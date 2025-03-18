@@ -10,7 +10,9 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['code', 'name', 'short_name', 'order', 'status', 'game_list_status'];
+    // protected $fillable = ['code', 'name', 'short_name', 'order', 'status', 'game_list_status'];
+
+     protected $fillable = ['code', 'name', 'short_name', 'order', 'status', 'game_list_status'];
 
     protected $appends = ['imgUrl']; // Changed from 'image' to 'imgUrl'
     //protected $appends = ['image'];
@@ -20,16 +22,13 @@ class Product extends Model
         return $this->belongsToMany(GameType::class)->withPivot('image');
     }
 
-    public function gameLists()
-    {
-        return $this->hasMany(GameList::class);
-    }
-
     public function getImgUrlAttribute()
     {
         if (isset($this->pivot) && isset($this->pivot->image)) {
-            return asset('assets/img/provider_logo/'.$this->pivot->image);
+            return asset('assets/img/game_logo/'.$this->pivot->image);
         }
 
     }
+
+
 }
