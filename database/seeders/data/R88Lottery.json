@@ -1,0 +1,93 @@
+{
+    "Game": [
+        {
+            "GameId": 522027,
+            "GameCode": "522027",
+            "GameName": "Bingo",
+            "GameType": 8,
+            "ImageUrl": "https://gicon.sm-sspi-res.com/providers/rich88/thumbs_square/522027.png",
+            "Method": "-",
+            "IsH5Support": true,
+            "Maintenance": "1|2|3|4|5|6",
+            "GameLobbyConfig": "",
+            "OtherName": [],
+            "HasDemo": false,
+            "Sequence": 29,
+            "GameEvent": null,
+            "GameProvideCode": "R88",
+            "GameProvideName": "Rich88"
+        },
+
+        {
+            "GameId": 522054,
+            "GameCode": "522054",
+            "GameName": "Bingo Football",
+            "GameType": 8,
+            "ImageUrl": "https://gicon.sm-sspi-res.com/providers/rich88/thumbs_square/522054.png",
+            "Method": "-",
+            "IsH5Support": true,
+            "Maintenance": "1|2|3|4|5|6",
+            "GameLobbyConfig": "",
+            "OtherName": [],
+            "HasDemo": false,
+            "Sequence": 56,
+            "GameEvent": null,
+            "GameProvideCode": "R88",
+            "GameProvideName": "Rich88"
+        },
+
+        {
+            "GameId": 522056,
+            "GameCode": "522056",
+            "GameName": "Multi Mega - Classic",
+            "GameType": 8,
+            "ImageUrl": "https://gicon.sm-sspi-res.com/providers/rich88/thumbs_square/522056.png",
+            "Method": "-",
+            "IsH5Support": true,
+            "Maintenance": "1|2|3|4|5|6",
+            "GameLobbyConfig": "",
+            "OtherName": [],
+            "HasDemo": false,
+            "Sequence": 58,
+            "GameEvent": null,
+            "GameProvideCode": "R88",
+            "GameProvideName": "Rich88"
+        },
+
+        {
+            "GameId": 522066,
+            "GameCode": "522066",
+            "GameName": "Multi Mega Bingo Bonanza",
+            "GameType": 8,
+            "ImageUrl": "https://gicon.sm-sspi-res.com/providers/rich88/thumbs_square/522066.png",
+            "Method": "-",
+            "IsH5Support": true,
+            "Maintenance": "1|2|3|4|5|6",
+            "GameLobbyConfig": "",
+            "OtherName": [],
+            "HasDemo": false,
+            "Sequence": 68,
+            "GameEvent": null,
+            "GameProvideCode": "R88",
+            "GameProvideName": "Rich88"
+        },
+
+        {
+            "GameId": 522093,
+            "GameCode": "522093",
+            "GameName": "Monopoly Bingo",
+            "GameType": 8,
+            "ImageUrl": "https://gicon.sm-sspi-res.com/providers/rich88/thumbs_square/522093.png",
+            "Method": "-",
+            "IsH5Support": true,
+            "Maintenance": "1|2|3|4|5|6",
+            "GameLobbyConfig": "",
+            "OtherName": [],
+            "HasDemo": false,
+            "Sequence": 95,
+            "GameEvent": null,
+            "GameProvideCode": "R88",
+            "GameProvideName": "Rich88"
+        }
+    ]
+}

@@ -1,0 +1,487 @@
+https://www.youtube.com/watch?v=ZKo3jn5L0yY&t=123s
+
+php artisan migrate --path=/database/migrations/2025_01_11_075203_add_after_before_column_to_results_table.php
+php artisan make:migration add_order_column_to_game_lists_table --table=game_lists
+
+php artisan make:migration make_name_and_phone_nullable_in_users_table --table=users
+
+
+// to remove laravel log
+php -r "file_put_contents('/var/www/pone_wine_a/storage/logs/laravel.log', '');"
+// created dev branch for kzt
+
+tail -f /var/www/slot_multi_banner_prod/storage/logs/laravel.log
+
+sudo apt update && sudo apt install supervisor -y
+sudo nano /etc/supervisor/conf.d/laravel-queue.conf
+[program:laravel-queue]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/html/artisan queue:work --tries=3
+autostart=true
+autorestart=true
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/log/laravel-queue.log
+
+--
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start laravel-queue
+
+sudo tail -f /var/log/supervisor/supervisord.log
+
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl stop laravel-queue
+sudo supervisorctl start laravel-queue
+sudo supervisorctl status
+
+
+
+
+
+sudo nano /etc/php/8.3/fpm/php.ini
+
+sudo su ubuntu
+crontab -e
+
+* * * * * cd /var/www/slot_multi_banner_prod && php artisan schedule:run >> /dev/null 2>&1
+
+tail -f /var/log/mysql/error.log
+
+sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+
+php artisan make:migration add_agent_link_to_users_table --table=users
+
+// to add column
+ALTER TABLE transactions
+ADD COLUMN agent_id INT(11) AFTER name;
+
+
+SHOW PROCESSLIST;
+
+
+SHOW INDEX FROM reports;
+SHOW INDEX FROM seamless_transactions;
+CREATE INDEX idx_wager_id ON reports (wager_id);
+CREATE INDEX idx_seamless_transaction_id ON seamless_transactions (seamless_transaction_id);
+EXPLAIN SELECT * FROM reports WHERE wager_id = 2462359211;
+
+
+sudo chmod -R 775 /var/www/html/bossi_a/storage/logs/
+sudo chown -R www-data:www-data /var/www/html/bossi_a/storage/logs
+
+
+SET GLOBAL innodb_print_all_deadlocks = 1;
+
+SHOW VARIABLES LIKE 'transaction_isolation';
+SET GLOBAL innodb_lock_wait_timeout = 100;
+------------
+cd /etc/mysql/my.cnf
+[mysqld]
+transaction-isolation = READ-COMMITTED
+---------------
+SELECT INDEX_NAME, LOCK_TYPE, LOCK_DATA, LOCK_MODE, LOCK_STATUS, EVENT_ID
+FROM performance_schema.data_locks;
+
+SELECT * FROM performance_schema.setup_instruments WHERE NAME LIKE '%data_lock%' AND ENABLED = 'YES';
+
+UPDATE performance_schema.setup_instruments
+SET ENABLED = 'YES'
+WHERE NAME LIKE '%data_lock%';
+SET GLOBAL innodb_status_output=ON;
+SET GLOBAL innodb_status_output_locks=ON;
+
+
+
+
+
+# Set the ownership of the entire project directory to www-data user and group
+chown -R www-data:www-data /var/www/html/slot_multi_banner_prod
+
+# Set directory permissions to allow access
+chmod -R 755 /var/www/html/bossi_a
+
+# Ensure storage directory is owned by www-data
+sudo chown -R www-data:www-data /var/www/html/bossi_a/storage
+
+# Ensure bootstrap cache directory is owned by www-data
+sudo chown -R www-data:www-data /var/www/html/bossi_a/bootstrap/cache
+
+# Set correct permissions for storage directory
+sudo chmod -R 775 /var/www/html/bossi_a/storage
+
+# Set correct permissions for bootstrap cache directory
+sudo chmod -R 775 /var/www/html/bossi_a/bootstrap/cache
+ls -al /var/www/html/bossi_a
+sudo systemctl restart nginx
+---------
+Redis install
+sudo apt update
+sudo apt upgrade
+sudo apt install redis-server
+sudo nano /etc/redis/redis.conf
+supervised systemd // change no to systemd
+sudo systemctl restart redis.service
+redis-cli ping
+PONG // out
+sudo systemctl enable redis-server
+sudo systemctl restart redis-server
+sudo systemctl status redis-server
+
+shan db setup
+
+mysql> CREATE DATABASE shan;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> CREATE USER 'shan_user'@'localhost' IDENTIFIED BY 'StrongPassword123!';
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> GRANT ALL PRIVILEGES ON shan.* TO 'new_user'@'localhost';
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> FLUSH PRIVILEGES;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> exit;
+Bye
+
+sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+change bind-address 127.0.0.1 to 0.0.0.0
+
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+set up
+01 - GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+02- GRANT ALL PRIVILEGES ON slot_maker.* TO 'shan_remote_user'@'1.2.165.234';
+03 - GRANT ALL PRIVILEGES ON slot_maker.* TO 'shan_remote_user'@'1.2.165.234' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+1 - CREATE USER 'shan_remote_connect'@'47.129.221.143' IDENTIFIED BY 'StrongPassword123!';
+2 - GRANT ALL PRIVILEGES ON slot_maker.* TO 'shan_remote_connect'@'47.129.221.143';
+3 - FLUSH PRIVILEGES;
+
+GRANT ALL PRIVILEGES ON slot_maker.* TO 'shan_remote_user_prod'@'%' IDENTIFIED BY 'StrongPassword123!';
+
+GRANT ALL PRIVILEGES ON slot_maker.* TO 'shan_remote_connect'@'%';
+
+CREATE USER 'shan_remote_user_prod'@'%' IDENTIFIED BY 'StrongPassword123!';
+
+SHOW GRANTS FOR 'shan_remote_user'@'1.2.165.234';
+SHOW GRANTS FOR 'shan_remote_user'@'52.77.209.90';
+SHOW GRANTS FOR 'shan_remote_user_prod'@'%';
+
+ SHOW GRANTS FOR 'shan_remote_connect'@'47.129.221.143';
+
+## to check connect ##
+CREATE USER 'shan_remote_connect'@'103.121.227.231' IDENTIFIED BY 'StrongPassword123!';
+GRANT ALL PRIVILEGES ON slot_maker.* TO 'shan_remote_connect'@'103.121.227.231';
+FLUSH PRIVILEGES;
+
+CREATE USER 'shan_remote_connect'@'47.129.221.143' IDENTIFIED BY 'StrongPassword123!';
+GRANT ALL PRIVILEGES ON slot_maker.* TO 'shan_remote_connect'@'47.129.221.143';
+FLUSH PRIVILEGES;
+
+SELECT user, host FROM mysql.user WHERE user = 'shan_remote_connect';
+SELECT host, user, authentication_string FROM mysql.user WHERE user = 'shan_remote_connect';
+
+## confirm
+DROP USER 'shan_remote_connect'@'47.129.221.143';
+CREATE USER 'shan_remote_connect'@'https://ec2-47-129-221-143.ap-southeast-1.compute.amazonaws.com' IDENTIFIED BY 'StrongPassword123!';
+
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON slot_maker.users TO 'shan_remote_connect'@'https://ec2-47-129-221-143.ap-southeast-1.compute.amazonaws.com';
+FLUSH PRIVILEGES;
+
+SHOW GRANTS FOR 'shan_prod'@'%';
+
+GRANT SELECT ON slot_maker.users TO 'shan_remote_connect'@'https://ec2-47-129-221-143.ap-southeast-1.compute.amazonaws.com';
+FLUSH PRIVILEGES;
+
+
+CREATE USER 'shan_prod'@'ec2-47-129-221-143.ap-southeast-1.compute.amazonaws.com' IDENTIFIED BY 'StrongPassword123!';
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON slot_maker.users TO 'shan_remote_prod'@'ec2-47-129-221-143.ap-southeast-1.compute.amazonaws.com';
+
+FLUSH PRIVILEGES;
+DROP USER 'shan_remote_prod'@'ec2-47-129-221-143.ap-southeast-1.compute.amazonaws.com';
+
+CREATE USER 'shan_prod'@'%' IDENTIFIED BY 'StrongPassword123!';
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON slot_maker.users TO 'shan_prod'@'%';
+
+FLUSH PRIVILEGES;
+
+O22856518
+
+
+
+php artisan result:delete-old-backups "2024-12-18" "2024-12-19"
+
+php artisan bet:delete-old-backups "2024-12-10" "2024-12-11"
+
+
+{
+    "game_type_id": 1,
+    "players": [
+        {
+            "player_id": "5",
+            "player_name": "Alice",
+            "win_lose_status": 1,
+            "bet_amount": 100,
+            "amount_changed": 50
+        },
+        {
+            "player_id": "6",
+            "player_name": "Bob",
+            "win_lose_status": 0,
+            "bet_amount": 150,
+            "amount_changed": 20
+        },
+        {
+            "player_id": "7",
+            "player_name": "Charlie",
+            "win_lose_status": 1,
+            "bet_amount": 200,
+            "amount_changed": 80
+        }
+    ]
+}
+
+
+sudo certbot --nginx -d delightmyanmarmmk.xyz -d www.delightmyanmarmmk.xyz -d superman788.online -d www.superman788.online -d asaibetslot.online -d www.asaibetslot.online
+
+
+
+1 - CREATE USER 'mksuperman'@'104.248.159.5' IDENTIFIED BY 'StrongPassword123!';
+2 - GRANT ALL PRIVILEGES ON superman.* TO 'mksuperman'@'104.248.159.5';
+3 - FLUSH PRIVILEGES;
+
+GRANT ALL PRIVILEGES ON slot_maker.* TO 'shan_remote_user_prod'@'%' IDENTIFIED BY 'StrongPassword123!';
+
+GRANT ALL PRIVILEGES ON slot_maker.* TO 'shan_remote_connect'@'%';
+
+CREATE USER 'mksuperman'@'104.248.159.5' IDENTIFIED BY 'StrongPassword123!';
+GRANT ALL PRIVILEGES ON mk_slot.* TO 'mksuperman'@'104.248.159.5';
+FLUSH PRIVILEGES;
+
+
+SHOW GRANTS FOR 'mksuperman'@'139.59.91.201';
+CREATE USER 'mksuperman'@'139.59.91.201' IDENTIFIED BY 'StrongPassword123!';
+GRANT ALL PRIVILEGES ON superman.* TO 'mksuperman'@'139.59.91.201';
+FLUSH PRIVILEGES;
+
+
+
+@extends('layouts.master')
+@section('content')
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Dashboard</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Dashboard v1</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{ number_format($user->wallet->balanceFloat, 2) }}</h3>
+                        <p>Balance</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-bag"></i>
+                    </div>
+                    <a href="#" class="small-box-footer"> <i class="fas "></i></a>
+                </div>
+            </div>
+            @if ($role['0'] == 'Senior')
+            <!-- ./col -->
+            <div class="col-lg-4 col-6">
+                <!-- small box -->
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{ number_format($totalBalance->balance / 100, 2) }}</h3>
+
+                        <p>Master Total Balance</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                    <a href="{{ route('admin.agent.index') }}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
+
+                </div>
+            </div>
+            @endif
+            @if ($role['0'] == 'Master')
+            <div class="col-lg-4 col-6">
+                <!-- small box -->
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{ number_format($totalBalance->balance / 100, 2) }}</h3>
+                        <p>Agent Total Balance</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                    <a href="{{ route('admin.agent.index') }}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            @endif
+            <!-- ./col -->
+            <!-- ./col -->
+            @can('senior_access')
+            <div class="col-lg-4 col-6">
+                <!-- small box -->
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        @if ($playerBalance)
+                        <h3>{{ number_format($playerBalance->balance / 100, 2) }}</h3>
+                        @else
+                        <h3>0.00</h3>
+                        @endif
+                        <p>Player Balance</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="{{ route('admin.playerList') }}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            @endcan
+
+            <!-- ./col -->
+
+            @can('senior_owner_access')
+            <div class="col-lg-4 col-6">
+                <!-- small box -->
+                <div class="small-box bg-warning">
+                    <form action="{{ route('admin.balanceUp') }}" method="post">
+                        @csrf
+                        <div class="card-header p-3 pb-0">
+                            <h6 class="mb-1">Update Balance</h6>
+                            <p class="text-sm mb-0">
+                                Seninor can update balance.
+                            </p>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="input-group input-group-static my-4">
+                                <label>Amount</label>
+                                <input type="integer" class="form-control" name="balance">
+                            </div>
+
+                            <button class="btn bg-gradient-dark mb-0 float-end">Update </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            @endcan
+            @can('master_access')
+            <div class="col-lg-4 col-6">
+                <!-- small box -->
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{ $totalAgent }}</h3>
+                        <p>Total Agent</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="{{ route('admin.agent.index') }}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            @endcan
+            @can('agent_access')
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-primary">
+                    <div class="inner">
+                        <h3>{{ $totalPlayer }}</h3>
+                        <p>Total Player</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="{{ route('admin.player.index') }}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{number_format($totalWinlose,2)}}</h3>
+                        <p>Total WinLose</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="{{ route('admin.player.index') }}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-gray">
+                    <div class="inner">
+                        <h3>{{number_format($todayWinlose,2)}}</h3>
+                        <p>Today WinLose</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="{{ route('admin.player.index') }}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{number_format($todayDeposit,2)}}</h3>
+                        <p>Today Deposit</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="{{ route('admin.player.index') }}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>{{number_format($todayWithdraw,2)}}</h3>
+                        <p>Today Withdraw</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="{{ route('admin.player.index') }}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            @endcan
+            <!-- ./col -->
+        </div>
+    </div>
+</section>
+@endsection

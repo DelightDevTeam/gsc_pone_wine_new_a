@@ -1,0 +1,100 @@
+{
+    "success": true,
+    "data": [
+        {
+            "ProviderCode": "UUS",
+            "ProviderName": "UUSlot",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "MGH5",
+            "ProviderName": "MegaH5",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "L22",
+            "ProviderName": "Live22",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "EPW",
+            "ProviderName": "EpicWin",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "EVOPLAY",
+            "ProviderName": "EvoPlay",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "YBAT",
+            "ProviderName": "YellowBat",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "JDB",
+            "ProviderName": "JDB Gaming",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "PGSOFT",
+            "ProviderName": "PGSoft",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "FACHAI",
+            "ProviderName": "FaChai",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "JILI",
+            "ProviderName": "JILI",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "BNG",
+            "ProviderName": "BNG",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "PPLAY",
+            "ProviderName": "PragmaticPlay",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "PPLAYLIVE",
+            "ProviderName": "PragmaticPlay Live",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "HSW",
+            "ProviderName": "Hacksaw",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "FUNTA",
+            "ProviderName": "Funta",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "CQ9",
+            "ProviderName": "CQ9",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "SAG",
+            "ProviderName": "SAGaming",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "R88",
+            "ProviderName": "Rich88",
+            "IsActive": true
+        },
+        {
+            "ProviderCode": "GPD",
+            "ProviderName": "GamingPanda",
+            "IsActive": true
+        }
+    ]
+}

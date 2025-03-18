@@ -1,0 +1,56 @@
+{
+    "Game": [
+        {
+            "GameId": 521002,
+            "GameCode": "521002",
+            "GameName": "Super Ace",
+            "GameType": 1,
+            "ImageUrl": "https://gicon.sm-sspi-res.com/providers/gamingpanda/thumbs_square/521002.png",
+            "Method": "Slots",
+            "IsH5Support": true,
+            "Maintenance": "1|2|3|4|5|6",
+            "GameLobbyConfig": "",
+            "OtherName": [],
+            "HasDemo": false,
+            "Sequence": 2,
+            "GameEvent": null,
+            "GameProvideCode": "GPD",
+            "GameProvideName": "GamingPanda"
+        },
+        {
+            "GameId": 521003,
+            "GameCode": "521003",
+            "GameName": "Fortune Gems",
+            "GameType": 1,
+            "ImageUrl": "https://gicon.sm-sspi-res.com/providers/gamingpanda/thumbs_square/521003.png",
+            "Method": "Slots",
+            "IsH5Support": true,
+            "Maintenance": "1|2|3|4|5|6",
+            "GameLobbyConfig": "",
+            "OtherName": [],
+            "HasDemo": false,
+            "Sequence": 3,
+            "GameEvent": null,
+            "GameProvideCode": "GPD",
+            "GameProvideName": "GamingPanda"
+        },
+
+        {
+            "GameId": 521023,
+            "GameCode": "521023",
+            "GameName": "Yummy Carnival",
+            "GameType": 1,
+            "ImageUrl": "https://gicon.sm-sspi-res.com/providers/gamingpanda/thumbs_square/521023.png",
+            "Method": "Slots",
+            "IsH5Support": true,
+            "Maintenance": "1|2|3|4|5|6",
+            "GameLobbyConfig": "",
+            "OtherName": [],
+            "HasDemo": false,
+            "Sequence": 25,
+            "GameEvent": null,
+            "GameProvideCode": "GPD",
+            "GameProvideName": "GamingPanda"
+        }
+    ]
+}
