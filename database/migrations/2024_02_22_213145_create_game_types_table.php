@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('game_types', function (Blueprint $table) {
-            $table->id();
+           $table->id();
             $table->string('name');
+            $table->string('name_mm');
             $table->string('code');
             $table->string('img')->default('default.png');
             $table->integer('status');

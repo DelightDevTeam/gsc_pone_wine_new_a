@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('game_lists', function (Blueprint $table) {
+        Schema::create('hot_games', function (Blueprint $table) {
             $table->id();
             $table->string('code');
             $table->string('name');
@@ -20,12 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id');
             $table->string('image_url');
             $table->boolean('status')->default(1);
-            $table->boolean('hot_status')->default(0);
             $table->timestamps();
-
-            // $table->foreign('game_type_id')->references('id')->on('game_types')->onDelete('cascade');
-            // $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-
         });
     }
 
@@ -34,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('game_lists');
+        Schema::dropIfExists('hot_games');
     }
 };
