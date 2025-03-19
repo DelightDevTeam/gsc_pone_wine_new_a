@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Webhook;
+namespace App\Http\Controllers\Api\V1\Webhook\Gsc;
 
 use App\Enums\SlotWebhookResponseCode;
 use App\Http\Controllers\Controller;
