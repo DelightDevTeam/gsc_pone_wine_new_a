@@ -27,7 +27,6 @@ return new class extends Migration
             $table->decimal('commission_amount', 12)->nullable();
             $table->decimal('jackpot_amount', 12)->nullable();
             $table->string('operator_code')->nullable();
-            $table->string('message_id')->nullable();
             $table->string('sign')->nullable();
             $table->decimal('jp_bet', 12)->nullable();
             $table->timestamp('request_time');
