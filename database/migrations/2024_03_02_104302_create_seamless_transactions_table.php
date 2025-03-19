@@ -26,7 +26,7 @@ return new class extends Migration
             $table->decimal('transaction_amount', 12);
             $table->string('transaction_id')->nullable();
             $table->decimal('rate')->nullable();
-            $table->decimal('payout_amount', 12);
+            $table->decimal('payout_amount', 12)->default('0.00');
             //$table->timestamp('settlement_date')->nullable();
             $table->string('status')->default(TransactionStatus::Pending);
             $table->string('wager_status')->default(WagerStatus::Ongoing->value);

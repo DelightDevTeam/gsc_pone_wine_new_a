@@ -179,6 +179,7 @@ trait OptimizedBettingProcess
                                 'transaction_id' => $transactionData['TransactionID'],
                                 'rate' => $rate,  // Include rate for the transaction
                                 'transaction_amount' => $transactionData['TransactionAmount'],
+                                'payout_amount' => $transactionData['PayoutAmount'],
                                 'bet_amount' => $transactionData['BetAmount'],
                                 'valid_bet_amount' => $transactionData['ValidBetAmount'],
                                 'status' => $transactionData['Status'],
