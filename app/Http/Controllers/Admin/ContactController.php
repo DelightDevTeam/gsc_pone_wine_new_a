@@ -44,12 +44,12 @@ class ContactController extends Controller
         $request->validate([
             'name' => 'required',
             'value' => 'required',
-            'type_id' => 'required'
+            'type_id' => 'required',
         ]);
         $agent = $this->getAgent() ?? Auth::user();
         $contact = Contact::where('agent_id', $agent->id)->where('type_id', $request->type_id)->first();
-        
-        if($contact){
+
+        if ($contact) {
             return redirect()->back()->with('error', 'Already Created for this contact type');
         }
 
@@ -57,7 +57,7 @@ class ContactController extends Controller
             'name' => $request->name,
             'value' => $request->value,
             'agent_id' => $agent->id,
-            'type_id' => $request->type_id
+            'type_id' => $request->type_id,
         ]);
 
         return redirect(route('admin.contact.index'))->with('success', 'New Contact Created Successfully.');
@@ -94,7 +94,7 @@ class ContactController extends Controller
         $contact->update([
             'name' => $request->name,
             'value' => $request->value,
-            'type_id' => $request->type_id
+            'type_id' => $request->type_id,
         ]);
 
         return redirect(route('admin.contact.index'))->with('success', 'New Contact Updated Successfully.');

@@ -12,7 +12,7 @@ class PermissionRoleTableSeeder extends Seeder
      * Run the database seeds.
      */
     public function run(): void
-    {   
+    {
         //Senior Permissions
         $senior_owner_permissions = Permission::whereIn('title', [
             'senior_owner_access',
@@ -50,7 +50,7 @@ class PermissionRoleTableSeeder extends Seeder
             'make_transfer',
         ]);
         Role::findOrFail(3)->permissions()->sync($super_permissions->pluck('id'));
-        
+
         //Senior Permissions
         $super_permissions = Permission::whereIn('title', [
             'senior_access',
@@ -62,7 +62,6 @@ class PermissionRoleTableSeeder extends Seeder
             'make_transfer',
         ]);
         Role::findOrFail(4)->permissions()->sync($super_permissions->pluck('id'));
-        
 
         // master permissions
         $master_permissions = Permission::whereIn('title', [

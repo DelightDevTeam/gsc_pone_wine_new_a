@@ -39,7 +39,7 @@ class OwnerController extends Controller
             'roles',
             'children.children.children.children.children.poneWinePlayer',
             'children.children.children.children.children.results',
-            'children.children.children.children.children.betNResults'
+            'children.children.children.children.children.betNResults',
         ]
         )->whereHas('roles', function ($query) {
             $query->where('role_id', self::OWNER_ROLE);
@@ -113,7 +113,7 @@ class OwnerController extends Controller
         if ($request->agent_logo) {
             $image = $request->file('agent_logo');
             $ext = $image->getClientOriginalExtension();
-            $filename = uniqid('logo') . '.' . $ext; // Generate a unique filename
+            $filename = uniqid('logo').'.'.$ext; // Generate a unique filename
             $image->move(public_path('assets/img/logo/'), $filename); // Save the file
             $userPrepare['agent_logo'] = $filename;
         }
@@ -153,7 +153,7 @@ class OwnerController extends Controller
     {
         $randomNumber = mt_rand(10000000, 99999999);
 
-        return 'O' . $randomNumber;
+        return 'O'.$randomNumber;
     }
 
     /**
@@ -312,7 +312,7 @@ class OwnerController extends Controller
 
         return redirect()->back()->with(
             'success',
-            'User ' . ($user->status == 1 ? 'activate' : 'inactive') . ' successfully'
+            'User '.($user->status == 1 ? 'activate' : 'inactive').' successfully'
         );
     }
 
@@ -336,12 +336,12 @@ class OwnerController extends Controller
         ]);
 
         if ($request->file('agent_logo')) {
-            if ($user->agent_logo && File::exists(public_path('assets/img/logo/' . $user->agent_logo))) {
-                File::delete(public_path('assets/img/logo/' . $user->agent_logo));
+            if ($user->agent_logo && File::exists(public_path('assets/img/logo/'.$user->agent_logo))) {
+                File::delete(public_path('assets/img/logo/'.$user->agent_logo));
             }
 
             $image = $request->file('agent_logo');
-            $filename = uniqid('logo') . '.' . $image->getClientOriginalExtension();
+            $filename = uniqid('logo').'.'.$image->getClientOriginalExtension();
             $image->move(public_path('assets/img/logo/'), $filename);
             $user->agent_logo = $filename;
         } else {
@@ -391,7 +391,6 @@ class OwnerController extends Controller
             ->with('username', $master->user_name);
     }
 
-
     /**
      * Remove the specified resource from storage.
      */
@@ -410,13 +409,14 @@ class OwnerController extends Controller
         return redirect()->back()->with('success', 'Banner Deleted.');
     }
 
-       // KS Upgrade RPIndex
-       public function ownerReportIndex($id) {
+    // KS Upgrade RPIndex
+    public function ownerReportIndex($id)
+    {
         $user = User::with([
             'roles',
             'children.children.children.children.children.poneWinePlayer',
             'children.children.children.children.children.results',
-            'children.children.children.children.children.betNResults'
+            'children.children.children.children.children.betNResults',
         ])->find($id);
 
         $poneWineAmt = $user->children->flatMap->children->flatMap->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
@@ -427,10 +427,9 @@ class OwnerController extends Controller
 
         $report = [
             'poneWineTotalAmt' => $poneWineAmt,
-            'slotTotalAmt'  => $slotTotalAmt,
+            'slotTotalAmt' => $slotTotalAmt,
         ];
 
-        return view('admin.owner.report_index',compact('report'));
+        return view('admin.owner.report_index', compact('report'));
     }
-
 }

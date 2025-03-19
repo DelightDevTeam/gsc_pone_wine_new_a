@@ -10,9 +10,8 @@ use App\Notifications\PlayerDepositNotification;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Notification;
 
 class DepositRequestController extends Controller
 {

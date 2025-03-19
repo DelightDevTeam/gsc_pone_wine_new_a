@@ -17,8 +17,6 @@ class DepositNotifyEvent
     /**
      * Create a new event instance.
      */
-
-
     public $deposit;
 
     /**
@@ -34,10 +32,8 @@ class DepositNotifyEvent
      */
     public function broadcastOn()
     {
-        return new Channel('agent.' . $this->deposit->agent_id);
+        return new Channel('agent.'.$this->deposit->agent_id);
     }
-
-
 
     /**
      * The event's broadcast name.

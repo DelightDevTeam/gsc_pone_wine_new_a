@@ -10,8 +10,6 @@ use App\Services\Slot\SlotWebhookValidator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-
-
 class GetBalanceController extends Controller
 {
     public function getBalance(SlotWebhookRequest $request)
@@ -28,6 +26,7 @@ class GetBalanceController extends Controller
                     'secret_key' => config('game.api.secret_key'),
                     'api_url' => config('game.api.url'),
                 ]);
+
                 return $validator->getResponse();
             }
 

@@ -28,7 +28,7 @@ class ReportController extends Controller
                 'pone_wine_player_bets.user_name',
                 'pone_wine_bets.win_number',
                 'pone_wine_bets.match_id',
-                'pone_wine_player_bets.win_lose_amt'
+                'pone_wine_player_bets.win_lose_amt',
             ])
             ->get();
 

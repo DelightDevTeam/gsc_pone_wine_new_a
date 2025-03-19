@@ -28,7 +28,7 @@ class OwnerRequest extends FormRequest
             'password' => 'required|min:6',
             'amount' => 'nullable|numeric',
             'site_name' => 'nullable|string',
-            'site_link' => 'nullable|string'
+            'site_link' => 'nullable|string',
         ];
     }
 }

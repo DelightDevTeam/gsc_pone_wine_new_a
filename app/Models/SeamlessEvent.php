@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
-
 
 class SeamlessEvent extends Model
 {
@@ -29,7 +28,7 @@ class SeamlessEvent extends Model
         // 'operator_code',
         // 'sign',
         // 'jp_bet',
-         'request_time',
+        'request_time',
     ];
 
     protected $casts = [

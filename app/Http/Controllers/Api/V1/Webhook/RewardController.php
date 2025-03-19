@@ -27,11 +27,13 @@ class RewardController extends Controller
                 $player = User::where('user_name', $transaction['PlayerId'])->first();
                 if (! $player) {
                     Log::warning('Invalid player detected', ['PlayerId' => $transaction['PlayerId']]);
+
                     return $this->buildErrorResponse(StatusCode::InvalidPlayerPassword);
                 }
 
                 if (! $player->wallet) {
                     Log::error('Player wallet not found', ['PlayerId' => $player->id]);
+
                     return $this->buildErrorResponse(StatusCode::WalletNotFound);
                 }
 
@@ -41,12 +43,14 @@ class RewardController extends Controller
                         'transaction' => $transaction,
                         'generated_signature' => $signature,
                     ]);
+
                     return $this->buildErrorResponse(StatusCode::InvalidSignature);
                 }
 
                 $existingTransaction = Reward::where('tran_id', $transaction['TranId'])->first();
                 if ($existingTransaction) {
                     Log::warning('Duplicate TranId detected', ['TranId' => $transaction['TranId']]);
+
                     return $this->buildErrorResponse(StatusCode::DuplicateTransaction, $player->wallet->balanceFloat ?? 0);
                 }
 
@@ -60,6 +64,7 @@ class RewardController extends Controller
                 $player->wallet->refreshBalance();
                 if (! isset($player->wallet->balanceFloat)) {
                     Log::error('Wallet balanceFloat property missing after refresh', ['PlayerId' => $player->id]);
+
                     return $this->buildErrorResponse(StatusCode::WalletUpdateFailed);
                 }
 
@@ -93,6 +98,7 @@ class RewardController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to handle Reward', ['error' => $e->getMessage()]);
+
             return response()->json(['message' => 'Failed to handle Reward'], 500);
         }
     }
@@ -204,6 +210,7 @@ class RewardController extends Controller
     private function generateSignature(array $transaction): string
     {
         $method = 'Reward';
+
         return md5($method.$transaction['TranId'].$transaction['RequestDateTime'].
                    $transaction['OperatorId'].config('game.api.secret_key').$transaction['PlayerId']);
     }

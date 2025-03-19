@@ -37,11 +37,11 @@ class SuperController extends Controller
             'roles',
             'children.children.children.children.poneWinePlayer',
             'children.children.children.children.results',
-            'children.children.children.children.betNResults'
+            'children.children.children.children.betNResults',
         ])
-        ->whereHas('roles', function ($query) {
-            $query->where('role_id', self::SUPER_ROLE);
-        })
+            ->whereHas('roles', function ($query) {
+                $query->where('role_id', self::SUPER_ROLE);
+            })
             ->where('agent_id', auth()->id())
             ->orderBy('id', 'desc')
             ->get();
@@ -120,7 +120,7 @@ class SuperController extends Controller
     {
         $randomNumber = mt_rand(10000000, 99999999);
 
-        return 'S' . $randomNumber;
+        return 'S'.$randomNumber;
     }
 
     /**
@@ -298,7 +298,7 @@ class SuperController extends Controller
 
         return redirect()->back()->with(
             'success',
-            'User ' . ($user->status == 1 ? 'activate' : 'inactive') . ' successfully'
+            'User '.($user->status == 1 ? 'activate' : 'inactive').' successfully'
         );
     }
 
@@ -347,26 +347,27 @@ class SuperController extends Controller
             ->with('username', $super->user_name);
     }
 
-   // KS Upgrade RPIndex
-    public function superReportIndex($id) {
+    // KS Upgrade RPIndex
+    public function superReportIndex($id)
+    {
         $user = User::with([
             'roles',
             'children.children.children.children.poneWinePlayer',
             'children.children.children.children.results',
-            'children.children.children.children.betNResults'
+            'children.children.children.children.betNResults',
         ])->find($id);
 
         $poneWineAmt = $user->children->flatMap->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
-        $result =      $user->children->flatMap->children->flatMap->children->flatMap->children->flatMap->results->sum('net_win');
+        $result = $user->children->flatMap->children->flatMap->children->flatMap->children->flatMap->results->sum('net_win');
         $betNResults = $user->children->flatMap->children->flatMap->children->flatMap->children->flatMap->results->sum('betNResults');
 
         $slotTotalAmt = $result + $betNResults;
 
         $report = [
             'poneWineTotalAmt' => $poneWineAmt,
-            'slotTotalAmt'  => $slotTotalAmt,
+            'slotTotalAmt' => $slotTotalAmt,
         ];
 
-        return view('admin.owner.report_index',compact('report'));
+        return view('admin.owner.report_index', compact('report'));
     }
 }

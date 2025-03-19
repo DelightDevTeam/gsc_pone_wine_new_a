@@ -14,7 +14,7 @@ class ContactTypeSeeder extends Seeder
     {
         $types = [
             ['name' => 'Telegram', 'image' => 'telegram.png'],
-            ['name' => 'Viber', 'image' => 'viber.png']
+            ['name' => 'Viber', 'image' => 'viber.png'],
         ];
         foreach ($types as $type) {
             \App\Models\ContactType::create($type);

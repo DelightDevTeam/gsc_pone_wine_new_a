@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use App\Models\Admin\GameType;
 use App\Models\Admin\GameTypeProduct;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class GameTypeProductTableSeeder extends Seeder
 {

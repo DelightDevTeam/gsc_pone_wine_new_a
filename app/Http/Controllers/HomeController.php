@@ -24,7 +24,6 @@ class HomeController extends Controller
      *
      * @return void
      */
-
     private const PLAYER_ROLE = 7;
 
     public function __construct()
@@ -204,24 +203,24 @@ class HomeController extends Controller
         return User::withSum([
             'poneWinePlayer as pone_wine_player_win_lose_amt' => function ($query) {
                 $query->whereDate('created_at', today());
-            }
+            },
         ], 'win_lose_amt')
             ->withSum([
                 'results as results_net_win' => function ($query) {
                     $query->whereDate('created_at', today());
-                }
+                },
             ], 'net_win')
             ->withSum([
                 'betNResults as bet_n_results_net_win' => function ($query) {
                     $query->whereDate('created_at', today());
-                }
+                },
             ], 'net_win')
             ->whereHas('roles', function ($query) {
                 $query->where('role_id', self::PLAYER_ROLE);
             })
             ->where('agent_id', Auth::id())
             ->get()
-            ->sum(fn($user) => ($user->pone_wine_player_win_lose_amt ?? 0)
+            ->sum(fn ($user) => ($user->pone_wine_player_win_lose_amt ?? 0)
                 + ($user->results_net_win ?? 0)
                 + ($user->bet_n_results_net_win ?? 0));
     }
@@ -236,7 +235,7 @@ class HomeController extends Controller
             })
             ->where('agent_id', Auth::id())
             ->get()
-            ->sum(fn($user) => $user->pone_wine_player_win_lose_amt
+            ->sum(fn ($user) => $user->pone_wine_player_win_lose_amt
                 + $user->results_net_win
                 + $user->bet_n_results_net_win);
     }

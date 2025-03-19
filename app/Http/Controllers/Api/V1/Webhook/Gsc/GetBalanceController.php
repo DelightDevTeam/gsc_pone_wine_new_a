@@ -5,11 +5,10 @@ namespace App\Http\Controllers\Api\V1\Webhook\Gsc;
 use App\Enums\SlotWebhookResponseCode;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Slot\SlotWebhookRequest;
-use App\Services\Slot\SlotWebhookService;
 use App\Services\Slot\SeamlessTransactionWebhookValidator;
+use App\Services\Slot\SlotWebhookService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
 
 class GetBalanceController extends Controller
 {
@@ -27,6 +26,7 @@ class GetBalanceController extends Controller
                     'secret_key' => config('game.api.secret_key'),
                     'api_url' => config('game.api.url'),
                 ]);
+
                 return $validator->getResponse();
             }
 

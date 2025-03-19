@@ -21,20 +21,22 @@ class PoneWineBetController extends Controller
     public function index(PoneWineBetRequest $request): JsonResponse
     {
         $validatedData = $request->validated();
-        
+
         try {
             DB::beginTransaction();
             $results = [];
-            
+
             foreach ($validatedData as $data) {
                 $bet = $this->createBet($data);
                 $results = array_merge($results, $this->processPlayers($data, $bet));
             }
-            
+
             DB::commit();
+
             return $this->success($results, 'Transaction Successful');
         } catch (\Exception $e) {
             DB::rollBack();
+
             return $this->error('Transaction failed', $e->getMessage(), 500);
         }
     }
@@ -42,10 +44,12 @@ class PoneWineBetController extends Controller
     private function processPlayers(array $data, $bet): array
     {
         $results = [];
-        
+
         foreach ($data['players'] as $playerData) {
             $player = $this->getUserByUsername($playerData['playerId']);
-            if (!$player) continue;
+            if (! $player) {
+                continue;
+            }
 
             $this->handlePlayerTransaction($data, $playerData, $player, $bet);
             $results[] = [
@@ -53,7 +57,7 @@ class PoneWineBetController extends Controller
                 'balance' => $player->balanceFloat,
             ];
         }
-        
+
         return $results;
     }
 
@@ -101,8 +105,8 @@ class PoneWineBetController extends Controller
 
     private function updatePlayerBalance(User $player, float $amountChanged): void
     {
-        $walletService = new WalletService();
-        
+        $walletService = new WalletService;
+
         if ($amountChanged > 0) {
             $walletService->deposit($player, $amountChanged, TransactionName::CapitalDeposit);
         } else {

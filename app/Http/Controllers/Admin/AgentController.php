@@ -46,9 +46,9 @@ class AgentController extends Controller
             ->where('agent_id', auth()->id())
             ->orderBy('id', 'desc')
             ->get();
+
         return view('admin.agent.index', compact('users'));
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -248,7 +248,7 @@ class AgentController extends Controller
     {
         $randomNumber = mt_rand(10000000, 99999999);
 
-        return 'A' . $randomNumber;
+        return 'A'.$randomNumber;
     }
 
     public function banAgent($id): RedirectResponse
@@ -457,7 +457,6 @@ class AgentController extends Controller
         return view('admin.agent.auth_win_lose_details', compact('details'));
     }
 
-
     public function getPlayerReports($id)
     {
         $users = User::with('roles', 'poneWinePlayer', 'results', 'betNResults')
@@ -472,22 +471,23 @@ class AgentController extends Controller
     }
 
     // KS Upgrade RPIndex
-    public function agentReportIndex($id) {
+    public function agentReportIndex($id)
+    {
         $user = User::with(['roles', 'children.poneWinePlayer', 'children.results', 'children.betNResults'])
-                        ->find($id);
+            ->find($id);
 
-                        $poneWineAmt = $user->children->flatMap->poneWinePlayer->sum('win_lose_amt');
-                        $result = $user->children->flatMap->results->sum('net_win');
-                        $betNResults = $user->children->flatMap->results->sum('betNResults');
+        $poneWineAmt = $user->children->flatMap->poneWinePlayer->sum('win_lose_amt');
+        $result = $user->children->flatMap->results->sum('net_win');
+        $betNResults = $user->children->flatMap->results->sum('betNResults');
 
-                        $slotTotalAmt = $result + $betNResults;
+        $slotTotalAmt = $result + $betNResults;
 
-                        $report = [
-                            'poneWineTotalAmt' => $poneWineAmt,
-                            'slotTotalAmt'  => $slotTotalAmt,
-                        ];
+        $report = [
+            'poneWineTotalAmt' => $poneWineAmt,
+            'slotTotalAmt' => $slotTotalAmt,
+        ];
 
-                  return view('admin.agent.report_index',compact('report'));
+        return view('admin.agent.report_index', compact('report'));
     }
 
     private function generateReferralCode($length = 8)

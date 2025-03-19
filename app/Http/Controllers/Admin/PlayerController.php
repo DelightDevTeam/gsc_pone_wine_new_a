@@ -45,14 +45,14 @@ class PlayerController extends Controller
         //kzt
         $agent = $this->getAgent() ?? Auth::user();
 
-        $users = User::with('roles' ,'poneWinePlayer', 'results', 'betNResults')
+        $users = User::with('roles', 'poneWinePlayer', 'results', 'betNResults')
             ->whereHas('roles', function ($query) {
                 $query->where('role_id', self::PLAYER_ROLE);
             })
             ->where('agent_id', $agent->id)
             ->orderBy('id', 'desc')
             ->get();
-        
+
         return view('admin.player.index', compact('users'));
     }
 

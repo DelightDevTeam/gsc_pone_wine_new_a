@@ -22,7 +22,7 @@ class PoneWineBetRequest extends FormRequest
     public function rules(): array
     {
         return [
-           '*.roomId' => 'required',
+            '*.roomId' => 'required',
             '*.matchId' => 'required',
             '*.winNumber' => 'required',
             '*.players' => 'required|array',

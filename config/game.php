@@ -1,6 +1,6 @@
 <?php
 
- return [
+return [
     'api' => [
         'operator_code' => env('SEAMLESS_OPERATOR_CODE'),
         'password' => env('SEAMLESS_PASSWORD'),

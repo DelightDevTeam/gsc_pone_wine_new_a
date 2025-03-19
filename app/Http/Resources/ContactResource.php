@@ -19,7 +19,7 @@ class ContactResource extends JsonResource
             'name' => $this->name,
             'value' => $this->value,
             'type' => $this->type->name,
-            'image' => $this->type->img_url
+            'image' => $this->type->img_url,
         ];
     }
 }

@@ -60,7 +60,7 @@ class RolesTableSeeder extends Seeder
                 'title' => 'System Wallet', // 8
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
         ];
 
         Role::insert($roles);

@@ -115,7 +115,7 @@ class SeniorController extends Controller
     {
         $randomNumber = mt_rand(10000000, 99999999);
 
-        return 'S' . $randomNumber;
+        return 'S'.$randomNumber;
     }
 
     /**
@@ -293,7 +293,7 @@ class SeniorController extends Controller
 
         return redirect()->back()->with(
             'success',
-            'User ' . ($user->status == 1 ? 'activate' : 'inactive') . ' successfully'
+            'User '.($user->status == 1 ? 'activate' : 'inactive').' successfully'
         );
     }
 
@@ -349,20 +349,19 @@ class SeniorController extends Controller
             'roles',
             'children.children.children.poneWinePlayer',
             'children.children.children.results',
-            'children.children.children.betNResults'
+            'children.children.children.betNResults',
         ])->find($id);
 
         $poneWineAmt = $user->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
-        $result =      $user->children->flatMap->children->flatMap->children->flatMap->results->sum('net_win');
+        $result = $user->children->flatMap->children->flatMap->children->flatMap->results->sum('net_win');
         $betNResults = $user->children->flatMap->children->flatMap->children->flatMap->results->sum('betNResults');
 
         $slotTotalAmt = $result + $betNResults;
 
         $report = [
             'poneWineTotalAmt' => $poneWineAmt,
-            'slotTotalAmt'  => $slotTotalAmt,
+            'slotTotalAmt' => $slotTotalAmt,
         ];
-
 
         return view('admin.senior.report_index', compact('report'));
     }

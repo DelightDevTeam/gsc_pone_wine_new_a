@@ -32,7 +32,7 @@ class ReportController extends Controller
             ->select([
                 'user_id',
                 'user_name',
-                DB::raw('SUM(win_lose_amt) as total_win_lose_amt')
+                DB::raw('SUM(win_lose_amt) as total_win_lose_amt'),
             ])
             ->groupBy('user_id', 'user_name');
 
@@ -55,15 +55,13 @@ class ReportController extends Controller
                 'player_totals.user_id',
                 'player_totals.user_name',
                 'player_totals.total_win_lose_amt',
-                DB::raw('SUM(pone_wine_bet_infos.bet_amount) as total_bet_amount')
+                DB::raw('SUM(pone_wine_bet_infos.bet_amount) as total_bet_amount'),
             ])
             ->groupBy('player_totals.user_id', 'player_totals.user_name', 'player_totals.total_win_lose_amt')
             ->get();
 
-
         return view('admin.report.ponewine.index', compact('reports'));
     }
-
 
     public function detail($playerId)
     {
@@ -75,7 +73,7 @@ class ReportController extends Controller
                 'pone_wine_bet_infos.bet_no',
                 'pone_wine_bet_infos.bet_amount',
                 'pone_wine_bets.win_number',
-                'pone_wine_bets.match_id'
+                'pone_wine_bets.match_id',
             ])
             ->where('pone_wine_player_bets.user_id', $playerId)
             ->get();
@@ -97,11 +95,11 @@ class ReportController extends Controller
         $total_sum = [
             'total_count_sum' => $total_count_sum,
             'total_bet_amount_sum' => $total_bet_amount_sum,
-            'total_win_amount_sum'  => $total_win_amount_sum,
-            'total_net_win_sum'    => $total_net_win_sum
+            'total_win_amount_sum' => $total_win_amount_sum,
+            'total_net_win_sum' => $total_net_win_sum,
         ];
 
-        return view('admin.report.index', compact('report','total_sum'));
+        return view('admin.report.index', compact('report', 'total_sum'));
     }
 
     public function getReportDetails(Request $request, $playerId)
@@ -131,10 +129,9 @@ class ReportController extends Controller
                 'pone_wine_player_bets.user_name',
                 'pone_wine_bets.win_number',
                 'pone_wine_bets.match_id',
-                'pone_wine_player_bets.win_lose_amt'
+                'pone_wine_player_bets.win_lose_amt',
             ])
             ->get();
-
 
         $combinedSubquery = DB::table('results')
             ->select(
@@ -176,7 +173,6 @@ class ReportController extends Controller
         return view('admin.report.player.index', compact('poneWineReport', 'slotReports'));
     }
 
-
     private function isExistingAgent($userId)
     {
         $user = User::find($userId);
@@ -191,7 +187,7 @@ class ReportController extends Controller
 
     private function buildQuery(Request $request, $adminId)
     {
-        $startDate = $request->start_date ??  Carbon::today()->startOfDay()->toDateString();
+        $startDate = $request->start_date ?? Carbon::today()->startOfDay()->toDateString();
         $endDate = $request->end_date ?? Carbon::today()->endOfDay()->toDateString();
 
         $resultsSubquery = Result::select(
@@ -202,7 +198,7 @@ class ReportController extends Controller
             DB::raw('COUNT(results.game_code) as total_count'),
         )
             ->groupBy('results.user_id')
-            ->whereBetween('results.created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+            ->whereBetween('results.created_at', [$startDate.' 00:00:00', $endDate.' 23:59:59']);
 
         $betsSubquery = BetNResult::select(
             'bet_n_results.user_id',
@@ -213,7 +209,7 @@ class ReportController extends Controller
 
         )
             ->groupBy('bet_n_results.user_id')
-            ->whereBetween('bet_n_results.created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+            ->whereBetween('bet_n_results.created_at', [$startDate.' 00:00:00', $endDate.' 23:59:59']);
 
         $query = DB::table('users as players')
             ->select(
@@ -231,7 +227,7 @@ class ReportController extends Controller
             ->leftJoin('wallets', 'wallets.holder_id', '=', 'players.id')
             ->leftJoinSub($resultsSubquery, 'results', 'results.user_id', '=', 'players.id') // Fixed alias
             ->leftJoinSub($betsSubquery, 'bets', 'bets.user_id', '=', 'players.id') // Fixed alias
-            ->when($request->player_id, fn($query) => $query->where('players.user_name', $request->player_id))
+            ->when($request->player_id, fn ($query) => $query->where('players.user_name', $request->player_id))
             ->where(function ($query) {
                 $query->whereNotNull('results.user_id')
                     ->orWhereNotNull('bets.user_id');
@@ -253,7 +249,7 @@ class ReportController extends Controller
 
     private function getPlayerDetails($playerId, $request)
     {
-        $startDate = $request->start_date ??  Carbon::today()->startOfDay()->toDateString();
+        $startDate = $request->start_date ?? Carbon::today()->startOfDay()->toDateString();
         $endDate = $request->end_date ?? Carbon::today()->endOfDay()->toDateString();
 
         $combinedSubquery = DB::table('results')
@@ -269,8 +265,8 @@ class ReportController extends Controller
             )
             ->join('game_lists', 'game_lists.game_id', '=', 'results.game_code')
             ->join('products', 'products.id', '=', 'game_lists.product_id')
-            ->whereBetween('results.created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
-            ->when($request->product_id, fn($query) => $query->where('products.id', $request->product_id))
+            ->whereBetween('results.created_at', [$startDate.' 00:00:00', $endDate.' 23:59:59'])
+            ->when($request->product_id, fn ($query) => $query->where('products.id', $request->product_id))
             ->unionAll(
                 DB::table('bet_n_results')
                     ->select(
@@ -285,8 +281,8 @@ class ReportController extends Controller
                     )
                     ->join('game_lists', 'game_lists.game_id', '=', 'bet_n_results.game_code')
                     ->join('products', 'products.id', '=', 'game_lists.product_id')
-                    ->whereBetween('bet_n_results.created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
-                    ->when($request->product_id, fn($query) => $query->where('products.id', $request->product_id))
+                    ->whereBetween('bet_n_results.created_at', [$startDate.' 00:00:00', $endDate.' 23:59:59'])
+                    ->when($request->product_id, fn ($query) => $query->where('products.id', $request->product_id))
             );
 
         $query = DB::table('users as players')
@@ -296,17 +292,17 @@ class ReportController extends Controller
         return $query->orderBy('date', 'desc')->get();
     }
 
-
     private function getAgentChildrenIds($agent, array $hierarchy)
     {
         foreach ($hierarchy as $role => $levels) {
             if ($agent->hasRole($role)) {
                 return collect([$agent])
-                    ->flatMap(fn($levelAgent) => $this->getChildrenRecursive($levelAgent, $levels))
+                    ->flatMap(fn ($levelAgent) => $this->getChildrenRecursive($levelAgent, $levels))
                     ->pluck('id')
                     ->toArray();
             }
         }
+
         return [];
     }
 
@@ -316,6 +312,7 @@ class ReportController extends Controller
         foreach ($levels as $level) {
             $children = $children->flatMap->children;
         }
+
         return $children->flatMap->children;
     }
 }

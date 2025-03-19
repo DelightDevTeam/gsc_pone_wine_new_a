@@ -9,8 +9,8 @@ use App\Models\Admin\GameType;
 use App\Models\Admin\GameTypeProduct;
 use App\Models\Admin\Product;
 use App\Models\SeamlessEvent;
-use App\Models\User;
 use App\Models\SeamlessTransaction;
+use App\Models\User;
 use App\Services\WalletService;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -185,11 +185,14 @@ trait OptimizedBettingProcess
                                 'status' => $transactionData['Status'],
                                 'wager_status' => $transactionData['TransactionAmount'] > 0 ? WagerStatus::Win : WagerStatus::Lose,
                                 'seamless_event_id' => $seamlessEventId,  // Include seamless_event_id
+                                'member_name' => $transactionData['MemberName'],
                                 'created_at' => now(),
                                 'updated_at' => now(),
                             ];
                         }
                     }
+
+                    return $seamlessTransactionsData;
 
                     if (! empty($seamlessTransactionsData)) {
                         DB::table('seamless_transactions')->insert($seamlessTransactionsData); // Insert transactions in bulk

@@ -67,7 +67,7 @@ class DatabaseSeeder extends Seeder
             RedTigerTablesSeeder::class,
             GamingWorldTablesSeeder::class,
             YesGetRichTablesSeeder::class,
-            ContactTypeSeeder::class
+            ContactTypeSeeder::class,
         ]);
     }
 }

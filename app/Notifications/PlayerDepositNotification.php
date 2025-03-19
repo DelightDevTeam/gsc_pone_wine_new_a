@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
@@ -30,6 +31,7 @@ class PlayerDepositNotification extends Notification implements ShouldQueue
             'amount' => $this->deposit->amount,
             'refrence_no' => $this->deposit->refrence_no,
         ]);
+
         return [
             'player_name' => $this->deposit->user->user_name,
             'amount' => $this->deposit->amount,

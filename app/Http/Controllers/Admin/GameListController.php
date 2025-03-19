@@ -36,25 +36,25 @@ class GameListController extends Controller
                     return $row->hot_status == 1 ? 'This Game is Hot' : 'Game is Normal';
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<form action="' . route('admin.gameLists.toggleStatus', $row->id) . '" method="POST" style="display:inline;">
-                                ' . csrf_field() . '
-                                ' . method_field('PATCH') . '
+                    $btn = '<form action="'.route('admin.gameLists.toggleStatus', $row->id).'" method="POST" style="display:inline;">
+                                '.csrf_field().'
+                                '.method_field('PATCH').'
                                 <button type="submit" class="btn btn-warning btn-sm">GameStatus</button>
                             </form>';
-                    $btn .= '<form action="' . route('admin.HotGame.toggleStatus', $row->id) . '" method="POST" style="display:inline;">
-                                ' . csrf_field() . '
-                                ' . method_field('PATCH') . '
+                    $btn .= '<form action="'.route('admin.HotGame.toggleStatus', $row->id).'" method="POST" style="display:inline;">
+                                '.csrf_field().'
+                                '.method_field('PATCH').'
                                 <button type="submit" class="btn btn-success btn-sm">HotGame</button>
                             </form>';
 
-                    $btn .= '<form action="' . route('admin.PPHotGame.toggleStatus', $row->id) . '" method="POST" style="display:inline;">
-                                ' . csrf_field() . '
-                                ' . method_field('PATCH') . '
+                    $btn .= '<form action="'.route('admin.PPHotGame.toggleStatus', $row->id).'" method="POST" style="display:inline;">
+                                '.csrf_field().'
+                                '.method_field('PATCH').'
                                 <button type="submit" class="btn btn-warning btn-sm">PPHot</button>
                             </form>';
 
-                    $btn .= '<a href="' . route('admin.game_list.edit', $row->id) . '" class="btn btn-primary btn-sm">EditImage</a>';
-                    $btn .= '<a href="' . route('admin.game_list_order.edit', $row->id) . '" class="btn btn-primary btn-sm">Order</a>';
+                    $btn .= '<a href="'.route('admin.game_list.edit', $row->id).'" class="btn btn-primary btn-sm">EditImage</a>';
+                    $btn .= '<a href="'.route('admin.game_list_order.edit', $row->id).'" class="btn btn-primary btn-sm">Order</a>';
 
                     return $btn;
                 })

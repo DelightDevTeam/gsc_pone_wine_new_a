@@ -7,7 +7,7 @@ enum UserType: int
     case SeniorOwner = 10;
     case Owner = 20;
     case Super = 30;
-    case Senior =  40;
+    case Senior = 40;
     case Master = 50;
     case Agent = 60;
     case Player = 70;

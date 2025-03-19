@@ -6,25 +6,17 @@ use App\Http\Controllers\Api\V1\BannerController;
 use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\DepositRequestController;
 use App\Http\Controllers\Api\V1\GetAdminSiteLogoNameController;
-use App\Http\Controllers\Api\V1\Webhook\Gsc\GetBalanceController;
-use App\Http\Controllers\Api\V1\Webhook\Gsc\PlaceBetController;
 use App\Http\Controllers\Api\V1\PoneWineBetController;
 use App\Http\Controllers\Api\V1\PromotionController;
 use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\ShanTransactionController;
 use App\Http\Controllers\Api\V1\Slot\GameController;
-use App\Http\Controllers\Api\V1\Slot\GetGameListByProviderController;
-use App\Http\Controllers\Api\V1\Slot\GetGameProviderController;
 use App\Http\Controllers\Api\V1\Slot\LaunchGameController;
 use App\Http\Controllers\Api\V1\TransactionController;
 use App\Http\Controllers\Api\V1\WagerController;
-use App\Http\Controllers\Api\V1\Webhook\AdjustmentController;
-use App\Http\Controllers\Api\V1\Webhook\BetNResulNewController;
-use App\Http\Controllers\Api\V1\Webhook\BetResultController;
-use App\Http\Controllers\Api\V1\Webhook\CancelBetController;
-use App\Http\Controllers\Api\V1\Webhook\CancelBetNResultController;
-use App\Http\Controllers\Api\V1\Webhook\NewBetController;
-use App\Http\Controllers\Api\V1\Webhook\RewardController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\GetBalanceController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\PlaceBetController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\GameResultController;
 use App\Http\Controllers\Api\V1\WithDrawRequestController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,7 +29,7 @@ Route::post('/logout', [AuthController::class, 'logout']);
 Route::group(['prefix' => 'Seamless'], function () {
     Route::post('GetBalance', [GetBalanceController::class, 'getBalance']);
     Route::post('PlaceBet', [PlaceBetController::class, 'placeBet']);
-    // Route::post('GameResult', [GameResultController::class, 'gameResult']);
+    Route::post('GameResult', [GameResultController::class, 'gameResult']);
     // Route::post('Rollback', [RollbackController::class, 'rollback']);
     // // Route::group(["middleware" => ["webhook_log"]], function(){
     // // Route::post('GetGameList', [LaunchGameController::class, 'getGameList']);

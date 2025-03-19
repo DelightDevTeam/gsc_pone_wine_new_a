@@ -121,7 +121,7 @@ class MasterController extends Controller
     {
         $randomNumber = mt_rand(10000000, 99999999);
 
-        return 'M' . $randomNumber;
+        return 'M'.$randomNumber;
     }
 
     /**
@@ -299,7 +299,7 @@ class MasterController extends Controller
 
         return redirect()->back()->with(
             'success',
-            'User ' . ($user->status == 1 ? 'activate' : 'inactive') . ' successfully'
+            'User '.($user->status == 1 ? 'activate' : 'inactive').' successfully'
         );
     }
 
@@ -316,7 +316,7 @@ class MasterController extends Controller
         $request->validate([
             'user_name' => 'nullable|string|max:255',
             'name' => 'required|string|max:255',
-            'phone' => 'required|numeric|digits_between:10,15|unique:users,phone,' . $id,
+            'phone' => 'required|numeric|digits_between:10,15|unique:users,phone,'.$id,
         ]);
 
         $user->update([
@@ -362,28 +362,26 @@ class MasterController extends Controller
     }
 
     // KS Upgrade RPIndex
-    public function masterReportIndex($id) {
+    public function masterReportIndex($id)
+    {
         $user = User::with([
             'roles',
             'children.children.poneWinePlayer',
             'children.children.results',
-            'children.children.betNResults'
+            'children.children.betNResults',
         ])->find($id);
 
         $poneWineAmt = $user->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
-        $result =      $user->children->flatMap->children->flatMap->results->sum('net_win');
+        $result = $user->children->flatMap->children->flatMap->results->sum('net_win');
         $betNResults = $user->children->flatMap->children->flatMap->results->sum('betNResults');
 
         $slotTotalAmt = $result + $betNResults;
 
         $report = [
             'poneWineTotalAmt' => $poneWineAmt,
-            'slotTotalAmt'  => $slotTotalAmt,
+            'slotTotalAmt' => $slotTotalAmt,
         ];
 
-
-        return view('admin.master.report_index',compact('report'));
+        return view('admin.master.report_index', compact('report'));
     }
-
-
 }

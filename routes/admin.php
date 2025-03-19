@@ -9,8 +9,8 @@ use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\DepositRequestController;
 use App\Http\Controllers\Admin\GameListController;
 use App\Http\Controllers\Admin\GameTypeProductController;
-use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\MasterController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\OwnerController;
 use App\Http\Controllers\Admin\PaymentTypeController;
 use App\Http\Controllers\Admin\PlayerController;
@@ -19,10 +19,10 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\RolesController;
 use App\Http\Controllers\Admin\SeniorController;
 use App\Http\Controllers\Admin\SubAccountController;
+use App\Http\Controllers\Admin\SuperController;
 use App\Http\Controllers\Admin\TransferLog\TransferLogController;
 use App\Http\Controllers\Admin\WithDrawRequestController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Admin\SuperController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
@@ -82,7 +82,6 @@ Route::group([
     })->name('markNotificationsRead');
 
     Route::get('/notifications/count', [NotificationController::class, 'count'])->name('notifications.count');
-
 
     // game list start
     Route::get('all-game-lists', [GameListController::class, 'index'])->name('gameLists.index');
@@ -180,14 +179,10 @@ Route::group([
 
     });
 
-    Route::get('/owner-report/{id}',[OwnerController::class,'ownerReportIndex'])->name('owner.report');
-    Route::get('/super-report/{id}',[SuperController::class,'superReportIndex'])->name('super.report');
-    Route::get('/senior-report/{id}',[SeniorController::class,'seniorReportIndex'])->name('senior.report');
-    Route::get('/master-report/{id}',[MasterController::class,'MasterReportIndex'])->name('master.report');
-    Route::get('/agent-report/{id}',[AgentController::class,'agentReportIndex'])->name('agent.report');
-
-
-
-
+    Route::get('/owner-report/{id}', [OwnerController::class, 'ownerReportIndex'])->name('owner.report');
+    Route::get('/super-report/{id}', [SuperController::class, 'superReportIndex'])->name('super.report');
+    Route::get('/senior-report/{id}', [SeniorController::class, 'seniorReportIndex'])->name('senior.report');
+    Route::get('/master-report/{id}', [MasterController::class, 'MasterReportIndex'])->name('master.report');
+    Route::get('/agent-report/{id}', [AgentController::class, 'agentReportIndex'])->name('agent.report');
 
 });

@@ -34,7 +34,7 @@ class BannerController extends Controller
         $image = $request->file('image');
         $ext = $image->getClientOriginalExtension();
         $filename = uniqid('banner').'.'.$ext;
-        $image->move(public_path('assets/img/banners/'), $filename); 
+        $image->move(public_path('assets/img/banners/'), $filename);
         Banner::create([
             'image' => $filename,
             'admin_id' => auth()->id(),
@@ -68,14 +68,13 @@ class BannerController extends Controller
             return redirect()->back()->with('error', 'Banner Not Found');
         }
         $image = $request->file('image');
-        
-        if($image)
-        {
+
+        if ($image) {
             File::delete(public_path('assets/img/banners/'.$banner->image));
             $ext = $image->getClientOriginalExtension();
             $filename = uniqid('banner').'.'.$ext;
             $image->move(public_path('assets/img/banners/'), $filename);
-    
+
             $banner->update([
                 'image' => $filename,
             ]);
