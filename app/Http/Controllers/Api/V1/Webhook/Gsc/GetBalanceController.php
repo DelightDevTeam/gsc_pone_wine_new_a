@@ -1,48 +1,50 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Webhook\Gsc;
+namespace App\Http\Controllers\Api\V1\Webhook;
 
-
+use App\Enums\SlotWebhookResponseCode;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Gsc\GetBalanceRequest;
-use App\Models\User;
-use Illuminate\Http\JsonResponse;
+use App\Http\Requests\Slot\SlotWebhookRequest;
+use App\Services\Slot\SlotWebhookService;
+use App\Services\Slot\SeamlessTransactionWebhookValidator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 
 class GetBalanceController extends Controller
 {
-    /**
-     * Handle the GetBalance request.
-     *
-     * @param GetBalanceRequest $request
-     * @return JsonResponse
-     */
-    public function getBalance(GetBalanceRequest $request): JsonResponse
+    public function getBalance(SlotWebhookRequest $request)
     {
-        // Validate the request signature
-        if (!$request->validateSignature()) {
+        DB::beginTransaction();
+        try {
+            $validator = SeamlessTransactionWebhookValidator::make($request)->validate();
+
+            if ($validator->fails()) {
+                Log::warning('GetBalanceController: Validation failed', [
+                    'errors' => $validator->getResponse(),
+                    'method' => $request->getMethodName(),
+                    'operator_code' => $request->getOperatorCode(),
+                    'secret_key' => config('game.api.secret_key'),
+                    'api_url' => config('game.api.url'),
+                ]);
+                return $validator->getResponse();
+            }
+
+            $balance = $request->getMember()->balanceFloat;
+
+            DB::commit();
+
+            return SlotWebhookService::buildResponse(
+                SlotWebhookResponseCode::Success,
+                $balance,
+                $balance
+            );
+        } catch (\Exception $e) {
+            DB::rollBack();
+
             return response()->json([
-                'ErrorCode' => 1,
-                'ErrorMessage' => 'Invalid signature',
-            ], 401);
+                'message' => $e->getMessage(),
+            ]);
         }
-
-        // Retrieve the member by MemberName
-        $member = User::where('user_name', $request->getMemberName())->first();
-
-        // If member not found, return an error response
-        if (!$member) {
-            return response()->json([
-                'ErrorCode' => 2,
-                'ErrorMessage' => 'Member not found',
-            ], 404);
-        }
-
-        // Return the balance information
-        return response()->json([
-            'ErrorCode' => 0,
-            'ErrorMessage' => 'Success',
-            'Balance' => $member->balance, // Assuming 'balance' is a field in the User model
-            'BeforeBalance' => $member->before_balance, // Assuming 'before_balance' is a field in the User model
-        ]);
     }
 }
