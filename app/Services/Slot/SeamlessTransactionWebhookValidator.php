@@ -132,6 +132,11 @@ class SeamlessTransactionWebhookValidator
         return $this->requestTransactions;
     }
 
+//     public function getRequestTransactions()
+// {
+//     return $this->requestTransactions ?? []; // Return an empty array if null
+// }
+
     protected function getSecretKey()
     {
         return config('game.api.secret_key');

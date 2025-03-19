@@ -7,7 +7,7 @@ php artisan make:migration make_name_and_phone_nullable_in_users_table --table=u
 
 
 // to remove laravel log
-php -r "file_put_contents('/var/www/pone_wine_a/storage/logs/laravel.log', '');"
+php -r "file_put_contents('/var/www/gsc_pone_wine_new_a/storage/logs/laravel.log', '');"
 // created dev branch for kzt
 
 tail -f /var/www/slot_multi_banner_prod/storage/logs/laravel.log
