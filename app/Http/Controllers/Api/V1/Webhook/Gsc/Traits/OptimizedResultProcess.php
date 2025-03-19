@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 
-trait OptimizedBettingProcess
+trait OptimizedResultProcess
 {
     public function placeBetProcess(SlotWebhookRequest $request)
     {
@@ -192,6 +192,7 @@ trait OptimizedBettingProcess
                         }
                     }
 
+                    return $seamlessTransactionsData;
 
                     if (! empty($seamlessTransactionsData)) {
                         DB::table('seamless_transactions')->insert($seamlessTransactionsData); // Insert transactions in bulk
