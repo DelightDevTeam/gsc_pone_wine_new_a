@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1\Webhook\Gsc;
 
 use App\Enums\SlotWebhookResponseCode;
 use App\Enums\TransactionName;
-use App\Http\Controllers\Api\V1\Webhook\Gsc\Traits\OptimizedResultProcess;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\Traits\UseWebhook;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Slot\SlotWebhookRequest;
 use App\Models\SeamlessEvent;
@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 
 class GameResultController extends Controller
 {
-    use OptimizedResultProcess;
+    use UseWebhook;
 
     public function gameResult(SlotWebhookRequest $request)
     {
