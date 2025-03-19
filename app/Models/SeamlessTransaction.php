@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\TransactionStatus;
+use App\Enums\WagerStatus;
 use App\Models\SeamlessEvent;
 use App\Models\User;
 use Carbon\Carbon;
@@ -23,18 +24,20 @@ class SeamlessTransaction extends Model
         'bet_amount',
         'transaction_amount',
         'transaction_id',
+        'rate',
         'payout_amount',
-        'settlement_date',
+        //'settlement_date',
         'status',
         'wager_status',
-        'created_on',
-        'modified_on',
+        // 'created_on',
+        // 'modified_on',
         'member_name',
-        'request_time',
+        //'request_time',
     ];
 
     protected $casts = [
         'status' => TransactionStatus::class,
+        'wager_status' => WagerStatus::class,
     ];
 
     public function user()

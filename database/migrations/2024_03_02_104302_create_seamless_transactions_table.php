@@ -25,14 +25,15 @@ return new class extends Migration
             $table->decimal('bet_amount', 12);
             $table->decimal('transaction_amount', 12);
             $table->string('transaction_id')->nullable();
+            $table->decimal('rate')->nullable();
             $table->decimal('payout_amount', 12);
-            $table->timestamp('settlement_date')->nullable();
+            //$table->timestamp('settlement_date')->nullable();
             $table->string('status')->default(TransactionStatus::Pending);
             $table->string('wager_status')->default(WagerStatus::Ongoing->value);
-            $table->timestamp('created_on');
-            $table->timestamp('modified_on');
-            $table->string('member_name');
-            $table->timestamp('request_time');
+            //$table->timestamp('created_on')->nullable();
+            //$table->timestamp('modified_on')->nullable();
+            $table->string('member_name')->nullable();
+            //$table->timestamp('request_time')->nullable();
             $table->timestamps();
         });
     }

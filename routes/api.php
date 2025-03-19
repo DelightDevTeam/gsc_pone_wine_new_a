@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\DepositRequestController;
 use App\Http\Controllers\Api\V1\GetAdminSiteLogoNameController;
 use App\Http\Controllers\Api\V1\Webhook\Gsc\GetBalanceController;
-use App\Http\Controllers\Api\V1\NewVersion\PlaceBetWebhookController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\PlaceBetController;
 use App\Http\Controllers\Api\V1\PoneWineBetController;
 use App\Http\Controllers\Api\V1\PromotionController;
 use App\Http\Controllers\Api\V1\ReportController;
@@ -36,7 +36,7 @@ Route::post('/logout', [AuthController::class, 'logout']);
 // sameless route
 Route::group(['prefix' => 'Seamless'], function () {
     Route::post('GetBalance', [GetBalanceController::class, 'getBalance']);
-    // Route::post('PlaceBet', [PlaceBetController::class, 'placeBetNew']);
+    Route::post('PlaceBet', [PlaceBetController::class, 'placeBet']);
     // Route::post('GameResult', [GameResultController::class, 'gameResult']);
     // Route::post('Rollback', [RollbackController::class, 'rollback']);
     // // Route::group(["middleware" => ["webhook_log"]], function(){
