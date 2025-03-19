@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Webhook\Traits;
+namespace App\Http\Controllers\Api\V1\Webhook\Gsc\Traits;
 
 use App\Enums\TransactionName;
 use App\Enums\WagerStatus;
