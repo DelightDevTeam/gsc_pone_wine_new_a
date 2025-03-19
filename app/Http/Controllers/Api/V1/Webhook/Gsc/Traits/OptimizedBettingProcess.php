@@ -180,7 +180,7 @@ trait OptimizedBettingProcess
                                 'rate' => $rate,  // Include rate for the transaction
                                 'transaction_amount' => $transactionData['TransactionAmount'],
                                 'bet_amount' => $transactionData['BetAmount'],
-                                'valid_amount' => $transactionData['ValidBetAmount'],
+                                'valid_bet_amount' => $transactionData['ValidBetAmount'],
                                 'status' => $transactionData['Status'],
                                 'wager_status' => $transactionData['TransactionAmount'] > 0 ? WagerStatus::Win : WagerStatus::Lose,
                                 'seamless_event_id' => $seamlessEventId,  // Include seamless_event_id
