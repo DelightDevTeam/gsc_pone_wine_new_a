@@ -6,7 +6,7 @@ use App\Enums\SlotWebhookResponseCode;
 use App\Enums\TransactionName;
 use App\Http\Controllers\Api\V1\Webhook\Gsc\Traits\UseWebhook;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Slot\SlotWebhookRequest;
+use App\Http\Requests\Slot\WebhookRequest;
 use App\Models\SeamlessEvent;
 use App\Models\Transaction;
 use App\Models\User;
@@ -24,7 +24,7 @@ class GameResultController extends Controller
 {
     use UseWebhook;
 
-    public function gameResult(SlotWebhookRequest $request)
+    public function gameResult(WebhookRequest $request)
     {
         DB::beginTransaction();
         try {

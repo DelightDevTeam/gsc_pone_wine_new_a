@@ -100,19 +100,19 @@ class WebhookRequest extends FormRequest
     }
 
     public function getTransactions()
-    {
-        $transactions = $this->get('Transactions', []);
+{
+    $transactions = $this->get('Transactions', []);
 
-        if ($transactions) {
-            return $transactions;
-        }
-
-        $transaction = $this->get('Transaction', []);
-
-        if ($transaction) {
-            return [$transaction];
-        }
-
-        return [];
+    if ($transactions) {
+        return $transactions;
     }
+
+    $transaction = $this->get('Transaction', []);
+
+    if ($transaction) {
+        return [$transaction];
+    }
+
+    return []; // Always return an array, even if empty
+}
 }

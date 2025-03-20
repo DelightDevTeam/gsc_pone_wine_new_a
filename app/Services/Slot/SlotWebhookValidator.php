@@ -3,7 +3,7 @@
 namespace App\Services\Slot;
 
 use App\Enums\SlotWebhookResponseCode;
-use App\Http\Requests\Slot\SlotWebhookRequest;
+use App\Http\Requests\Slot\WebhookRequest;
 use App\Models\SeamlessTransaction;
 use App\Models\Wager;
 use App\Services\Slot\Dto\RequestTransaction;
@@ -13,7 +13,7 @@ class SlotWebhookValidator
     protected ?SeamlessTransaction $existingTransaction;
 
     // TODO: imp: chang with actual wager
-    protected ?Wager $existingWager;
+    protected ?SeamlessTransaction $existingWager;
 
     protected float $totalTransactionAmount = 0;
 
@@ -28,7 +28,7 @@ class SlotWebhookValidator
      */
     protected $requestTransactions;
 
-    protected function __construct(protected SlotWebhookRequest $request) {}
+    protected function __construct(protected WebhookRequest $request) {}
 
     public function validate()
     {
@@ -84,7 +84,7 @@ class SlotWebhookValidator
     public function getExistingWager(RequestTransaction $transaction)
     {
         if (! isset($this->existingWager)) {
-            $this->existingWager = Wager::where('seamless_wager_id', $transaction->WagerID)->first();
+            $this->existingWager = SeamlessTransaction::where('wager_id', $transaction->WagerID)->first();
         }
 
         return $this->existingWager;
@@ -98,7 +98,7 @@ class SlotWebhookValidator
     public function getExistingTransaction(RequestTransaction $transaction)
     {
         if (! isset($this->existingTransaction)) {
-            $this->existingTransaction = SeamlessTransaction::where('seamless_transaction_id', $transaction->TransactionID)->first();
+            $this->existingTransaction = SeamlessTransaction::where('transaction_id', $transaction->TransactionID)->first();
         }
 
         return $this->existingTransaction;
@@ -127,10 +127,14 @@ class SlotWebhookValidator
         return $this->getAfterBalance() >= 0;
     }
 
+    // public function getRequestTransactions()
+    // {
+    //     return $this->requestTransactions;
+    // }
     public function getRequestTransactions()
-    {
-        return $this->requestTransactions;
-    }
+{
+    return $this->requestTransactions ?? []; // Return an empty array if null
+}
 
     protected function getSecretKey()
     {
@@ -158,7 +162,7 @@ class SlotWebhookValidator
         return isset($this->response);
     }
 
-    public static function make(SlotWebhookRequest $request)
+    public static function make(WebhookRequest $request)
     {
         return new self($request);
     }
