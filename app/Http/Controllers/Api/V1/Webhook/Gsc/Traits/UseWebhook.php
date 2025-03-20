@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1\Webhook\Gsc\Traits;
 use App\Enums\TransactionName;
 use App\Enums\TransactionStatus;
 use App\Enums\WagerStatus;
-use App\Http\Requests\Slot\SlotWebhookRequest;
+use App\Http\Requests\Slot\WebhookRequest;
 use App\Models\Admin\GameType;
 use App\Models\Admin\GameTypeProduct;
 use App\Models\Admin\Product;
@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\DB;
 trait UseWebhook
 {
     public function createEvent(
-        SlotWebhookRequest $request,
+        WebhookRequest $request,
     ): SeamlessEvent {
         return SeamlessEvent::create([
             'user_id' => $request->getMember()->id,
