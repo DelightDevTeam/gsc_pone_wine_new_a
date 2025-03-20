@@ -26,23 +26,14 @@ class GameResultController extends Controller
 
     public function gameResult(WebhookRequest $request)
     {
-        $validator = $request->check();
-
-        if ($validator->fails()) {
-            return $validator->getResponse();
-        }
-
-        // Check for duplicate transactions early
-        if ($validator->hasDuplicateTransaction()) {
-            return SlotWebhookService::buildResponse(
-                SlotWebhookResponseCode::DuplicateTransaction,
-                $request->getMember()->balanceFloat,
-                $request->getMember()->balanceFloat
-            );
-        }
-
         DB::beginTransaction();
         try {
+            $validator = $request->check();
+
+            if ($validator->fails()) {
+                return $validator->getResponse();
+            }
+
             $before_balance = $request->getMember()->balanceFloat;
 
             $event = $this->createEvent($request);

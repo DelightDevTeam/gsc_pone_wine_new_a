@@ -12,7 +12,6 @@ class SlotWebhookValidator
 {
     protected ?SeamlessTransaction $existingTransaction;
 
-    // TODO: imp: chang with actual wager
     protected ?SeamlessTransaction $existingWager;
 
     protected float $totalTransactionAmount = 0;
@@ -27,6 +26,8 @@ class SlotWebhookValidator
      * @var RequestTransaction[]
      */
     protected $requestTransactions;
+
+    protected bool $hasDuplicateTransaction = false; // Property to track if a duplicate transaction is found
 
     protected function __construct(protected WebhookRequest $request) {}
 
@@ -45,7 +46,9 @@ class SlotWebhookValidator
 
             $this->requestTransactions[] = $requestTransaction;
 
+            // Check for duplicate transaction
             if ($requestTransaction->TransactionID && ! $this->isNewTransaction($requestTransaction)) {
+                $this->hasDuplicateTransaction = true; // Set the flag
                 return $this->response(SlotWebhookResponseCode::DuplicateTransaction);
             }
 
@@ -104,6 +107,16 @@ class SlotWebhookValidator
         return $this->existingTransaction;
     }
 
+    /**
+     * Check if a duplicate transaction was detected during validation.
+     *
+     * @return bool
+     */
+    public function hasDuplicateTransaction(): bool
+    {
+        return $this->hasDuplicateTransaction;
+    }
+
     public function getAfterBalance()
     {
         if (! isset($this->after_balance)) {
@@ -127,14 +140,10 @@ class SlotWebhookValidator
         return $this->getAfterBalance() >= 0;
     }
 
-    // public function getRequestTransactions()
-    // {
-    //     return $this->requestTransactions;
-    // }
     public function getRequestTransactions()
-{
-    return $this->requestTransactions ?? []; // Return an empty array if null
-}
+    {
+        return $this->requestTransactions ?? [];
+    }
 
     protected function getSecretKey()
     {
