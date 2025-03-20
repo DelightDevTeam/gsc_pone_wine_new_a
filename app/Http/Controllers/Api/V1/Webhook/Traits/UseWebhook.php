@@ -93,7 +93,7 @@ trait UseWebhook
                     'wager_id' => $wager->id,
                     'game_type_id' => $game_type->id,
                     'product_id' => $product->id,
-                    'seamless_transaction_id' => $requestTransaction->TransactionID,
+                    'transaction_id' => $requestTransaction->TransactionID,
                     'rate' => $rate,
                     'transaction_amount' => $requestTransaction->TransactionAmount,
                     'bet_amount' => $requestTransaction->BetAmount,

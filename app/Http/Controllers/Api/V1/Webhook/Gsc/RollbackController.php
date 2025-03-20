@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1\Webhook\Gsc;
 
 use App\Enums\SlotWebhookResponseCode;
 use App\Enums\TransactionName;
-use App\Http\Controllers\Api\V1\Webhook\Traits\UseWebhook;
+use App\Http\Controllers\Api\V1\Webhook\Traits\Gsc\UseWebhook;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Slot\WebhookRequest;
 use App\Models\Transaction;
