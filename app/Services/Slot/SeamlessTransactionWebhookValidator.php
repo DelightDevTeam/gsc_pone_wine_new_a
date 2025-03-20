@@ -118,14 +118,20 @@ class SeamlessTransactionWebhookValidator
         return ! $this->getExistingTransaction($transaction);
     }
 
-    public function getExistingTransaction(RequestTransaction $transaction)
-    {
-        if (! isset($this->existingTransaction)) {
-            $this->existingTransaction = SeamlessTransaction::where('transaction_id', $transaction->TransactionID)->first();
-        }
+    // public function getExistingTransaction(RequestTransaction $transaction)
+    // {
+    //     if (! isset($this->existingTransaction)) {
+    //         $this->existingTransaction = SeamlessTransaction::where('transaction_id', $transaction->TransactionID)->first();
+    //     }
 
-        return $this->existingTransaction;
-    }
+    //     return $this->existingTransaction;
+    // }
+
+    public function getExistingTransaction(RequestTransaction $transaction)
+{
+    // Remove caching to ensure we always check the database for the current TransactionID
+    return SeamlessTransaction::where('transaction_id', $transaction->TransactionID)->first();
+}
 
     public function getAfterBalance()
     {
