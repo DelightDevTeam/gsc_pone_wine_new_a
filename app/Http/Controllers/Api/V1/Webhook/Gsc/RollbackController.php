@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Api\V1\Webhook\Gsc;
 
 use App\Enums\SlotWebhookResponseCode;
 use App\Enums\TransactionName;
-use App\Http\Controllers\Api\V1\Webhook\Gsc\Traits\UseWebhook;
+use App\Http\Controllers\Api\V1\Webhook\Traits\UseWebhook;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Slot\WebhookRequest;
-use App\Models\SeamlessEvent;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\Slot\SlotWebhookService;
@@ -18,43 +17,29 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Route;
 
-class GameResultController extends Controller
+class RollbackController extends Controller
 {
     use UseWebhook;
 
-    public function gameResult(WebhookRequest $request)
+    public function rollback(WebhookRequest $request)
     {
-        $validator = $request->check();
-
-        if ($validator->fails()) {
-            Log::info('Validator failed', ['response' => $validator->getResponse()]);
-            return $validator->getResponse();
-        }
-
-        // Check for duplicate transactions early
-        if ($validator->hasDuplicateTransaction()) {
-            Log::info('Duplicate transaction detected in controller', [
-                'transaction_id' => $request->getTransactions()[0]['TransactionID'] ?? null,
-            ]);
-            return SlotWebhookService::buildResponse(
-                SlotWebhookResponseCode::DuplicateTransaction,
-                $request->getMember()->balanceFloat,
-                $request->getMember()->balanceFloat
-            );
-        }
-        
         $event = $this->createEvent($request);
-
+        
         DB::beginTransaction();
         try {
+            $validator = $request->check();
+
+            if ($validator->fails()) {
+                return $validator->getResponse();
+            }
+
             $before_balance = $request->getMember()->balanceFloat;
 
 
-            $seamlessTransactionsData = $this->createWagerTransactions($validator->getRequestTransactions(), $event);
+            $seamless_transactions = $this->createWagerTransactions($validator->getRequestTransactions(), $event, true);
 
-            foreach ($seamlessTransactionsData as $seamless_transaction) {
+            foreach ($seamless_transactions as $seamless_transaction) {
                 if ($seamless_transaction->transaction_amount < 0) {
                     $from = $request->getMember();
                     $to = User::adminUser();
@@ -62,10 +47,11 @@ class GameResultController extends Controller
                     $from = User::adminUser();
                     $to = $request->getMember();
                 }
+
                 $this->processTransfer(
                     $from,
                     $to,
-                    TransactionName::Payout,
+                    TransactionName::Rollback,
                     $seamless_transaction->transaction_amount,
                     $seamless_transaction->rate,
                     [

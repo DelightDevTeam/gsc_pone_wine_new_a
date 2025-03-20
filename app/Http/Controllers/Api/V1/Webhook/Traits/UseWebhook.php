@@ -51,13 +51,13 @@ trait UseWebhook
         foreach ($requestTransactions as $requestTransaction) {
             DB::transaction(function () use (&$seamless_transactions, $event, $requestTransaction, $refund) {
 
-                $wager = Wager::where('seamless_wager_id', $requestTransaction->WagerID)
+                $wager = SeamlessTransaction::where('wager_id', $requestTransaction->WagerID)
                     ->lockForUpdate()
                     ->firstOrCreate([
-                        'seamless_wager_id' => $requestTransaction->WagerID,
+                        'wager_id' => $requestTransaction->WagerID,
                     ], [
                         'user_id' => $event->user->id,
-                        'seamless_wager_id' => $requestTransaction->WagerID,
+                        'wager_id' => $requestTransaction->WagerID,
                     ]);
 
                 if ($refund) {

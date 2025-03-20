@@ -84,6 +84,8 @@ class SlotWebhookRequest extends FormRequest
         return strtolower(str($this->url())->explode('/')->last());
     }
 
+    
+
     public function getOperatorCode()
     {
         return $this->get('OperatorCode');
