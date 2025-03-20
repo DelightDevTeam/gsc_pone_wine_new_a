@@ -24,29 +24,55 @@ class SlotWebhookRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+    // public function rules(): array
+    // {
+    //     $transaction_rules = [];
+
+    //     if (in_array($this->getMethodName(), ['getbalance', 'buyin', 'buyout'])) {
+    //         $transaction_rules['Transactions'] = ['nullable'];
+    //         if ($this->getMethodName() !== 'getbalance') {
+    //             $transaction_rules['Transaction'] = ['required'];
+    //         }
+    //     } else {
+    //         $transaction_rules['Transactions'] = ['required'];
+    //     }
+
+    //     return [
+    //         'MemberName' => ['required'],
+    //         'OperatorCode' => ['required'],
+    //         'ProductID' => ['required'],
+    //         'MessageID' => ['required'],
+    //         'RequestTime' => ['required'],
+    //         'Sign' => ['required'],
+    //         ...$transaction_rules,
+    //     ];
+    // }
+
     public function rules(): array
-    {
-        $transaction_rules = [];
+{
+    $transaction_rules = [];
 
-        if (in_array($this->getMethodName(), ['getbalance', 'buyin', 'buyout'])) {
-            $transaction_rules['Transactions'] = ['nullable'];
-            if ($this->getMethodName() !== 'getbalance') {
-                $transaction_rules['Transaction'] = ['required'];
-            }
-        } else {
-            $transaction_rules['Transactions'] = ['required'];
+    if (in_array($this->getMethodName(), ['getbalance', 'buyin', 'buyout'])) {
+        $transaction_rules['Transactions'] = ['nullable'];
+        if ($this->getMethodName() !== 'getbalance') {
+            $transaction_rules['Transaction'] = ['required'];
         }
-
-        return [
-            'MemberName' => ['required'],
-            'OperatorCode' => ['required'],
-            'ProductID' => ['required'],
-            'MessageID' => ['required'],
-            'RequestTime' => ['required'],
-            'Sign' => ['required'],
-            ...$transaction_rules,
-        ];
+    } else {
+        $transaction_rules['Transactions'] = ['required', 'array'];
+        // Add validation for each transaction in the Transactions array
+        $transaction_rules['Transactions.*.TransactionID'] = ['required', 'string'];
     }
+
+    return [
+        'MemberName' => ['required'],
+        'OperatorCode' => ['required'],
+        'ProductID' => ['required'],
+        'MessageID' => ['required'],
+        'RequestTime' => ['required'],
+        'Sign' => ['required'],
+        ...$transaction_rules,
+    ];
+}
 
     public function check()
     {
