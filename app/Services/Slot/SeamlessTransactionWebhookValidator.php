@@ -7,6 +7,8 @@ use App\Http\Requests\Slot\SlotWebhookRequest;
 use App\Models\SeamlessTransaction;
 use App\Models\Wager;
 use App\Services\Slot\Dto\RequestTransaction;
+use Illuminate\Support\Facades\Log;
+
 
 class SeamlessTransactionWebhookValidator
 {
@@ -63,18 +65,39 @@ class SeamlessTransactionWebhookValidator
         return $this;
     }
 
+    // protected function isValidSignature()
+    // {
+    //     $method = $this->request->getMethodName();
+    //     $operatorCode = $this->request->getOperatorCode();
+    //     $requestTime = $this->request->getRequestTime();
+
+    //     $secretKey = $this->getSecretKey();
+
+    //     $signature = md5($operatorCode.$requestTime.$method.$secretKey);
+
+    //     return $this->request->getSign() == $signature;
+    // }
+
     protected function isValidSignature()
-    {
-        $method = $this->request->getMethodName();
-        $operatorCode = $this->request->getOperatorCode();
-        $requestTime = $this->request->getRequestTime();
+{
+    $method = $this->request->getMethodName();
+    $operatorCode = $this->request->getOperatorCode();
+    $requestTime = $this->request->getRequestTime();
 
-        $secretKey = $this->getSecretKey();
+    $secretKey = $this->getSecretKey();
 
-        $signature = md5($operatorCode.$requestTime.$method.$secretKey);
+    $signature = md5($operatorCode.$requestTime.$method.$secretKey);
 
-        return $this->request->getSign() == $signature;
+    if ($this->request->getSign() != $signature) {
+        Log::warning('Signature validation failed', [
+            'provided_sign' => $this->request->getSign(),
+            'expected_sign' => $signature,
+            'concatenated_string' => $operatorCode.$requestTime.$method.$secretKey,
+        ]);
     }
+
+    return $this->request->getSign() == $signature;
+}
 
     protected function isNewWager(RequestTransaction $transaction)
     {

@@ -167,7 +167,7 @@ trait OptimizedBettingProcess
 
                         $rate = $game_type_product->rate;  // Fetch rate for this transaction
 
-                        Log::info('Fetched rate for transaction', ['rate' => $rate]);
+                        //Log::info('Fetched rate for transaction', ['rate' => $rate]);
 
                         if (! $existingWager) {
                             // Collect seamless transaction data for batch insert
