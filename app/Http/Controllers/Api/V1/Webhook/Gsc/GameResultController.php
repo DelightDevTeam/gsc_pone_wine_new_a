@@ -29,11 +29,15 @@ class GameResultController extends Controller
         $validator = $request->check();
 
         if ($validator->fails()) {
+            Log::info('Validator failed', ['response' => $validator->getResponse()]);
             return $validator->getResponse();
         }
 
         // Check for duplicate transactions early
         if ($validator->hasDuplicateTransaction()) {
+            Log::info('Duplicate transaction detected in controller', [
+                'transaction_id' => $request->getTransactions()[0]['TransactionID'] ?? null,
+            ]);
             return SlotWebhookService::buildResponse(
                 SlotWebhookResponseCode::DuplicateTransaction,
                 $request->getMember()->balanceFloat,

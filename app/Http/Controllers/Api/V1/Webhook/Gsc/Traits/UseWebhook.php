@@ -19,6 +19,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\MassAssignmentException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 trait UseWebhook
 {
@@ -55,7 +56,10 @@ trait UseWebhook
                     ->first();
 
                 if ($existingTransactionById) {
-                    // If a duplicate transaction is found, add it to the array and continue
+                    Log::info('Duplicate transaction found in createWagerTransactions', [
+                        'transaction_id' => $requestTransaction->TransactionID,
+                        'existing_id' => $existingTransactionById->id,
+                    ]);
                     $seamless_transactions[] = $existingTransactionById;
                     continue; // Skip further processing for this transaction
                 }
@@ -130,7 +134,6 @@ trait UseWebhook
 
     public function processTransfer(User $from, User $to, TransactionName $transactionName, float $amount, int $rate, array $meta)
     {
-        // TODO: ask: what if operator doesn't want to pay bonus
         app(WalletService::class)
             ->transfer(
                 $from,

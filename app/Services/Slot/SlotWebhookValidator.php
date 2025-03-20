@@ -7,6 +7,7 @@ use App\Http\Requests\Slot\WebhookRequest;
 use App\Models\SeamlessTransaction;
 use App\Models\Wager;
 use App\Services\Slot\Dto\RequestTransaction;
+use Illuminate\Support\Facades\Log;
 
 class SlotWebhookValidator
 {
@@ -27,7 +28,7 @@ class SlotWebhookValidator
      */
     protected $requestTransactions;
 
-    protected bool $hasDuplicateTransaction = false; // Property to track if a duplicate transaction is found
+    protected bool $hasDuplicateTransaction = false;
 
     protected function __construct(protected WebhookRequest $request) {}
 
@@ -48,7 +49,10 @@ class SlotWebhookValidator
 
             // Check for duplicate transaction
             if ($requestTransaction->TransactionID && ! $this->isNewTransaction($requestTransaction)) {
-                $this->hasDuplicateTransaction = true; // Set the flag
+                Log::info('Duplicate transaction detected during validation', [
+                    'transaction_id' => $requestTransaction->TransactionID,
+                ]);
+                $this->hasDuplicateTransaction = true;
                 return $this->response(SlotWebhookResponseCode::DuplicateTransaction);
             }
 
@@ -95,23 +99,26 @@ class SlotWebhookValidator
 
     protected function isNewTransaction(RequestTransaction $transaction)
     {
-        return ! $this->getExistingTransaction($transaction);
+        $existing = $this->getExistingTransaction($transaction);
+        if ($existing) {
+            Log::info('Existing transaction found', [
+                'transaction_id' => $transaction->TransactionID,
+                'existing_id' => $existing->id,
+            ]);
+        }
+        return ! $existing;
     }
 
     public function getExistingTransaction(RequestTransaction $transaction)
     {
         if (! isset($this->existingTransaction)) {
-            $this->existingTransaction = SeamlessTransaction::where('transaction_id', $transaction->TransactionID)->first();
+            $this->existingTransaction = SeamlessTransaction::where('transaction_id', $transaction->TransactionID)
+                ->first();
         }
 
         return $this->existingTransaction;
     }
 
-    /**
-     * Check if a duplicate transaction was detected during validation.
-     *
-     * @return bool
-     */
     public function hasDuplicateTransaction(): bool
     {
         return $this->hasDuplicateTransaction;
