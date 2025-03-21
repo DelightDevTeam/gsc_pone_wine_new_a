@@ -15,11 +15,11 @@ use App\Services\WalletService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class BuyOutController extends Controller
+class JackPotController extends Controller
 {
     use UseWebhook;
 
-    public function buyOut(WebhookRequest $request)
+    public function jackPot(WebhookRequest $request)
     {
         DB::beginTransaction();
         try {
@@ -39,9 +39,10 @@ class BuyOutController extends Controller
                 $this->processTransfer(
                     User::adminUser(),
                     $request->getMember(),
-                    TransactionName::BuyOut,
+                    TransactionName::JackPot,
                     $seamless_transaction->transaction_amount,
                     $seamless_transaction->rate,
+
                     [
                         'wager_id' => $seamless_transaction->wager_id,
                         'event_id' => $request->getMessageID(),

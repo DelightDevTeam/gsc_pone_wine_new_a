@@ -15,11 +15,11 @@ use App\Services\WalletService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class BuyOutController extends Controller
+class PushBetController extends Controller
 {
     use UseWebhook;
 
-    public function buyOut(WebhookRequest $request)
+    public function pushBet(WebhookRequest $request)
     {
         DB::beginTransaction();
         try {
@@ -33,22 +33,7 @@ class BuyOutController extends Controller
 
             $event = $this->createEvent($request);
 
-            $seamless_transactions = $this->createWagerTransactions($validator->getRequestTransactions(), $event);
-
-            foreach ($seamless_transactions as $seamless_transaction) {
-                $this->processTransfer(
-                    User::adminUser(),
-                    $request->getMember(),
-                    TransactionName::BuyOut,
-                    $seamless_transaction->transaction_amount,
-                    $seamless_transaction->rate,
-                    [
-                        'wager_id' => $seamless_transaction->wager_id,
-                        'event_id' => $request->getMessageID(),
-                        'transaction_id' => $seamless_transaction->id,
-                    ]
-                );
-            }
+            $this->createWagerTransactions($validator->getRequestTransactions(), $event);
 
             $request->getMember()->wallet->refreshBalance();
 
