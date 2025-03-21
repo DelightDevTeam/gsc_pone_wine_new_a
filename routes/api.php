@@ -10,8 +10,6 @@ use App\Http\Controllers\Api\V1\PoneWineBetController;
 use App\Http\Controllers\Api\V1\PromotionController;
 use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\ShanTransactionController;
-use App\Http\Controllers\Api\V1\Slot\GameController;
-use App\Http\Controllers\Api\V1\Slot\LaunchGameController;
 use App\Http\Controllers\Api\V1\TransactionController;
 use App\Http\Controllers\Api\V1\WagerController;
 use App\Http\Controllers\Api\V1\Webhook\Gsc\GetBalanceController;
@@ -27,6 +25,10 @@ use App\Http\Controllers\Api\V1\Webhook\Gsc\JackPotController;
 use App\Http\Controllers\Api\V1\Webhook\Gsc\MobileLoginController;
 use App\Http\Controllers\Api\V1\WithDrawRequestController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\Slot\GameController;
+use App\Http\Controllers\Api\V1\Game\LaunchGameController;
+use App\Http\Controllers\Api\V1\Game\DirectLaunchGameController;
+
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -95,4 +97,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('gameFilter', [GameController::class, 'gameFilter']);
     Route::get('gamelistTest/{provider_id}/{game_type_id}/', [GameController::class, 'gameListTest']);
     Route::get('ponewine-report', [ReportController::class, 'index']);
+
+    // gsc
+    Route::group(['prefix' => 'game'], function () {
+        Route::post('Seamless/LaunchGame', [LaunchGameController::class, 'launchGame']);
+        Route::get('gamelist/{provider_id}/{game_type_id}', [GameController::class, 'gameList']);
+    });
+
+    Route::group(['prefix' => 'direct'], function () {
+        Route::post('Seamless/LaunchGame', [DirectLaunchGameController::class, 'launchGame']);
+    });
 });
