@@ -18,6 +18,8 @@ use App\Http\Controllers\Api\V1\Webhook\Gsc\GetBalanceController;
 use App\Http\Controllers\Api\V1\Webhook\Gsc\PlaceBetController;
 use App\Http\Controllers\Api\V1\Webhook\Gsc\GameResultController;
 use App\Http\Controllers\Api\V1\Webhook\Gsc\RollbackController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\CancelBetController;
+
 use App\Http\Controllers\Api\V1\WithDrawRequestController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,7 +36,7 @@ Route::group(['prefix' => 'Seamless'], function () {
     Route::post('Rollback', [RollbackController::class, 'rollback']);
     // // Route::group(["middleware" => ["webhook_log"]], function(){
     // // Route::post('GetGameList', [LaunchGameController::class, 'getGameList']);
-    // Route::post('CancelBet', [CancelBetController::class, 'cancelBet']);
+    Route::post('CancelBet', [CancelBetController::class, 'cancelBet']);
     // Route::post('BuyIn', [BuyInController::class, 'buyIn']);
     // Route::post('BuyOut', [BuyOutController::class, 'buyOut']);
     // Route::post('PushBet', [PushBetController::class, 'pushBet']);
