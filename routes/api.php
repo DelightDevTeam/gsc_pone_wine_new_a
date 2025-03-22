@@ -30,6 +30,7 @@ use App\Http\Controllers\Api\V1\Slot\GameController;
 use App\Http\Controllers\Api\V1\Game\LaunchGameController;
 use App\Http\Controllers\Api\V1\Game\DirectLaunchGameController;
 
+require_once __DIR__.'/user.php';
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -61,7 +62,7 @@ Route::post('transactions', [ShanTransactionController::class, 'index'])->middle
 Route::post('/transaction-details/{tranId}', [TransactionController::class, 'getTransactionDetails']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::get('home', [HomeController::class, 'home']);
+    //Route::get('home', [HomeController::class, 'home']);
     Route::post('GameLogin', [LaunchGameController::class, 'LaunchGame']);
     Route::get('wager-logs', [WagerController::class, 'index']);
     Route::get('user', [AuthController::class, 'getUser']);
