@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\Auth\HomeController;
 use App\Http\Controllers\Api\V1\Bank\BankController;
 use App\Http\Controllers\Api\V1\BannerController;
 use App\Http\Controllers\Api\V1\ContactController;
@@ -60,7 +61,7 @@ Route::post('transactions', [ShanTransactionController::class, 'index'])->middle
 Route::post('/transaction-details/{tranId}', [TransactionController::class, 'getTransactionDetails']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
-
+    Route::get('home', [HomeController::class, 'home']);
     Route::post('GameLogin', [LaunchGameController::class, 'LaunchGame']);
     Route::get('wager-logs', [WagerController::class, 'index']);
     Route::get('user', [AuthController::class, 'getUser']);
