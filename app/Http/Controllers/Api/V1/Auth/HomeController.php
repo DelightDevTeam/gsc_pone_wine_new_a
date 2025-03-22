@@ -16,6 +16,8 @@ use App\Models\Admin\Promotion;
 
 class HomeController extends Controller
 {
+    use HttpResponses;
+    
     public function home()
 {
     $user = Auth::user();
