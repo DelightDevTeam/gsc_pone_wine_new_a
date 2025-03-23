@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Slot\GameController;
 use App\Http\Controllers\Api\V1\Game\LaunchGameController;
 use App\Http\Controllers\Api\V1\Game\DirectLaunchGameController;
-
+// home route
 require_once __DIR__.'/user.php';
 
 Route::post('/login', [AuthController::class, 'login']);
