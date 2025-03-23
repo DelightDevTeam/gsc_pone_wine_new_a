@@ -84,7 +84,7 @@ class GameTypeProductTableSeeder extends Seeder
             [
                 'product_id' => 9,
                 'game_type_id' => 1,
-                'image' => 'playstar.jpeg',
+                'image' => 'playstar.png',
                 'rate' => '1.0000',
             ],
             [
@@ -120,7 +120,7 @@ class GameTypeProductTableSeeder extends Seeder
             [
                 'product_id' => 14,
                 'game_type_id' => 1,
-                'image' => 'play_pearls.jpeg',
+                'image' => 'play_pearls.png',
                 'rate' => '1.0000',
             ],
             [
@@ -157,7 +157,7 @@ class GameTypeProductTableSeeder extends Seeder
             [
                 'product_id' => 20,
                 'game_type_id' => 1,
-                'image' => 'JDB.png',
+                'image' => 'jdb.png',
                 'rate' => '100.0000',
             ],
             [
@@ -236,7 +236,7 @@ class GameTypeProductTableSeeder extends Seeder
             [
                 'product_id' => 31,
                 'game_type_id' => 1,
-                'image' => 'PG_soft.png',
+                'image' => 'pg_soft.png',
                 'rate' => '1.0000',
             ],
             [
@@ -266,7 +266,7 @@ class GameTypeProductTableSeeder extends Seeder
             [
                 'product_id' => 35,
                 'game_type_id' => 1,
-                'image' => 'JILI.png',
+                'image' => 'jili.png',
                 'rate' => '1.0000',
             ],
             [
