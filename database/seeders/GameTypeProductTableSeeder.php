@@ -18,7 +18,7 @@ class GameTypeProductTableSeeder extends Seeder
             [
                 'product_id' => 1,
                 'game_type_id' => 1,
-                'image' => 'Pragmatic_Play.png',
+                'image' => 'pragmatic_play.png',
                 'rate' => '1.0000',
             ],
             [
@@ -120,7 +120,7 @@ class GameTypeProductTableSeeder extends Seeder
             [
                 'product_id' => 14,
                 'game_type_id' => 1,
-                'image' => 'play_pearls.png',
+                'image' => 'playpearl.png',
                 'rate' => '1.0000',
             ],
             [
@@ -242,13 +242,13 @@ class GameTypeProductTableSeeder extends Seeder
             [
                 'product_id' => 32,
                 'game_type_id' => 1,
-                'image' => 'CQ9_Slot.png',
+                'image' => 'cq9_slot.png',
                 'rate' => '1.0000',
             ],
             [
                 'product_id' => 32,
                 'game_type_id' => 4,
-                'image' => 'CQ9.png',
+                'image' => 'cq9.png',
                 'rate' => '1.0000',
             ],
             [
