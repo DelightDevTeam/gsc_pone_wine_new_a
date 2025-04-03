@@ -29,31 +29,63 @@ class HomeController extends Controller
 {
     use HttpResponses;
 
-    public function index()
-    {
-        $user = Auth::user();
-        $agent = $user->parent->id;
-        if ($user->parent) {
-            $admin = $user->parent->parent->id;
-        } else {
-            $admin = $user->id;
-        }
-        $banners = Banner::where('admin_id', $admin)->get();
-        $rewards = TopTenWithdraw::where('admin_id', $admin)->get();
-        $banner_text = BannerText::where('admin_id', $admin)->latest()->first();
-        $ads_banner = BannerAds::where('admin_id', $admin)->latest()->first();
-        $promotions = Promotion::where('admin_id', $admin)->latest()->get();
-        $contacts = Contact::where('agent_id', $agent)->get();
+    // public function index()
+    // {
+    //     $user = Auth::user();
+    //     $agent = $user->parent->id;
+    //     if ($user->parent) {
+    //         $admin = $user->parent->parent->id;
+    //     } else {
+    //         $admin = $user->id;
+    //     }
+    //     $banners = Banner::where('admin_id', $admin)->get();
+    //     $rewards = TopTenWithdraw::where('admin_id', $admin)->get();
+    //     $banner_text = BannerText::where('admin_id', $admin)->latest()->first();
+    //     $ads_banner = BannerAds::where('admin_id', $admin)->latest()->first();
+    //     $promotions = Promotion::where('admin_id', $admin)->latest()->get();
+    //     $contacts = Contact::where('agent_id', $agent)->get();
 
-        return $this->success([
-            "banners" => BannerResource::collection($banners),
-            "banner_text" => new BannerTextResource($banner_text),
-            "ads_banner" => new AdsBannerResource($ads_banner),
-            "rewards" => $rewards,
-            "promotions" => PromotionResource::collection($promotions),
-            "contacts" => ContactResource::collection($contacts)
-        ]);
+    //     return $this->success([
+    //         "banners" => BannerResource::collection($banners),
+    //         "banner_text" => new BannerTextResource($banner_text),
+    //         "ads_banner" => new AdsBannerResource($ads_banner),
+    //         "rewards" => $rewards,
+    //         "promotions" => PromotionResource::collection($promotions),
+    //         "contacts" => ContactResource::collection($contacts)
+    //     ]);
+    // }
+
+    public function index()
+{
+    $user = Auth::user();
+    $agent = $user->parent->id;
+    if ($user->parent) {
+        $admin = $user->parent->parent->id;
+    } else {
+        $admin = $user->id;
     }
+
+    // Fetch data
+    $banners = Banner::where('admin_id', $admin)->get();
+    $rewards = TopTenWithdraw::where('admin_id', $admin)->get();
+    $banner_text = BannerText::where('admin_id', $admin)->latest()->first();
+    $ads_banner = BannerAds::where('admin_id', $admin)->latest()->first();
+    $promotions = Promotion::where('admin_id', $admin)->latest()->get();
+    $contacts = Contact::where('agent_id', $agent)->get();
+
+    // Handle null values
+    $banner_text_resource = $banner_text ? new BannerTextResource($banner_text) : null;
+    $ads_banner_resource = $ads_banner ? new AdsBannerResource($ads_banner) : null;
+
+    return $this->success([
+        "banners" => BannerResource::collection($banners),
+        "banner_text" => $banner_text_resource,
+        "ads_banner" => $ads_banner_resource,
+        "rewards" => $rewards,
+        "promotions" => PromotionResource::collection($promotions),
+        "contacts" => ContactResource::collection($contacts)
+    ]);
+}
 
     public function gameTypes()
     {

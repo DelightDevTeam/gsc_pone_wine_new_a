@@ -20,7 +20,8 @@ class GameListResource extends JsonResource
             'code' => $this->code,
             'img' => $this->image_url,
             'type_id' => $this->game_type_id,
-            'provider_id' => $this->product_id
+            'provider_id' => $this->product_id,
+            'provider_code' => $this->product->code,
         ];
     }
 }
