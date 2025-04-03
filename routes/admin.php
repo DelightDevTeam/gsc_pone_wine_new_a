@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\AdsVedioController;
+use App\Http\Controllers\Admin\TopTenWithdrawController;
+use App\Http\Controllers\Admin\WinnerTextController;
 use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\BannerAdsController;
@@ -61,6 +64,9 @@ Route::group([
     Route::post('player-changepassword/{id}', [PlayerController::class, 'makeChangePassword'])->name('player.makeChangePassword');
     Route::get('/players-list', [PlayerController::class, 'player_with_agent'])->name('playerListForAdmin');
 
+    Route::resource('video-upload', AdsVedioController::class);
+    Route::resource('winner_text', WinnerTextController::class);
+    Route::resource('top-10-withdraws', TopTenWithdrawController::class);
     Route::resource('banners', BannerController::class);
     Route::resource('adsbanners', BannerAdsController::class);
     Route::resource('text', BannerTextController::class);

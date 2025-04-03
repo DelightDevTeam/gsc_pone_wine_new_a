@@ -389,6 +389,30 @@
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
+                                <a href="{{ route('admin.video-upload.index') }}"
+                                    class="nav-link  {{ Route::current()->getName() == 'admin.video-upload.index' ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>AdsVideo</p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('admin.winner_text.index') }}"
+                                    class="nav-link  {{ Route::current()->getName() == 'admin.winner_text.index' ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>WinnerText</p>
+                                </a>
+                            </li>
+                             <li class="nav-item">
+                        <a href="{{ route('admin.top-10-withdraws.index') }}"
+                            class="nav-link {{ Route::current()->getName() == 'admin.top-10-withdraws.index' ? 'active' : '' }}">
+                            <i class="fas fa-swatchbook"></i>
+                            <p>
+                                WithdrawTopTen
+                            </p>
+                        </a>
+                    </li>
+                                    <li class="nav-item">
                                         <a href="{{ route('admin.text.index') }}"
                                             class="nav-link {{ Route::current()->getName() == 'admin.text.index' ? 'active' : '' }}">
                                             <i class="far fa-circle nav-icon"></i>
