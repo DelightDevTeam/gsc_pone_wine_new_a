@@ -5,9 +5,8 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header pb-0">
-
                     <div class="card-body">
-                        <h5 class="mb-0">Report BackUp(result)</h5>
+                        <h5 class="mb-0">Report Backup</h5>
                     </div>
                     <div class="mt-2">
                         <form action="{{ route('admin.archive.results') }}" method="POST">
@@ -18,41 +17,39 @@
                             <label for="end_date">End Date:</label>
                             <input type="date" id="end_date" name="end_date" required>
 
-                            <button type="submit">ReporeBackUp</button>
+                            <button type="submit" class="btn btn-primary">Backup Reports</button>
                         </form>
-
                     </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-flush" id="users-search">
-
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Player Name</th>
-                                <th>PlayerID</th>
-                                <th>Game Provide Name</th>
+                                <th>Member Name</th>
+                                <th>Wager ID</th>
                                 <th>Game Name</th>
-                                <th>Total Bet Amount</th>
-                                <th>Win Amount</th>
-                                <th>Net Win</th>
+                                <th>Game Round ID</th>
+                                <th>Valid Bet Amount</th>
+                                <th>Bet Amount</th>
+                                <th>Payout Amount</th>
+                                <th>Status</th>
                                 <th>Date</th>
-
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($results as $index => $result)
                                 <tr>
-                                    <td>{{ $results->firstItem() + $index }}</td> <!-- Adjust for pagination -->
-                                    <td>{{ $result->player_name }}</td>
-                                    <td>{{ $result->player_id }}</td>
-                                    <td>{{ $result->game_provide_name }}</td>
+                                    <td>{{ $results->firstItem() + $index }}</td>
+                                    <td>{{ $result->member_name }}</td>
+                                    <td>{{ $result->wager_id }}</td>
                                     <td>{{ $result->game_name }}</td>
-                                    <td>{{ number_format($result->total_bet_amount, 2) }}</td>
-                                    <td>{{ number_format($result->win_amount, 2) }}</td>
-                                    <td>{{ number_format($result->net_win, 2) }}</td>
-                                    <td>{{ $result->tran_date_time }}</td>
-
+                                    <td>{{ $result->game_round_id }}</td>
+                                    <td>{{ number_format($result->valid_bet_amount, 2) }}</td>
+                                    <td>{{ number_format($result->bet_amount, 2) }}</td>
+                                    <td>{{ number_format($result->payout_amount, 2) }}</td>
+                                    <td>{{ $result->status }}</td>
+                                    <td>{{ $result->created_on }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -62,14 +59,12 @@
                     <div class="d-flex justify-content-center">
                         {{ $results->links() }}
                     </div>
-
-                    </tbody>
-                    </table>
                 </div>
             </div>
         </div>
     </div>
 @endsection
+
 @section('scripts')
     <script>
         if (document.getElementById('users-search')) {
@@ -78,7 +73,6 @@
                 fixedHeight: false,
                 perPage: 7
             });
-
         };
     </script>
     <script>
