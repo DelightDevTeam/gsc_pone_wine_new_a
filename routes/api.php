@@ -101,12 +101,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('ponewine-report', [ReportController::class, 'index']);
 
     // gsc
-    Route::group(['prefix' => 'game'], function () {
-        Route::post('Seamless/LaunchGame', [LaunchGameController::class, 'launchGame']);
-        Route::get('gamelist/{provider_id}/{game_type_id}', [GameController::class, 'gameList']);
-    });
+    // Route::group(['prefix' => 'game'], function () {
+    //     Route::post('Seamless/LaunchGame', [LaunchGameController::class, 'launchGame']);
+    //     Route::get('gamelist/{provider_id}/{game_type_id}', [GameController::class, 'gameList']);
+    // });
 
-    Route::group(['prefix' => 'direct'], function () {
-        Route::post('Seamless/LaunchGame', [DirectLaunchGameController::class, 'launchGame']);
-    });
+    // Route::group(['prefix' => 'direct'], function () {
+    //     Route::post('Seamless/LaunchGame', [DirectLaunchGameController::class, 'launchGame']);
+    // });
 });
