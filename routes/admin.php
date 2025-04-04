@@ -27,6 +27,7 @@ use App\Http\Controllers\Admin\TransferLog\TransferLogController;
 use App\Http\Controllers\Admin\WithDrawRequestController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ResultArchiveController;
 
 Route::group([
     'prefix' => 'admin',
@@ -190,5 +191,9 @@ Route::group([
     Route::get('/senior-report/{id}', [SeniorController::class, 'seniorReportIndex'])->name('senior.report');
     Route::get('/master-report/{id}', [MasterController::class, 'MasterReportIndex'])->name('master.report');
     Route::get('/agent-report/{id}', [AgentController::class, 'agentReportIndex'])->name('agent.report');
+
+    // report backup
+     Route::get('/resultsdata', [ResultArchiveController::class, 'getAllResults'])->name('backup_results.index');
+     Route::post('/archive-results', [ResultArchiveController::class, 'archiveResults'])->name('archive.results');
 
 });

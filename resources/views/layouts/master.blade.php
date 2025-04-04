@@ -375,6 +375,15 @@
                                         </p>
                                     </a>
                                 </li>
+                                 <li class="nav-item">
+                                <a href="{{ route('admin.backup_results.index') }}"
+                                    class="nav-link {{ Route::current()->getName() === 'admin.backup_results.index' ? 'active' : '' }}">
+                                    <i class="fab fa-dochub"></i>
+                                    <p>
+                                        Backup Report
+                                    </p>
+                                </a>
+                            </li>
                             </ul>
                         </li>
                         @can('owner_access')
