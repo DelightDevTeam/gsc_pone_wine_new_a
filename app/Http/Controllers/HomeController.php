@@ -40,8 +40,8 @@ class HomeController extends Controller
     {
         $user = Auth::user();
         $role = $user->roles->pluck('title');
-        $totalAgent = $user->children->count();
-        $totalPlayer = $user->children->count();
+        // $totalAgent = $user->children->count();
+        // $totalPlayer = $user->children->count();
         $totalWinlose = 0;
         $todayWinlose = 0;
         $todayDeposit = 0;
@@ -89,11 +89,22 @@ class HomeController extends Controller
             })
             ->first();
 
+            $userCountGet =  $this->userCountGet($user);
+
+            $totalSuper = $userCountGet['totalSuper'] ?? 0;
+            $totalSenior = $userCountGet['totalSenior'] ?? 0;
+            $totalMaster = $userCountGet['totalMaster'] ?? 0;
+            $totalAgent = $userCountGet['totalAgent'] ?? 0;
+            $totalPlayer = $userCountGet['totalPlayer'] ?? 0;
+
         return view('admin.dashboard', compact(
             'user',
             'totalBalance',
             'role',
             'playerBalance',
+            'totalSuper',
+            'totalSenior',
+            'totalMaster',
             'totalAgent',
             'totalPlayer',
             'totalWinlose',
@@ -248,5 +259,48 @@ class HomeController extends Controller
             ->whereDate('created_at', today())
             ->whereIn('name', ['credit_transfer', 'debit_transfer'])
             ->sum('amount');
+    }
+
+    // update for user count #KS
+    private function userCountGet($user) {
+        $totalSuper = $totalSenior = $totalMaster = $totalAgent = $totalPlayer = 0;
+
+        if ($user->hasRole('Owner')) {
+            $totalSuper = User::where('agent_id', $user->id)->where('type', 30)->pluck('id');
+            $totalSenior = User::whereIn('agent_id', $totalSuper)->where('type', 40)->pluck('id');
+            $totalMaster = User::whereIn('agent_id', $totalSenior)->where('type', 50)->pluck('id');
+            $totalAgent = User::whereIn('agent_id', $totalMaster)->where('type', 60)->pluck('id');
+            $totalPlayer = User::whereIn('agent_id', $totalAgent)->count();
+
+            $totalSuper = $totalSuper->count();
+            $totalSenior = $totalSenior->count();
+            $totalMaster = $totalMaster->count();
+            $totalAgent = $totalAgent->count();
+        } elseif ($user->hasRole('Super')) {
+            $totalSenior = User::where('agent_id', $user->id)->where('type', 40)->pluck('id');
+            $totalMaster = User::whereIn('agent_id', $totalSenior)->where('type', 50)->pluck('id');
+            $totalAgent = User::whereIn('agent_id', $totalMaster)->where('type', 60)->pluck('id');
+            $totalPlayer = User::whereIn('agent_id', $totalAgent)->count();
+
+            $totalSenior = $totalSenior->count();
+            $totalMaster = $totalMaster->count();
+            $totalAgent = $totalAgent->count();
+        } elseif ($user->hasRole('Senior')) {
+            $totalMaster = User::where('agent_id', $user->id)->where('type', 50)->pluck('id');
+            $totalAgent = User::whereIn('agent_id', $totalMaster)->where('type', 60)->pluck('id');
+            $totalPlayer = User::whereIn('agent_id', $totalAgent)->count();
+
+            $totalMaster = $totalMaster->count();
+            $totalAgent = $totalAgent->count();
+        } elseif ($user->hasRole('Master')) {
+            $totalAgent = User::where('agent_id', $user->id)->where('type', 60)->pluck('id');
+            $totalPlayer = User::whereIn('agent_id', $totalAgent)->count();
+
+            $totalAgent = $totalAgent->count();
+        } elseif ($user->hasRole('Agent')) {
+            $totalPlayer = User::where('agent_id', $user->id)->where('type', 70)->count();
+        }
+
+        return compact('totalSuper', 'totalSenior', 'totalMaster', 'totalAgent', 'totalPlayer');
     }
 }
