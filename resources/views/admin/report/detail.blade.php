@@ -34,7 +34,7 @@
                                     <select name="product_id" id="" class="form-control">
                                         <option value="">Select Product type</option>
                                         @foreach($productTypes as $type)
-                                        <option value="{{$type->id}}" {{$type->id == request()->product_id ? 'selected' : ''}}>{{$type->provider_name}}</option>
+                                        <option value="{{$type->id}}" {{$type->id == request()->product_id ? 'selected' : ''}}>{{$type->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -69,28 +69,26 @@
                                     <th>History</th>
                                     <th>Bet</th>
                                     <th>Win</th>
-                                    <th>NetWin</th>
                                     <th>TransactionDateTime</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($details as $detail)
                                 <tr>
-                                    <td>{{ $detail->user_name }}</td>
-                                    <td>{{ $detail->provider_name }}</td>
+                                    <td>{{ $detail->member_name }}</td>
+                                    <td>{{ $detail->name }}</td>
                                     <td>{{ $detail->game_name }}</td>
 
                                     <td>
                                         <a href="javascript:void(0);"
-                                            onclick="getTransactionDetails('{{ $detail->round_id }}')"
+                                            onclick="getTransactionDetails('{{ $detail->game_round_id }}')"
                                             style="color: blueviolet; text-decoration: underline;">
-                                            {{ $detail->round_id }}
+                                            {{ $detail->game_round_id }}
                                         </a>
                                     </td>
-                                    <td>{{ number_format($detail->total_bet_amount, 2) }}</td>
-                                    <td>{{ number_format($detail->win_amount, 2) }}</td>
-                                    <td>{{ number_format($detail->net_win, 2) }}</td>
-                                    <td>{{ $detail->date }}</td>
+                                    <td>{{ number_format($detail->bet_amount, 2) }}</td>
+                                    <td>{{ number_format($detail->payout_amount, 2) }}</td>
+                                    <td>{{ $detail->created_on }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
