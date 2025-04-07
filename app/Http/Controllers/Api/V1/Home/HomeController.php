@@ -58,20 +58,15 @@ class HomeController extends Controller
     public function index()
 {
     $user = Auth::user();
-    $agent = $user->parent->id;
-    if ($user->parent) {
-        $admin = $user->parent->parent->id;
-    } else {
-        $admin = $user->id;
-    }
+    $admin = $user->parent->parent->parent->parent;
 
     // Fetch data
-    $banners = Banner::where('admin_id', $admin)->get();
-    $rewards = TopTenWithdraw::where('admin_id', $admin)->get();
-    $banner_text = BannerText::where('admin_id', $admin)->latest()->first();
-    $ads_banner = BannerAds::where('admin_id', $admin)->latest()->first();
-    $promotions = Promotion::where('admin_id', $admin)->latest()->get();
-    $contacts = Contact::where('agent_id', $agent)->get();
+    $banners = Banner::where('admin_id', $admin->agent_id)->get();
+    $rewards = TopTenWithdraw::where('admin_id', $admin->agent_id)->get();
+    $banner_text = BannerText::where('admin_id', $admin->agent_id)->latest()->first();
+    $ads_banner = BannerAds::where('admin_id', $admin->agent_id)->latest()->first();
+    $promotions = Promotion::where('admin_id', $admin->agent_id)->latest()->get();
+    $contacts = Contact::where('agent_id', $user->agent_id)->get();
 
     // Handle null values
     $banner_text_resource = $banner_text ? new BannerTextResource($banner_text) : null;
