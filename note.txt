@@ -5,7 +5,7 @@ php artisan make:migration add_order_column_to_game_lists_table --table=game_lis
 
 php artisan make:migration make_name_and_phone_nullable_in_users_table --table=users
 
-
+sudo ln -s /etc/nginx/sites-available/ponewine20x.xyz /etc/nginx/sites-available/ponewine20x.xyz
 // to remove laravel log
 php -r "file_put_contents('/var/www/gsc_pone_wine_new_a/storage/logs/laravel.log', '');"
 // created dev branch for kzt
