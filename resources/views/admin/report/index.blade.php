@@ -65,35 +65,25 @@
                                 <tbody>
                                     @foreach ($report as $row)
                                         <tr>
-                                            <td>{{ $row->agent_name }}</td>
-                                            <td>{{ $row->player_name }}</td>
+                                            <td>{{ $row->user_name }}</td>
+                                            <td>{{ $row->user_name }}</td>
                                             <td>{{ $row->total_count }}</td>
-                                            <td class="{{ $row->total_bet_amount >= 0 ? 'text-success' : 'text-danger' }}">
+                                            <td class="">
                                                 {{ number_format($row->total_bet_amount, 2) }}</td>
-                                            <td class="{{ $row->total_win_amount >= 0 ? 'text-success' : 'text-danger' }}">
-                                                {{ number_format($row->total_win_amount, 2) }}</td>
-                                            <td class="{{ $row->total_net_win >= 0 ? 'text-success' : 'text-danger' }}">
-                                                {{ number_format($row->total_net_win, 2) }}</td>
-                                            <td><a href="{{ route('admin.reports.details', $row->user_id) }}">Detail</a>
+                                            <td class="">
+                                                {{ number_format($row->total_payout_amount, 2) }}</td>
+                                                <?php
+                                                    $net_win = $row->total_payout_amount - $row->total_bet_amount;
+                                                 ?>
+                                            <td class="{{ $net_win >= 0 ? 'text-success' : 'text-danger' }}">
+                                                
+                                                {{ number_format($net_win, 2) }}</td>
+                                            <td><a href="{{ route('admin.reports.details', $row->user_name) }}">Detail</a>
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
-                                <tr>
-                                    <td></td>
-                                    <td class="font-weight-bold">Total </td>
-                                    <td class="font-weight-bold">{{ $total_sum['total_count_sum'] }}</td>
-                                    <td
-                                        class="{{ $total_sum['total_bet_amount_sum'] >= 0 ? 'text-success' : 'text-danger' }} font-weight-bold">
-                                        {{ number_format($total_sum['total_bet_amount_sum'], 2) }}</td>
-                                    <td
-                                        class="{{ $total_sum['total_win_amount_sum'] >= 0 ? 'text-success' : 'text-danger' }} font-weight-bold">
-                                        {{ number_format($total_sum['total_win_amount_sum'], 2) }}</td>
-                                    <td
-                                        class="{{ $total_sum['total_net_win_sum'] >= 0 ? 'text-success' : 'text-danger' }} font-weight-bold">
-                                        {{ number_format($total_sum['total_net_win_sum'], 2) }}</td>
-                                    <td></td>
-                                </tr>
+                                
                             </table>
                         </div>
                         <!-- /.card-body -->

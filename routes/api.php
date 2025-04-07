@@ -91,9 +91,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     //slot
     Route::get('gameTypeProducts/{id}', [GameController::class, 'gameTypeProducts']);
     Route::get('allGameProducts', [GameController::class, 'allGameProducts']);
-    //Route::get('game_types', [GameController::class, 'gameType']);
-    //Route::get('hot_game_lists', [GameController::class, 'HotgameList']);
-    //Route::get('pphotgamelist', [GameController::class, 'PPHotgameList']);
+    // Route::get('game_types', [GameController::class, 'gameType']);
+    Route::get('hot_game_lists', [GameController::class, 'HotgameList']);
+    Route::get('pphotgamelist', [GameController::class, 'PPHotgameList']);
     //Route::get('gamelist/{provider_id}/{game_type_id}/', [GameController::class, 'gameList']);
     //Route::get('slotfishgamelist/{provider_id}/{game_type_id}/', [GameController::class, 'JILIgameList']);
     //Route::get('gameFilter', [GameController::class, 'gameFilter']);

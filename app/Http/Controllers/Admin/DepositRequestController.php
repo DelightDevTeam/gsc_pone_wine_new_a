@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\TransactionName;
-use App\Http\Controllers\Controller;
-use App\Models\DepositRequest;
+use Exception;
+use Carbon\Carbon;
 use App\Models\User;
+use Illuminate\Http\Request;
+use App\Enums\TransactionName;
+use App\Models\DepositRequest;
 use App\Models\WithDrawRequest;
 use App\Services\WalletService;
-use Exception;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class DepositRequestController extends Controller
@@ -19,16 +20,27 @@ class DepositRequestController extends Controller
     public function index(Request $request)
     {
         $agent = $this->getAgent() ?? Auth::user();
+        $startDate = $request->start_date ?? Carbon::today()->startOfDay()->toDateString();
+        $endDate = $request->end_date ?? Carbon::today()->endOfDay()->toDateString();
 
         $deposits = DepositRequest::with(['user', 'bank', 'agent'])
             ->where('agent_id', $agent->id)
             ->when($request->filled('status') && $request->input('status') !== 'all', function ($query) use ($request) {
                 $query->where('status', $request->input('status'));
             })
+            ->whereBetween('created_at',[$startDate.' 00:00:00', $endDate.' 23:59:59'])
             ->orderBy('id', 'desc')
             ->get();
 
-        return view('admin.deposit_request.index', compact('deposits'));
+            if($request->input('status') !== 'all') {
+                $totalDeposits = $deposits->sum('amount');
+            } else {
+                $totalDeposits = $deposits->where('status',$request->input('status'))->sum('amount');
+            }
+
+
+
+        return view('admin.deposit_request.index', compact('deposits','totalDeposits'));
     }
 
     public function statusChangeIndex(Request $request, DepositRequest $deposit)

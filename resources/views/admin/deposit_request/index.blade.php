@@ -30,8 +30,19 @@
                         <div class="card-body">
                             <form action="{{ route('admin.agent.deposit') }}" method="GET">
                                 <div class="row mt-3">
+
+                                        <div class="col-md-3">
+                                            <label for="start_date" class="form-label">Start Date</label>
+                                            <input type="date" class="form-control" name="start_date"
+                                                value="{{ request()->start_date }}">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="end_date" class="form-label">End Date</label>
+                                            <input type="date" class="form-control" name="end_date"
+                                                value="{{ request()->end_date }}">
+                                        </div>
+
                                     <div class="col-md-3">
-                                        <div class="input-group input-group-static mb-4">
                                             <label for="exampleFormControlSelect1" class="ms-0">Select Status</label>
                                             <select class="form-control" id="" name="status">
                                                 <option value="all"
@@ -47,9 +58,8 @@
                                                     {{ request()->get('status') == '2' ? 'selected' : '' }}>Rejected
                                                 </option>
                                             </select>
-                                        </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 mt-4 pt-2">
                                         <button class="btn btn-sm btn-primary" id="search" type="submit">Search</button>
                                         <a href="{{ route('admin.agent.deposit') }}"
                                             class="btn btn-link text-primary ms-auto border-0" >
@@ -99,6 +109,19 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
+                                <tfoot>
+                                    <th></th>
+                                    <th></th>
+                                    <th>Total Amounts</th>
+                                    <th>{{number_format($totalDeposits)}}</th>
+                                    <th>Total Deposit Count</th>
+                                    <th>{{$deposits->count()}}</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+
+
+                                </tfoot>
 
                             </table>
                         </div>
