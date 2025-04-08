@@ -28,6 +28,7 @@ use App\Http\Controllers\Admin\WithDrawRequestController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ResultArchiveController;
+use App\Http\Controllers\Admin\DailySummaryController;
 
 Route::group([
     'prefix' => 'admin',
@@ -195,5 +196,10 @@ Route::group([
     // report backup
      Route::get('/resultsdata', [ResultArchiveController::class, 'getAllResults'])->name('backup_results.index');
      Route::post('/archive-results', [ResultArchiveController::class, 'archiveResults'])->name('archive.results');
+
+     Route::post('/generate-daily-summaries', [DailySummaryController::class, 'generateSummaries']);
+
+     Route::get('/daily-summaries', [DailySummaryController::class, 'index'])
+    ->name('daily_summaries.index');
 
 });

@@ -23,7 +23,6 @@ return new class extends Migration
             $table->bigInteger('total_lose_amount')->default(0);
             $table->integer('total_stake_count')->default(0);
             $table->timestamps();
-            
             $table->unique(['report_date', 'member_name', 'agent_id']);
             $table->index('report_date');
             $table->index('member_name');

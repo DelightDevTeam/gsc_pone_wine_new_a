@@ -384,6 +384,16 @@
                                     </p>
                                 </a>
                             </li>
+
+                            <li class="nav-item menu-open">
+                                    <a href="{{ route('admin.daily_summaries.index') }}"
+                                        class="nav-link {{ Route::current()->getName() == 'admin.daily_summaries.index' ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>
+                                            Daily Report
+                                        </p>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         @can('owner_access')

@@ -10,6 +10,8 @@ sudo ln -s /etc/nginx/sites-available/ponewine20x.xyz /etc/nginx/sites-available
 php -r "file_put_contents('/var/www/gsc_pone_wine_new_a/storage/logs/laravel.log', '');"
 // created dev branch for kzt
 
+php artisan migrate:rollback --path=database/migrations/2024_11_15_022950_create_daily_summaries_table.php
+
 tail -f /var/www/gsc_pone_wine_new_a/storage/logs/laravel.log
 
 sudo apt update && sudo apt install supervisor -y
