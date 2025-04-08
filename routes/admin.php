@@ -197,7 +197,7 @@ Route::group([
      Route::get('/resultsdata', [ResultArchiveController::class, 'getAllResults'])->name('backup_results.index');
      Route::post('/archive-results', [ResultArchiveController::class, 'archiveResults'])->name('archive.results');
 
-     Route::post('/generate-daily-summaries', [DailySummaryController::class, 'generateSummaries']);
+     Route::post('/generate-daily-summaries', [DailySummaryController::class, 'generateSummaries'])->name('generate_daily_sammary');
 
      Route::get('/daily-summaries', [DailySummaryController::class, 'index'])
     ->name('daily_summaries.index');
