@@ -48,7 +48,7 @@
         <tbody>
             @forelse ($summaries as $summary)
                 <tr>
-                    <td>{{ $summary->report_date->format('Y-m-d') }}</td>
+                    <td>{{ $summary->report_date }}</td>
                     <td>{{ $summary->member_name ?? 'N/A' }}</td>
                     <td>{{ $summary->agent_id ?? 'N/A' }}</td>
                     <td>{{ number_format($summary->total_valid_bet_amount) }}</td>
