@@ -58,7 +58,7 @@ class GameTypeTableSeeder extends Seeder
                 'name_mm' => 'Qipai',
                 'code' => '6',
                 'order' => '6',
-                'status' => 1,
+                'status' => 0,
                 'img' => 'sportbook.png',
             ],
             [
@@ -66,7 +66,7 @@ class GameTypeTableSeeder extends Seeder
                 'name_mm' => 'အားကစား',
                 'code' => '7',
                 'order' => '7',
-                'status' => 1,
+                'status' => 0,
                 'img' => 'sportbook.png',
             ],
             [
@@ -74,7 +74,7 @@ class GameTypeTableSeeder extends Seeder
                 'name_mm' => 'ငါးဖမ်းခြင်း',
                 'code' => '8',
                 'order' => '8',
-                'status' => 1,
+                'status' => 0,
                 'img' => 'fishing.png',
             ],
 
@@ -109,7 +109,7 @@ class GameTypeTableSeeder extends Seeder
                 'name_mm' => 'အားကစား',
                 'code' => '12',
                 'order' => '12',
-                'status' => 1,
+                'status' => 0,
                 'img' => 'sportbook.png',
             ],
             [
@@ -117,7 +117,7 @@ class GameTypeTableSeeder extends Seeder
                 'name_mm' => 'အားကစား',
                 'code' => '13',
                 'order' => '13',
-                'status' => 1,
+                'status' => 0,
                 'img' => 'sportbook.png',
             ],
         ];
