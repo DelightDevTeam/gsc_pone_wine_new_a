@@ -23,7 +23,7 @@ class MasterController extends Controller
     /**
      * Display a listing of the resource.
      */
-    private const MASTER_ROLE = 5;
+    private const MASTER_ROLE = 4;
 
     public function index()
     {

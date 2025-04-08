@@ -19,10 +19,9 @@ class RoleUserTableSeeder extends Seeder
         User::findOrFail(5)->roles()->sync(5); // master
         User::findOrFail(6)->roles()->sync(6); // agent
         User::findOrFail(7)->roles()->sync(7); // player
-        User::findOrFail(8)->roles()->sync(8); // system wallet
+        User::findOrFail(8)->roles()->sync(7); // system wallet
         User::findOrFail(9)->roles()->sync(7); // player
         User::findOrFail(10)->roles()->sync(7); // player
         User::findOrFail(11)->roles()->sync(7); // player
-        User::findOrFail(12)->roles()->sync(7); // player
     }
 }

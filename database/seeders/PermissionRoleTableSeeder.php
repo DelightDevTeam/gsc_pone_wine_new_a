@@ -29,19 +29,6 @@ class PermissionRoleTableSeeder extends Seeder
         //Owner Permissions
         $owner_permissions = Permission::whereIn('title', [
             'owner_access',
-            'super_index',
-            'super_create',
-            'super_edit',
-            'super_delete',
-            'transfer_log',
-            'make_transfer',
-            'game_type_access',
-        ]);
-        Role::findOrFail(2)->permissions()->sync($owner_permissions->pluck('id'));
-
-        //Super Permissions
-        $super_permissions = Permission::whereIn('title', [
-            'super_access',
             'senior_index',
             'senior_create',
             'senior_edit',
@@ -49,10 +36,10 @@ class PermissionRoleTableSeeder extends Seeder
             'transfer_log',
             'make_transfer',
         ]);
-        Role::findOrFail(3)->permissions()->sync($super_permissions->pluck('id'));
+        Role::findOrFail(2)->permissions()->sync($owner_permissions->pluck('id'));
 
         //Senior Permissions
-        $super_permissions = Permission::whereIn('title', [
+        $senior_permissions = Permission::whereIn('title', [
             'senior_access',
             'master_index',
             'master_create',
@@ -61,7 +48,7 @@ class PermissionRoleTableSeeder extends Seeder
             'transfer_log',
             'make_transfer',
         ]);
-        Role::findOrFail(4)->permissions()->sync($super_permissions->pluck('id'));
+        Role::findOrFail(3)->permissions()->sync($senior_permissions->pluck('id'));
 
         // master permissions
         $master_permissions = Permission::whereIn('title', [
@@ -74,7 +61,7 @@ class PermissionRoleTableSeeder extends Seeder
             'transfer_log',
             'make_transfer',
         ]);
-        Role::findOrFail(5)->permissions()->sync($master_permissions->pluck('id'));
+        Role::findOrFail(4)->permissions()->sync($master_permissions->pluck('id'));
 
         $agent_permissions = Permission::whereIn('title', [
             'agent_access',
@@ -91,9 +78,9 @@ class PermissionRoleTableSeeder extends Seeder
             'contact',
         ])->pluck('id');
 
-        Role::findOrFail(6)->permissions()->sync($agent_permissions);
+        Role::findOrFail(5)->permissions()->sync($agent_permissions);
 
         $systemWallet = Permission::where('title', 'system_wallet')->first();
-        Role::findOrFail(7)->permissions()->sync($systemWallet);
+        Role::findOrFail(6)->permissions()->sync($systemWallet);
     }
 }

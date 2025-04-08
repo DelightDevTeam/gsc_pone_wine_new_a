@@ -28,9 +28,9 @@ class AgentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    private const AGENT_ROLE = 6;
+    private const AGENT_ROLE = 5;
 
-    private const PLAYER_ROLE = 7;
+    private const PLAYER_ROLE = 6;
 
     public function index(): View
     {

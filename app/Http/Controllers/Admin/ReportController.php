@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Product;
 use App\Models\User;
-use App\Models\Webhook\BetNResult;
-use App\Models\Webhook\Result;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -177,7 +175,14 @@ class ReportController extends Controller
     {
         $startDate = $request->start_date ?? Carbon::today()->startOfDay()->toDateString();
         $endDate = $request->end_date ?? Carbon::today()->endOfDay()->toDateString();
-        
+        $agent = Auth::user();
+
+        $hierarchy = [
+            'Owner' => ['Senior', 'Master', 'Agent'],
+            'Senior' => ['Master', 'Agent'],
+            'Master' => ['Agent'],
+        ];
+
         $query = DB::table('reports')
             ->select(
                 'users.id as user_id',
@@ -188,33 +193,32 @@ class ReportController extends Controller
                 DB::raw('SUM(reports.payout_amount) as total_payout_amount'),
                 DB::raw('MAX(wallets.balance) as balance'),
             )
-            ->leftjoin('users', 'reports.member_name' , '=' , 'users.user_name')
+            ->leftjoin('users', 'reports.member_name', '=', 'users.user_name')
             ->leftJoin('wallets', 'wallets.holder_id', '=', 'users.id')
-            ->when($request->player_id, fn ($query) => $query->where('users.user_name', $request->player_id));
+            ->when($request->player_id, fn($query) => $query->where('users.user_name', $request->player_id));
 
-        $this->applyRoleFilter($query, $adminId);
-
-        return $query->groupBy('user_id', 'users.name', 'users.user_name')->get();
-    }
-
-    private function applyRoleFilter($query, $adminId)
-    {
-        if (Auth::user()->hasRole('Owner')) {
-            $query->where('agents.agent_id', $adminId);
-        } elseif (Auth::user()->hasRole('Agent')) {
-            $query->where('agents.id', $adminId);
+        if ($agent->hasRole('Senior Owner')) {
+            $result = $query;
+        } elseif ($agent->hasRole('Agent')) {
+            $agentChildrenIds = $agent->children->pluck('id')->toArray();
+            $result = $query->whereIn('users.id', $agentChildrenIds);
+        } else {
+            $agentChildrenIds = $this->getAgentChildrenIds($agent, $hierarchy);
+            $result = $query->whereIn('users.id', $agentChildrenIds);
         }
+
+        return $result->groupBy('users.id', 'users.name', 'users.user_name')->get();
     }
 
     private function getPlayerDetails($playerId, $request)
     {
         $startDate = $request->start_date ?? Carbon::today()->startOfDay()->toDateString();
         $endDate = $request->end_date ?? Carbon::today()->endOfDay()->toDateString();
-        dd($request->product_id);    $query = DB::table('reports')
-                 ->join('products', 'products.code', '=' , 'reports.product_code')
-                ->where('member_name', $playerId)
-                ->when($request->product_id, fn ($query) => $query->where('products.id', $request->product_id));
-                
+        $query = DB::table('reports')
+            ->join('products', 'products.code', '=', 'reports.product_code')
+            ->where('member_name', $playerId)
+            ->when($request->product_id, fn($query) => $query->where('products.id', $request->product_id));
+
         return $query->orderBy('created_on', 'desc')->get();
     }
 
@@ -223,7 +227,7 @@ class ReportController extends Controller
         foreach ($hierarchy as $role => $levels) {
             if ($agent->hasRole($role)) {
                 return collect([$agent])
-                    ->flatMap(fn ($levelAgent) => $this->getChildrenRecursive($levelAgent, $levels))
+                    ->flatMap(fn($levelAgent) => $this->getChildrenRecursive($levelAgent, $levels))
                     ->pluck('id')
                     ->toArray();
             }

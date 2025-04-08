@@ -23,7 +23,7 @@ class SeniorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    private const SENIOR_ROLE = 4;
+    private const SENIOR_ROLE = 3;
 
     public function index()
     {
