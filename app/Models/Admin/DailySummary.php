@@ -10,11 +10,13 @@ class DailySummary extends Model
     use HasFactory;
 
     protected $fillable = [
-        'summary_date',
-        'currency_code',
-        'turnover',
-        'valid_turnover',
-        'payout',
-        'win_lose',
+        'report_date',
+        'member_name',
+        'agent_id',
+        'total_payout_amount',
+        'total_bet_amount',
+        'total_win_amount',
+        'total_lose_amount',
+        'total_stake_count'
     ];
 }
