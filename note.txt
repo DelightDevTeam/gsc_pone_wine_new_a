@@ -23,6 +23,10 @@ numprocs=1
 redirect_stderr=true
 stdout_logfile=/var/log/laravel-queue.log
 
+URL: https://ttt930sc.site/
+Login ID: P17440074
+Password: passwordvip
+Amount: 20000
 --
 sudo supervisorctl reread
 sudo supervisorctl update
