@@ -19,4 +19,10 @@ class DailySummary extends Model
         'total_lose_amount',
         'total_stake_count'
     ];
+
+    // Cast report_date as a date
+    protected $casts = [
+        'report_date' => 'date',
+        'created_at' => 'datetime',
+    ];
 }
