@@ -13,6 +13,13 @@
         padding: 8px;
         text-align: left;
     }
+    .date-filter-form {
+        margin-bottom: 20px;
+    }
+    .date-filter-form .form-group {
+        margin-right: 15px;
+        display: inline-block;
+    }
 </style>
 @endsection
 
@@ -39,6 +46,20 @@
                         <h3>Total Daily Slot Win/Lose Report</h3>
                     </div>
                     <div class="card-body">
+                        <!-- Date Filter Form -->
+                        <form method="GET" action="{{ route('admin.daily_summaries.index') }}" class="date-filter-form">
+                            <div class="form-group">
+                                <label for="start_date">Start Date</label>
+                                <input type="date" name="start_date" id="start_date" class="form-control" value="{{ request('start_date') }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="end_date">End Date</label>
+                                <input type="date" name="end_date" id="end_date" class="form-control" value="{{ request('end_date') }}">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                            <a href="{{ route('daily_summaries.index') }}" class="btn btn-secondary">Clear</a>
+                        </form>
+
                         <table id="ponewineTable" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
