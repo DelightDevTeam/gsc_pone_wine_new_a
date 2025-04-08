@@ -57,7 +57,7 @@
                                 <input type="date" name="end_date" id="end_date" class="form-control" value="{{ request('end_date') }}">
                             </div>
                             <button type="submit" class="btn btn-primary">Filter</button>
-                            <a href="{{ route('daily_summaries.index') }}" class="btn btn-secondary">Clear</a>
+                            <a href="{{ route('admin.daily_summaries.index') }}" class="btn btn-secondary">Clear</a>
                         </form>
 
                         <table id="ponewineTable" class="table table-bordered table-hover">
