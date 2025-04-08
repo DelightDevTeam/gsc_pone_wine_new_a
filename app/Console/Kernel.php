@@ -9,7 +9,7 @@ class Kernel extends ConsoleKernel
 {
     protected $commands = [
          Commands\PullReport::class,
-
+         Commands\GenerateDailySummaries::class
     ];
 
     /**
@@ -19,6 +19,7 @@ class Kernel extends ConsoleKernel
     {
         
         $schedule->command('make:pull-report')->everyFiveSeconds();
+        $schedule->command('generate:daily-summaries')->dailyAt('01:00');
         
         // $schedule->command('inspire')->hourly();
         //$schedule->command('summary:fetch')->dailyAt('00:01');

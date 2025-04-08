@@ -13,13 +13,21 @@ return new class extends Migration
     {
         Schema::create('daily_summaries', function (Blueprint $table) {
             $table->id();
-            $table->date('summary_date');
-            $table->string('currency_code', 10);
-            $table->decimal('turnover', 18, 2);
-            $table->decimal('valid_turnover', 18, 2);
-            $table->decimal('payout', 18, 2);
-            $table->decimal('win_lose', 18, 2);
+            $table->date('report_date');
+            $table->string('member_name')->nullable(); // Null for agent/overall summaries
+            $table->unsignedBigInteger('agent_id')->nullable(); // Null for overall summaries
+            $table->bigInteger('total_valid_bet_amount')->default(0);
+            $table->bigInteger('total_payout_amount')->default(0);
+            $table->bigInteger('total_bet_amount')->default(0);
+            $table->bigInteger('total_win_amount')->default(0);
+            $table->bigInteger('total_lose_amount')->default(0);
+            $table->integer('total_stake_count')->default(0);
             $table->timestamps();
+            
+            $table->unique(['report_date', 'member_name', 'agent_id']);
+            $table->index('report_date');
+            $table->index('member_name');
+            $table->index('agent_id');
         });
     }
 
