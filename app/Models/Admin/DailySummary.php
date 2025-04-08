@@ -20,9 +20,20 @@ class DailySummary extends Model
         'total_stake_count'
     ];
 
-    // Cast report_date as a date
     protected $casts = [
         'report_date' => 'date',
         'created_at' => 'datetime',
     ];
+
+    // Add a custom accessor for report_date
+    public function getReportDateFormattedAttribute()
+    {
+        return $this->report_date ? $this->report_date->format('Y-m-d') : 'N/A';
+    }
+
+    // Add a custom accessor for created_at
+    public function getCreatedAtFormattedAttribute()
+    {
+        return $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : 'N/A';
+    }
 }
