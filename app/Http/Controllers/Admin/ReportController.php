@@ -195,7 +195,9 @@ class ReportController extends Controller
             )
             ->leftjoin('users', 'reports.member_name', '=', 'users.user_name')
             ->leftJoin('wallets', 'wallets.holder_id', '=', 'users.id')
-            ->when($request->player_id, fn($query) => $query->where('users.user_name', $request->player_id));
+            ->when($request->player_id, fn($query) => $query->where('users.user_name', $request->player_id))
+            ->whereBetween('reports.created_at',[$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+            ;
 
         if ($agent->hasRole('Senior Owner')) {
             $result = $query;
