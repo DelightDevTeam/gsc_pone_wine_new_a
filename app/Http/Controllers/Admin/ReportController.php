@@ -81,9 +81,9 @@ class ReportController extends Controller
 
     public function index(Request $request)
     {
-        $adminId = auth()->id();
+        $agent = $this->getAgent() ?? Auth::user();
 
-        $report = $this->buildQuery($request, $adminId);
+        $report = $this->buildQuery($request, $agent);
 
         return view('admin.report.index', compact('report'));
     }
@@ -171,11 +171,10 @@ class ReportController extends Controller
         return $this->isExistingAgent(Auth::id());
     }
 
-    private function buildQuery(Request $request, $adminId)
+    private function buildQuery(Request $request, $agent)
     {
         $startDate = $request->start_date ?? Carbon::today()->startOfDay()->toDateString();
         $endDate = $request->end_date ?? Carbon::today()->endOfDay()->toDateString();
-        $agent = Auth::user();
 
         $hierarchy = [
             'Owner' => ['Senior', 'Master', 'Agent'],
