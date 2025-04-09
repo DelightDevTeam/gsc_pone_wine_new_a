@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->foreignId('game_type_id');
             $table->foreignId('product_id');
-            $table->unsignedBigInteger('wager_id')->unique();
+            $table->unsignedBigInteger('wager_id')->nullable();
             $table->decimal('valid_bet_amount', 12);
             $table->decimal('bet_amount', 12);
             $table->decimal('transaction_amount', 12);
