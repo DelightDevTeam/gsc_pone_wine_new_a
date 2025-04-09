@@ -25,8 +25,10 @@ class DailySummaryController extends Controller
             'Master' => ['Agent'],
         ];
 
-        $query = DailySummary::query();
-
+        $query = DailySummary::query()
+                ->join('users', 'users.user_name', '=', 'daily_summaries.member_name')
+                ->select('daily_summaries.*');
+            
         // Apply date filters if provided
         if ($request->filled('start_date')) {
             $query->whereDate('report_date', '>=', Carbon::parse($request->start_date));
