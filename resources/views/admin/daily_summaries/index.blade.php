@@ -64,7 +64,7 @@
                             <button type="submit" class="btn btn-primary">Filter</button>
                             <a href="{{ route('admin.daily_summaries.index') }}" class="btn btn-secondary">Clear</a>
                         </form> --}}
-                        @can('Senior Owner')
+                        @can('senior_owner_access')
                             <form method="POST" action="{{ route('admin.generate_daily_sammary') }}"
                                 class="date-filter-form">
                                 @csrf
