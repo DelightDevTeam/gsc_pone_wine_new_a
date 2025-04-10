@@ -500,6 +500,16 @@ class DailySummaryController extends Controller
                     return 0;
                 }
 
+                // Log the wallet balances before deletion (for auditing)
+                $wallets = Wallet::whereIn('id', $walletIds)->get();
+                foreach ($wallets as $wallet) {
+                    Log::info('Wallet balance before transaction deletion', [
+                        'wallet_id' => $wallet->id,
+                        'user_id' => $user->id,
+                        'balance' => $wallet->balance,
+                    ]);
+                }
+
                 // Delete transactions associated with the user's wallets in chunks
                 $totalDeleted = 0;
                 Transaction::whereIn('wallet_id', $walletIds)
@@ -513,9 +523,6 @@ class DailySummaryController extends Controller
                         ]);
                     });
 
-                // Optionally, delete the wallets if you want to clean them up as well
-                // Wallet::whereIn('id', $walletIds)->delete(); // This will cascade delete transactions due to foreign key
-
                 // Delete transactions where the user is the payable directly
                 $payableDeleted = Transaction::where('payable_type', 'App\Models\User')
                     ->where('payable_id', $user->id)
@@ -528,6 +535,16 @@ class DailySummaryController extends Controller
                     'payable_deleted' => $payableDeleted,
                 ]);
 
+                // Log the wallet balances after deletion (for verification)
+                foreach ($wallets as $wallet) {
+                    $wallet->refresh(); // Refresh the wallet to get the latest balance
+                    Log::info('Wallet balance after transaction deletion', [
+                        'wallet_id' => $wallet->id,
+                        'user_id' => $user->id,
+                        'balance' => $wallet->balance,
+                    ]);
+                }
+
                 return $totalDeleted;
             });
 
@@ -538,7 +555,7 @@ class DailySummaryController extends Controller
             ]);
 
             return redirect()->route('admin.transaction_cleanup.index')
-                ->with('success', "Successfully deleted $deletedCount transactions for user {$user->user_name}.");
+                ->with('success', "Successfully deleted $deletedCount transactions for user {$user->user_name}. Wallet balances remain unchanged.");
         } catch (\Exception $e) {
             // Log the error
             Log::error('Failed to delete transactions for user', [
@@ -551,6 +568,89 @@ class DailySummaryController extends Controller
                 ->with('error', 'Failed to delete transactions: ' . $e->getMessage());
         }
     }
+
+    // public function delete(Request $request)
+    // {
+    //     $request->validate([
+    //         'user_id' => 'required|exists:users,id',
+    //     ]);
+
+    //     $userId = $request->input('user_id');
+
+    //     try {
+    //         // Log the deletion request
+    //         Log::info('Starting transaction cleanup for user', [
+    //             'user_id' => $userId,
+    //         ]);
+
+    //         // Find the user
+    //         $user = User::findOrFail($userId);
+
+    //         // Start a transaction to ensure data integrity
+    //         $deletedCount = DB::transaction(function () use ($user) {
+    //             // Find wallets belonging to the user
+    //             $walletIds = Wallet::where('holder_type', 'App\Models\User')
+    //                 ->where('holder_id', $user->id)
+    //                 ->pluck('id');
+
+    //             if ($walletIds->isEmpty()) {
+    //                 Log::info('No wallets found for user', [
+    //                     'user_id' => $user->id,
+    //                 ]);
+    //                 return 0;
+    //             }
+
+    //             // Delete transactions associated with the user's wallets in chunks
+    //             $totalDeleted = 0;
+    //             Transaction::whereIn('wallet_id', $walletIds)
+    //                 ->chunk(1000, function ($transactions) use (&$totalDeleted) {
+    //                     $count = $transactions->count();
+    //                     Transaction::whereIn('id', $transactions->pluck('id'))->delete();
+    //                     $totalDeleted += $count;
+    //                     Log::info('Deleted batch of transactions', [
+    //                         'count' => $count,
+    //                         'total_deleted' => $totalDeleted,
+    //                     ]);
+    //                 });
+
+    //             // Optionally, delete the wallets if you want to clean them up as well
+    //             // Wallet::whereIn('id', $walletIds)->delete(); // This will cascade delete transactions due to foreign key
+
+    //             // Delete transactions where the user is the payable directly
+    //             $payableDeleted = Transaction::where('payable_type', 'App\Models\User')
+    //                 ->where('payable_id', $user->id)
+    //                 ->delete();
+
+    //             $totalDeleted += $payableDeleted;
+
+    //             Log::info('Deleted payable transactions for user', [
+    //                 'user_id' => $user->id,
+    //                 'payable_deleted' => $payableDeleted,
+    //             ]);
+
+    //             return $totalDeleted;
+    //         });
+
+    //         // Log the result
+    //         Log::info('Transaction cleanup completed', [
+    //             'user_id' => $user->id,
+    //             'total_deleted' => $deletedCount,
+    //         ]);
+
+    //         return redirect()->route('admin.transaction_cleanup.index')
+    //             ->with('success', "Successfully deleted $deletedCount transactions for user {$user->user_name}.");
+    //     } catch (\Exception $e) {
+    //         // Log the error
+    //         Log::error('Failed to delete transactions for user', [
+    //             'user_id' => $userId,
+    //             'error' => $e->getMessage(),
+    //             'trace' => $e->getTraceAsString(),
+    //         ]);
+
+    //         return redirect()->route('admin.transaction_cleanup.index')
+    //             ->with('error', 'Failed to delete transactions: ' . $e->getMessage());
+    //     }
+    // }
 }
 
 // class DailySummaryController extends Controller
