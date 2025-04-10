@@ -28,7 +28,7 @@
                         </div>
                         <div class="card-body">
                             <table id="mytable" class="table table-bordered table-hover">
-                                <thead>
+                                <thead class="text-center">
                                     <th>#</th>
                                     <th>PlayerID</th>
                                     <th>Name</th>
@@ -36,7 +36,7 @@
                                     <th>Status</th>
                                     <th>Balance</th>
                                     <th>Total Win/Lose</th>
-                                    <th>CreatedAt</th>
+                                    {{-- <th>CreatedAt</th> --}}
                                     <th>Action</th>
                                     <th>Transaction</th>
                                 </thead>
@@ -44,7 +44,7 @@
                                     @if (isset($users))
                                         @if (count($users) > 0)
                                             @foreach ($users as $user)
-                                                <tr>
+                                                <tr class="text-center">
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>
                                                         <span class="d-block">{{ $user->user_name }}</span>
@@ -56,9 +56,9 @@
                                                         <small
                                                             class="badge bg-gradient-{{ $user->status == 1 ? 'success' : 'danger' }}">{{ $user->status == 1 ? 'active' : 'inactive' }}</small>
                                                     </td>
-                                                    <td>{{ number_format($user->balanceFloat) }}</td>
-                                                    <td>{{ number_format($user->poneWinePlayer->sum('win_lose_amt') + $user->results->sum('net_win') + $user->betNResults->sum('net_win'), 2)}}</td>
-                                                    <td>{{ $user->created_at->setTimezone('Asia/Yangon')->format('d-m-Y H:i:s') }}
+                                                    <td class="text-bold">{{ number_format($user->balanceFloat) }}</td>
+                                                    <td class="{{$user->win_lose >= 0 ? 'text-success text-bold' : 'text-danger text-bold'}}">{{ number_format($user->win_lose)}}</td>
+                                                    {{-- <td>{{ $user->created_at->setTimezone('Asia/Yangon')->format('d-m-Y H:i:s') }} --}}
                                                     </td>
                                                     <td>
                                                         @if ($user->status == 1)

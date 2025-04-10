@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\TransactionName;
+use Exception;
+use App\Models\User;
 use App\Enums\UserType;
+use Illuminate\Http\Request;
+use App\Enums\TransactionName;
+use App\Services\WalletService;
+use App\Models\Admin\TransferLog;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MasterRequest;
-use App\Http\Requests\TransferLogRequest;
-use App\Models\Admin\TransferLog;
-use App\Models\User;
-use App\Services\WalletService;
-use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\TransferLogRequest;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,13 +34,43 @@ class MasterController extends Controller
             '403 Forbidden |You cannot  Access this page because you do not have permission'
         );
 
-        $users = User::with(['roles', 'children.children.poneWinePlayer', 'children.children.results', 'children.children.betNResults'])
-            ->whereHas('roles', function ($query) {
-                $query->where('role_id', self::MASTER_ROLE);
-            })
-            ->where('agent_id', auth()->id())
-            ->orderBy('id', 'desc')
-            ->get();
+        // $users = User::with(['roles', 'children.children.poneWinePlayer', 'children.children.results', 'children.children.betNResults'])
+        //     ->whereHas('roles', function ($query) {
+        //         $query->where('role_id', self::MASTER_ROLE);
+        //     })
+        //     ->where('agent_id', auth()->id())
+        //     ->orderBy('id', 'desc')
+        //     ->get();
+
+        $masters = User::with(['roles','children.children.poneWinePlayer'])->whereHas('roles', fn($q) => $q->where('role_id', self::MASTER_ROLE))
+        ->select('id', 'name', 'user_name', 'phone', 'status')
+        ->where('agent_id', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    $reportData = DB::table('users as m')
+        ->join('users as a', 'a.agent_id', '=', 'm.id')          // agent
+        ->join('users as p', 'p.agent_id', '=', 'a.id')          // player
+        ->join('reports', 'reports.member_name', '=', 'p.user_name')
+        ->groupBy('m.id')
+        ->selectRaw('m.id as master_id,SUM(reports.bet_amount) as total_bet_amount,SUM(reports.payout_amount) as total_payout_amount')
+        ->get()
+        ->keyBy('master_id');
+
+        // dd($reportData);
+    $users = $masters->map(function ($master) use ($reportData) {
+        $report = $reportData->get($master->id);
+        $poneWineTotalAmt = $master->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
+        return (object)[
+            'id' => $master->id,
+            'name' => $master->name,
+            'user_name' => $master->user_name,
+            'phone' => $master->phone,
+            'balanceFloat' => $master->balanceFloat,
+            'status' => $master->status,
+            'win_lose' => (($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0)) + $poneWineTotalAmt,
+        ];
+    });
 
         return view('admin.master.index', compact('users'));
     }
@@ -364,23 +395,32 @@ class MasterController extends Controller
     // KS Upgrade RPIndex
     public function masterReportIndex($id)
     {
-        $user = User::with([
+        $master = User::with([
             'roles',
             'children.children.poneWinePlayer',
-            'children.children.results',
-            'children.children.betNResults',
         ])->find($id);
 
-        $poneWineAmt = $user->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
-        $result = $user->children->flatMap->children->flatMap->results->sum('net_win');
-        $betNResults = $user->children->flatMap->children->flatMap->results->sum('betNResults');
+        $poneWineTotalAmt = $master->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
 
-        $slotTotalAmt = $result + $betNResults;
+        $reportData = DB::table('users as m')
+            ->join('users as a', 'a.agent_id', '=', 'm.id')          // agent
+            ->join('users as p', 'p.agent_id', '=', 'a.id')          // player
+            ->join('reports', 'reports.member_name', '=', 'p.user_name')
+            ->groupBy('m.id')
+            ->selectRaw('
+    m.id as master_id,
+    SUM(reports.bet_amount) as total_bet_amount,
+    SUM(reports.payout_amount) as total_payout_amount
+')
+            ->get()
+            ->keyBy('master_id');
 
-        $report = [
-            'poneWineTotalAmt' => $poneWineAmt,
-            'slotTotalAmt' => $slotTotalAmt,
-        ];
+        $report = $reportData->get($master->id);
+       $report =  (object)[
+        'win_lose' => ($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0),
+        'total_win_lose_pone_wine' =>  $poneWineTotalAmt ?? 0
+    ];
+
 
         return view('admin.master.report_index', compact('report'));
     }

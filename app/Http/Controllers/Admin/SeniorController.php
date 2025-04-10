@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\TransactionName;
+use Exception;
+use App\Models\User;
 use App\Enums\UserType;
+use Illuminate\Http\Request;
+use App\Enums\TransactionName;
+use App\Services\WalletService;
+use App\Models\Admin\TransferLog;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SeniorRequest;
-use App\Http\Requests\TransferLogRequest;
-use App\Models\Admin\TransferLog;
-use App\Models\User;
-use App\Services\WalletService;
-use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\TransferLogRequest;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,13 +35,45 @@ class SeniorController extends Controller
             '403 Forbidden |You cannot  Access this page because you do not have permission'
         );
 
-        $users = User::with(['roles', 'children.children.children.poneWinePlayer', 'children.children.children.results', 'children.children.children.betNResults'])
-            ->whereHas('roles', function ($query) {
-                $query->where('role_id', self::SENIOR_ROLE);
-            })
-            ->where('agent_id', auth()->id())
-            ->orderBy('id', 'desc')
+        // $users = User::with(['roles', 'children.children.children.poneWinePlayer', 'children.children.children.results', 'children.children.children.betNResults'])
+        //     ->whereHas('roles', function ($query) {
+        //         $query->where('role_id', self::SENIOR_ROLE);
+        //     })
+        //     ->where('agent_id', auth()->id())
+        //     ->orderBy('id', 'desc')
+        //     ->get();
+
+        $seniors = User::with(['roles','children.children.children.poneWinePlayer'])->whereHas('roles', fn($query) => $query->where('role_id', self::SENIOR_ROLE))
+            ->select('id', 'name', 'user_name', 'phone', 'status')
+            ->orderBy('created_at', 'desc')
             ->get();
+
+        $reportData = DB::table('users as s')
+            ->join('users as m', 'm.agent_id', '=', 's.id')          // master
+            ->join('users as a', 'a.agent_id', '=', 'm.id')          // agent
+            ->join('users as p', 'p.agent_id', '=', 'a.id')          // player
+            ->join('reports', 'reports.member_name', '=', 'p.user_name')
+            ->groupBy('s.id')
+            ->selectRaw('s.id as senior_id,SUM(reports.bet_amount) as total_bet_amount,SUM(reports.payout_amount) as total_payout_amount')
+            ->get()
+            ->keyBy('senior_id');
+
+// dd($reportData);
+        $users = $seniors->map(function ($senior) use ($reportData) {
+            $report = $reportData->get($senior->id);
+            $poneWineTotalAmt = $senior->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
+            return (object)[
+                'id' => $senior->id,
+                'name' => $senior->name,
+                'user_name' => $senior->user_name,
+                'phone' => $senior->phone,
+                'balanceFloat' => $senior->balanceFloat,
+                'status' => $senior->status,
+                'win_lose' => (($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0)) + $poneWineTotalAmt,
+            ];
+        });
+
+        #KS
 
         return view('admin.senior.index', compact('users'));
     }
@@ -115,7 +149,7 @@ class SeniorController extends Controller
     {
         $randomNumber = mt_rand(10000000, 99999999);
 
-        return 'S'.$randomNumber;
+        return 'S' . $randomNumber;
     }
 
     /**
@@ -293,7 +327,7 @@ class SeniorController extends Controller
 
         return redirect()->back()->with(
             'success',
-            'User '.($user->status == 1 ? 'activate' : 'inactive').' successfully'
+            'User ' . ($user->status == 1 ? 'activate' : 'inactive') . ' successfully'
         );
     }
 
@@ -345,23 +379,34 @@ class SeniorController extends Controller
     // KS Upgrade RPIndex
     public function seniorReportIndex($id)
     {
-        $user = User::with([
+        $senior = User::with([
             'roles',
             'children.children.children.poneWinePlayer',
-            'children.children.children.results',
-            'children.children.children.betNResults',
         ])->find($id);
 
-        $poneWineAmt = $user->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
-        $result = $user->children->flatMap->children->flatMap->children->flatMap->results->sum('net_win');
-        $betNResults = $user->children->flatMap->children->flatMap->children->flatMap->results->sum('betNResults');
+        $poneWineTotalAmt = $senior->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
 
-        $slotTotalAmt = $result + $betNResults;
+        $reportData = DB::table('users as s')
+            ->join('users as m', 'm.agent_id', '=', 's.id')          // master
+            ->join('users as a', 'a.agent_id', '=', 'm.id')          // agent
+            ->join('users as p', 'p.agent_id', '=', 'a.id')          // player
+            ->join('reports', 'reports.member_name', '=', 'p.user_name')
+            ->groupBy('s.id')
+            ->selectRaw('
+    s.id as senior_id,
+    SUM(reports.bet_amount) as total_bet_amount,
+    SUM(reports.payout_amount) as total_payout_amount
+')
+            ->get()
+            ->keyBy('senior_id');
 
-        $report = [
-            'poneWineTotalAmt' => $poneWineAmt,
-            'slotTotalAmt' => $slotTotalAmt,
-        ];
+        $report = $reportData->get($senior->id);
+       $report =  (object)[
+        'win_lose' => ($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0),
+        'total_win_lose_pone_wine' =>  $poneWineTotalAmt ?? 0
+    ];
+
+
 
         return view('admin.senior.report_index', compact('report'));
     }

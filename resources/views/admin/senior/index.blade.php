@@ -27,7 +27,7 @@
                 <div class="card">
                     <div class="card-body">
                         <table id="mytable" class="table table-bordered table-hover">
-                            <thead>
+                            <thead class="text-center">
                                 <th>#</th>
                                 <th>SeniorName</th>
                                 <th>SeniorId</th>
@@ -43,7 +43,7 @@
                                 @if (isset($users))
                                 @if (count($users) > 0)
                                 @foreach ($users as $user)
-                                <tr>
+                                <tr class="text-center">
                                     <td>{{ $loop->iteration }}</td>
                                     <td>
                                         <span class="d-block">{{ $user->name }}</span>
@@ -58,14 +58,14 @@
 
                                     </td>
                                     <td>{{ number_format($user->balanceFloat) }}</td>
-                                    <?php
-                                        $poneWintAmt = $user->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
-                                        $result = $user->children->flatMap->children->flatMap->children->flatMap->results->sum('net_win');
-                                        $betNResults = $user->children->flatMap->children->flatMap->children->flatMap->results->sum('betNResults');
 
-                                        $totalAmt = $poneWintAmt + $result + $betNResults;
-                                    ?>
-                                    <td>{{number_format($totalAmt, 2)}}</td>
+                                        {{-- // $poneWintAmt = $user->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
+                                        // $result = $user->children->flatMap->children->flatMap->children->flatMap->results->sum('net_win');
+                                        // $betNResults = $user->children->flatMap->children->flatMap->children->flatMap->results->sum('betNResults');
+
+                                        // $totalAmt = $poneWintAmt + $result + $betNResults; --}}
+
+                                    <td class="{{$user->win_lose >= 0 ? 'text-success text-bold' : 'text-danger text-bold'}}">{{number_format($user->win_lose)}}</td>
 
                                     <td>
                                         @if ($user->status == 1)

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\Admin\Product;
-use App\Models\User;
 use Carbon\Carbon;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Admin\Product;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
@@ -85,7 +86,17 @@ class ReportController extends Controller
 
         $report = $this->buildQuery($request, $agent);
 
-        return view('admin.report.index', compact('report'));
+        $totalstake = $report->sum('total_count');
+        $totalBetAmt = $report->sum('total_bet_amount');
+        $totalWinAmt = $report->sum('total_payout_amount');
+
+        $total = [
+            'totalstake'  => $totalstake,
+            'totalBetAmt' => $totalBetAmt,
+            'totalWinAmt' => $totalWinAmt
+        ];
+
+        return view('admin.report.index', compact('report','total'));
     }
 
     public function getReportDetails(Request $request, $playerId)
@@ -195,8 +206,7 @@ class ReportController extends Controller
             ->leftjoin('users', 'reports.member_name', '=', 'users.user_name')
             ->leftJoin('wallets', 'wallets.holder_id', '=', 'users.id')
             ->when($request->player_id, fn($query) => $query->where('users.user_name', $request->player_id))
-            ->whereBetween('reports.created_at',[$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
-            ;
+            ->whereBetween('reports.created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
 
         if ($agent->hasRole('Senior Owner')) {
             $result = $query;
