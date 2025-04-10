@@ -117,7 +117,7 @@
                     </div>
                 @endcan
 
-                @can('owner_access')
+                {{-- @can('owner_access')
                     <div class="col-lg-3 col-6">
                         <!-- small box -->
                         <div class="small-box bg-danger">
@@ -134,9 +134,9 @@
                             @endif
                         </div>
                     </div>
-                @endcan
+                @endcan --}}
 
-                @canany(['owner_access', 'super_access'])
+                @canany(['owner_access'])
                     <div class="col-lg-3 col-6">
                         <!-- small box -->
                         <div class="small-box bg-gradient-maroon">
@@ -147,7 +147,7 @@
                             <div class="icon">
                                 <i class="ion ion-pie-graph"></i>
                             </div>
-                            @if (Auth::user()->hasRole('Super'))
+                            @if (Auth::user()->hasRole('Owner'))
                                 <a href="{{ route('admin.senior.index') }}" class="small-box-footer">More info <i
                                         class="fas fa-arrow-circle-right"></i></a>
                             @else
@@ -157,7 +157,7 @@
                     </div>
                 @endcanany
 
-                @canany(['owner_access', 'super_access', 'senior_access'])
+                @canany(['owner_access','senior_access'])
                     <div class="col-lg-3 col-6">
                         <!-- small box -->
                         <div class="small-box  bg-gradient-purple">
@@ -220,7 +220,7 @@
 
 
 
-                @canany(['owner_access', 'super_access', 'senior_access', 'master_access', 'agent_access'])
+                @canany(['owner_access', 'senior_access', 'master_access', 'agent_access'])
                     <div class="col-lg-3 col-6">
                         <!-- small box -->
                         <div class="small-box bg-gradient-success ">

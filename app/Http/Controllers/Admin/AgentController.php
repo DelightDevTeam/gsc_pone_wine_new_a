@@ -47,8 +47,9 @@ class AgentController extends Controller
         //     ->orderBy('id', 'desc')
         //     ->get();
 
-        $agents = User::with(['roles','children.children.poneWinePlayer'])->whereHas('roles', fn($q) => $q->where('title', 'Agent'))
+        $agents = User::with(['roles','children.children.poneWinePlayer'])->whereHas('roles', fn($q) => $q->where('role_id', self::AGENT_ROLE))
         ->select('id', 'name', 'user_name', 'phone', 'status','referral_code')
+        ->where('agent_id', auth()->id())
         ->orderBy('created_at', 'desc')
         ->get();
 

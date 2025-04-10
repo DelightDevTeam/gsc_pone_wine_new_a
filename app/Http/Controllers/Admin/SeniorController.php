@@ -45,6 +45,7 @@ class SeniorController extends Controller
 
         $seniors = User::with(['roles','children.children.children.poneWinePlayer'])->whereHas('roles', fn($query) => $query->where('role_id', self::SENIOR_ROLE))
             ->select('id', 'name', 'user_name', 'phone', 'status')
+            ->where('agent_id', auth()->id())
             ->orderBy('created_at', 'desc')
             ->get();
 
