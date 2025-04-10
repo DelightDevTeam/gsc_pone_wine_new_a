@@ -202,4 +202,9 @@ Route::group([
      Route::get('/daily-summaries', [DailySummaryController::class, 'index'])
     ->name('daily_summaries.index');
 
+    Route::get('/seamless-transactions', [DailySummaryController::class, 'SeamlessTransactionIndex'])
+        ->name('seamless_transactions.index');
+    Route::post('/seamless-transactions/delete', [DailySummaryController::class, 'deleteByDateRange'])
+        ->name('seamless_transactions.delete');
+
 });

@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use Carbon\Carbon;
+use App\Models\User;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use App\Models\Admin\DailySummary;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
-use App\Models\User;
-use Carbon\CarbonPeriod;
-use Illuminate\Support\Facades\Auth;
+use App\Models\SeamlessTransaction;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class DailySummaryController extends Controller
 {
@@ -20,18 +21,18 @@ class DailySummaryController extends Controller
     public function index(Request $request)
 {
     // Log the incoming request parameters
-    Log::debug('Index method called', [
-        'request_params' => $request->all(),
-        'user_id' => Auth::id(),
-    ]);
+    // Log::debug('Index method called', [
+    //     'request_params' => $request->all(),
+    //     'user_id' => Auth::id(),
+    // ]);
 
     $agent = $this->getAgent() ?? Auth::user()->load('roles');
 
     // Log the agent details
-    Log::debug('Agent determined', [
-        'agent_id' => $agent->id,
-        'agent_roles' => $agent->roles->pluck('name')->toArray(),
-    ]);
+    // Log::debug('Agent determined', [
+    //     'agent_id' => $agent->id,
+    //     'agent_roles' => $agent->roles->pluck('name')->toArray(),
+    // ]);
 
     $hierarchy = [
         'Owner' => ['Senior', 'Master', 'Agent'],
@@ -44,28 +45,28 @@ class DailySummaryController extends Controller
             ->select('daily_summaries.*');
         
     // Log the initial query state
-    Log::debug('Initial query built', [
-        'sql' => $query->toSql(),
-        'bindings' => $query->getBindings(),
-    ]);
+    // Log::debug('Initial query built', [
+    //     'sql' => $query->toSql(),
+    //     'bindings' => $query->getBindings(),
+    // ]);
 
     // Set default date range if not provided (e.g., last 7 days)
     $startDate = $request->filled('start_date') ? Carbon::parse($request->start_date) : Carbon::now()->subDays(7);
     $endDate = $request->filled('end_date') ? Carbon::parse($request->end_date) : Carbon::now();
 
     $query->whereDate('report_date', '>=', $startDate);
-    Log::debug('Applied start_date filter', [
-        'start_date' => $startDate->toDateString(),
-        'sql' => $query->toSql(),
-        'bindings' => $query->getBindings(),
-    ]);
+    // Log::debug('Applied start_date filter', [
+    //     'start_date' => $startDate->toDateString(),
+    //     'sql' => $query->toSql(),
+    //     'bindings' => $query->getBindings(),
+    // ]);
 
     $query->whereDate('report_date', '<=', $endDate);
-    Log::debug('Applied end_date filter', [
-        'end_date' => $endDate->toDateString(),
-        'sql' => $query->toSql(),
-        'bindings' => $query->getBindings(),
-    ]);
+    // Log::debug('Applied end_date filter', [
+    //     'end_date' => $endDate->toDateString(),
+    //     'sql' => $query->toSql(),
+    //     'bindings' => $query->getBindings(),
+    // ]);
 
     if ($agent->hasRole('Senior Owner')) {
         $result = $query;
@@ -73,44 +74,44 @@ class DailySummaryController extends Controller
     } elseif ($agent->hasRole('Agent')) {
         $agentChildrenIds = $agent->children->pluck('id')->toArray();
         $result = $query->whereIn('users.id', $agentChildrenIds);
-        Log::debug('Agent role detected, filtered by children IDs', [
-            'agent_children_ids' => $agentChildrenIds,
-            'sql' => $result->toSql(),
-            'bindings' => $result->getBindings(),
-        ]);
+        // Log::debug('Agent role detected, filtered by children IDs', [
+        //     'agent_children_ids' => $agentChildrenIds,
+        //     'sql' => $result->toSql(),
+        //     'bindings' => $result->getBindings(),
+        // ]);
     } else {
         $agentChildrenIds = $this->getAgentChildrenIds($agent, $hierarchy);
         $result = $query->whereIn('users.id', $agentChildrenIds);
-        Log::debug('Non-Senior Owner/Agent role, filtered by hierarchical children IDs', [
-            'agent_children_ids' => $agentChildrenIds,
-            'sql' => $result->toSql(),
-            'bindings' => $result->getBindings(),
-        ]);
+        // Log::debug('Non-Senior Owner/Agent role, filtered by hierarchical children IDs', [
+        //     'agent_children_ids' => $agentChildrenIds,
+        //     'sql' => $result->toSql(),
+        //     'bindings' => $result->getBindings(),
+        // ]);
     }
 
     // Log before executing the query
-    Log::debug('Executing final query for summaries', [
-        'sql' => $result->toSql(),
-        'bindings' => $result->getBindings(),
-    ]);
+    // Log::debug('Executing final query for summaries', [
+    //     'sql' => $result->toSql(),
+    //     'bindings' => $result->getBindings(),
+    // ]);
 
     $summaries = $result->orderBy('report_date', 'desc')
         ->paginate(10)
         ->appends($request->only(['start_date', 'end_date'])); // Preserve query parameters in pagination links
 
     // Log the pagination results
-    Log::debug('Summaries retrieved', [
-        'total' => $summaries->total(),
-        'per_page' => $summaries->perPage(),
-        'current_page' => $summaries->currentPage(),
-        'summary_ids' => $summaries->pluck('id')->toArray(),
-    ]);
+    // Log::debug('Summaries retrieved', [
+    //     'total' => $summaries->total(),
+    //     'per_page' => $summaries->perPage(),
+    //     'current_page' => $summaries->currentPage(),
+    //     'summary_ids' => $summaries->pluck('id')->toArray(),
+    // ]);
 
-    // Log the pagination links to verify query parameters
-    Log::debug('Pagination links generated', [
-        'links' => $summaries->toArray()['links'],
-        'appended_params' => $request->only(['start_date', 'end_date']),
-    ]);
+    // // Log the pagination links to verify query parameters
+    // Log::debug('Pagination links generated', [
+    //     'links' => $summaries->toArray()['links'],
+    //     'appended_params' => $request->only(['start_date', 'end_date']),
+    // ]);
 
     return view('admin.daily_summaries.index', compact('summaries'));
 }
@@ -389,6 +390,71 @@ class DailySummaryController extends Controller
         }
 
         return $children->flatMap->children;
+    }
+
+    public function SeamlessTransactionIndex(Request $request)
+    {
+        // Log the incoming request parameters
+        // Log::debug('SeamlessTransaction index method called', [
+        //     'request_params' => $request->all(),
+        // ]);
+
+        // Fetch seamless transactions, ordered by created_at descending, paginated 10 per page
+        $transactions = SeamlessTransaction::query()
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        // Log the retrieved transactions
+        // Log::debug('Seamless transactions retrieved', [
+        //     'total' => $transactions->total(),
+        //     'per_page' => $transactions->perPage(),
+        //     'current_page' => $transactions->currentPage(),
+        //     'transaction_ids' => $transactions->pluck('id')->toArray(),
+        // ]);
+
+        return view('admin.daily_summaries.seamless_transaction_index', compact('transactions'));
+    }
+
+    public function deleteByDateRange(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
+        $startDate = Carbon::parse($request->input('start_date'))->startOfDay();
+        $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
+
+        try {
+            // Log the deletion request
+            // Log::info('Deleting seamless transactions by date range', [
+            //     'start_date' => $startDate->toDateTimeString(),
+            //     'end_date' => $endDate->toDateTimeString(),
+            // ]);
+
+            // Delete records within the date range
+            $deletedCount = DB::transaction(function () use ($startDate, $endDate) {
+                return SeamlessTransaction::whereBetween('created_at', [$startDate, $endDate])
+                    ->delete();
+            });
+
+            // Log the result of the deletion
+            // Log::info('Seamless transactions deleted', [
+            //     'deleted_count' => $deletedCount,
+            // ]);
+
+            return redirect()->route('admin.seamless_transactions.index')
+                ->with('success', "Successfully deleted $deletedCount transactions between $startDate and $endDate.");
+        } catch (\Exception $e) {
+            // Log the error
+            Log::error('Failed to delete seamless transactions', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->route('admin.seamless_transactions.index')
+                ->with('error', 'Failed to delete transactions: ' . $e->getMessage());
+        }
     }
 }
 

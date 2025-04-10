@@ -394,6 +394,17 @@
                                         </p>
                                     </a>
                                 </li>
+                                 @can('senior_owner_access')
+                                <li class="nav-item menu-open">
+                                    <a href="{{ route('admin.seamless_transactions.index') }}"
+                                        class="nav-link {{ Route::current()->getName() == 'admin.seamless_transactions.index' ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>
+                                            Del SeamlessTransaction
+                                        </p>
+                                    </a>
+                                </li>
+                                @endcan
                             </ul>
                         </li>
                         @can('owner_access')

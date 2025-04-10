@@ -38,6 +38,11 @@ class SeamlessTransaction extends Model
     protected $casts = [
         'status' => TransactionStatus::class,
         'wager_status' => WagerStatus::class,
+        'valid_bet_amount' => 'decimal:2',
+        'bet_amount' => 'decimal:2',
+        'transaction_amount' => 'decimal:2',
+        'rate' => 'decimal:2',
+        'payout_amount' => 'decimal:2',
     ];
 
     public function user()
