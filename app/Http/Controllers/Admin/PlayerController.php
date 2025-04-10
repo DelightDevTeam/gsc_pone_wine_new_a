@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\TransactionName;
+use Exception;
+use App\Models\User;
 use App\Enums\UserType;
+use App\Models\PaymentType;
+use Illuminate\Http\Request;
+use App\Services\UserService;
+use App\Enums\TransactionName;
+use App\Services\WalletService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PlayerRequest;
-use App\Http\Requests\TransferLogRequest;
-use App\Models\PaymentType;
-use App\Models\User;
-use App\Services\UserService;
-use App\Services\WalletService;
-use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
+use App\Http\Requests\TransferLogRequest;
 use Symfony\Component\HttpFoundation\Response;
 
 class PlayerController extends Controller
@@ -43,15 +44,44 @@ class PlayerController extends Controller
             '403 Forbidden |You cannot  Access this page because you do not have permission'
         );
         //kzt
-        $agent = $this->getAgent() ?? Auth::user();
+        // $agent = $this->getAgent() ?? Auth::user();
 
-        $users = User::with('roles', 'poneWinePlayer', 'results', 'betNResults')
-            ->whereHas('roles', function ($query) {
-                $query->where('role_id', self::PLAYER_ROLE);
-            })
-            ->where('agent_id', $agent->id)
-            ->orderBy('id', 'desc')
-            ->get();
+        // $users = User::with('roles', 'poneWinePlayer', 'results', 'betNResults')
+        //     ->whereHas('roles', function ($query) {
+        //         $query->where('role_id', self::PLAYER_ROLE);
+        //     })
+        //     ->where('agent_id', $agent->id)
+        //     ->orderBy('id', 'desc')
+        //     ->get();
+
+        $players = User::with(['roles','poneWinePlayer'])->whereHas('roles', fn($query) => $query->where('role_id', self::PLAYER_ROLE))
+        ->select('id', 'name', 'user_name', 'phone', 'status','referral_code')
+        ->where('agent_id', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+
+    $reportData = DB::table('users as p')
+        ->join('reports', 'reports.member_name', '=', 'p.user_name')
+        ->groupBy('p.id')
+        ->selectRaw('p.id as player_id,SUM(reports.bet_amount) as total_bet_amount,SUM(reports.payout_amount) as total_payout_amount')
+        ->get()
+        ->keyBy('player_id');
+
+        // dd($reportData);
+    $users = $players->map(function ($player) use ($reportData) {
+        $report = $reportData->get($player->id);
+        $poneWineTotalAmt = $player->children->flatMap->poneWinePlayer->sum('win_lose_amt');
+        return (object)[
+            'id' => $player->id,
+            'name' => $player->name,
+            'user_name' => $player->user_name,
+            'phone' => $player->phone,
+            'balanceFloat' => $player->balanceFloat,
+            'status' => $player->status,
+            'win_lose' => (($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0)) + $poneWineTotalAmt,
+        ];
+    });
 
         return view('admin.player.index', compact('users'));
     }

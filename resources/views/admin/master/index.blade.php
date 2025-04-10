@@ -27,7 +27,7 @@
                 <div class="card">
                     <div class="card-body">
                         <table id="mytable" class="table table-bordered table-hover">
-                            <thead>
+                            <thead class="text-center">
                                 <th>#</th>
                                 <th>MasterName</th>
                                 <th>MasterId</th>
@@ -43,7 +43,7 @@
                                 @if (isset($users))
                                 @if (count($users) > 0)
                                 @foreach ($users as $user)
-                                <tr>
+                                <tr class="text-center">
                                     <td>{{ $loop->iteration }}</td>
                                     <td>
                                         <span class="d-block">{{ $user->name }}</span>
@@ -57,15 +57,15 @@
                                             class="badge bg-gradient-{{ $user->status == 1 ? 'success' : 'danger' }}">{{ $user->status == 1 ? 'active' : 'inactive' }}</small>
 
                                     </td>
-                                    <td>{{ number_format($user->balanceFloat) }}</td>
-                                    <?php
-                                        $poneWintAmt = $user->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
-                                        $result = $user->children->flatMap->children->flatMap->results->sum('net_win');
-                                        $betNResults = $user->children->flatMap->children->flatMap->results->sum('betNResults');
+                                    <td class="text-bold">{{ number_format($user->balanceFloat) }}</td>
 
-                                        $totalAmt = $poneWintAmt + $result + $betNResults;
-                                    ?>
-                                    <td>{{number_format($totalAmt, 2)}}</td>
+                                        {{-- // $poneWintAmt = $user->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
+                                        // $result = $user->children->flatMap->children->flatMap->results->sum('net_win');
+                                        // $betNResults = $user->children->flatMap->children->flatMap->results->sum('betNResults');
+
+                                        // $totalAmt = $poneWintAmt + $result + $betNResults; --}}
+
+                                    <td class="{{ $user->win_lose >= 0 ? 'text-success text-bold' : 'text-danger text-bold'}}">{{number_format($user->win_lose)}}</td>
 
                                     <td>
                                         @if ($user->status == 1)
@@ -100,7 +100,7 @@
                                             data-bs-toggle="tooltip" data-bs-original-title="Edit Agent">
                                             <i class="fas fa-edit text-info" style="font-size: 20px;"></i>
                                         </a>
-                                        <form class="d-inline" action="{{ route('admin.master.destroy', $user->id) }}"
+                                        {{-- <form class="d-inline" action="{{ route('admin.master.destroy', $user->id) }}"
                                             method="POST">
                                             @csrf
                                             @method('DELETE')
@@ -108,7 +108,7 @@
                                                 data-bs-original-title="Delete Banner">
                                                 <i class="fa fa-trash  text-danger" style="font-size: 20px;"></i>
                                             </button>
-                                        </form>
+                                        </form> --}}
                                     </td>
                                     <td>
                                         <a href="{{ route('admin.master.getCashIn', $user->id) }}"

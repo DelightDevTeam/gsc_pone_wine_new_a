@@ -39,13 +39,43 @@ class AgentController extends Controller
         }
 
         //kzt
-        $users = User::with(['roles', 'children.poneWinePlayer', 'children.results', 'children.betNResults'])
-            ->whereHas('roles', function ($query) {
-                $query->where('role_id', self::AGENT_ROLE);
-            })
-            ->where('agent_id', auth()->id())
-            ->orderBy('id', 'desc')
-            ->get();
+        // $users = User::with(['roles', 'children.poneWinePlayer', 'children.results', 'children.betNResults'])
+        //     ->whereHas('roles', function ($query) {
+        //         $query->where('role_id', self::AGENT_ROLE);
+        //     })
+        //     ->where('agent_id', auth()->id())
+        //     ->orderBy('id', 'desc')
+        //     ->get();
+
+        $agents = User::with(['roles','children.children.poneWinePlayer'])->whereHas('roles', fn($q) => $q->where('role_id', self::AGENT_ROLE))
+        ->select('id', 'name', 'user_name', 'phone', 'status','referral_code')
+        ->where('agent_id', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    $reportData = DB::table('users as a')
+        ->join('users as p', 'p.agent_id', '=', 'a.id')          // player
+        ->join('reports', 'reports.member_name', '=', 'p.user_name')
+        ->groupBy('a.id')
+        ->selectRaw('a.id as agent_id,SUM(reports.bet_amount) as total_bet_amount,SUM(reports.payout_amount) as total_payout_amount')
+        ->get()
+        ->keyBy('agent_id');
+
+        // dd($reportData);
+    $users = $agents->map(function ($agent) use ($reportData) {
+        $report = $reportData->get($agent->id);
+        $poneWineTotalAmt = $agent->children->flatMap->poneWinePlayer->sum('win_lose_amt');
+        return (object)[
+            'id' => $agent->id,
+            'name' => $agent->name,
+            'user_name' => $agent->user_name,
+            'referral_code' => $agent->referral_code,
+            'phone' => $agent->phone,
+            'balanceFloat' => $agent->balanceFloat,
+            'status' => $agent->status,
+            'win_lose' => (($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0)) + $poneWineTotalAmt,
+        ];
+    });
 
         return view('admin.agent.index', compact('users'));
     }
@@ -97,11 +127,16 @@ class AgentController extends Controller
         $agent->roles()->sync(self::AGENT_ROLE);
 
         if (isset($inputs['amount'])) {
-            app(WalletService::class)->transfer($master, $agent, $inputs['amount'],
-                TransactionName::CreditTransfer, [
+            app(WalletService::class)->transfer(
+                $master,
+                $agent,
+                $inputs['amount'],
+                TransactionName::CreditTransfer,
+                [
                     'old_balance' => $agent->balanceFloat,
                     'new_balance' => $agent->balanceFloat + $request->amount,
-                ]);
+                ]
+            );
         }
 
         return redirect()->route('admin.agent.index')
@@ -180,12 +215,17 @@ class AgentController extends Controller
                 throw new \Exception('You do not have enough balance to transfer!');
             }
 
-            app(WalletService::class)->transfer($admin, $agent, $request->amount,
-                TransactionName::CreditTransfer, [
+            app(WalletService::class)->transfer(
+                $admin,
+                $agent,
+                $request->amount,
+                TransactionName::CreditTransfer,
+                [
                     'note' => $request->note,
                     'old_balance' => $agent->balanceFloat,
                     'new_balance' => $agent->balanceFloat + $request->amount,
-                ]);
+                ]
+            );
 
             return redirect()->route('admin.agent.index')->with('success', 'Money fill request submitted successfully!');
         } catch (Exception $e) {
@@ -211,12 +251,17 @@ class AgentController extends Controller
             }
 
             // Transfer money
-            app(WalletService::class)->transfer($agent, $admin, $request->amount,
-                TransactionName::DebitTransfer, [
+            app(WalletService::class)->transfer(
+                $agent,
+                $admin,
+                $request->amount,
+                TransactionName::DebitTransfer,
+                [
                     'note' => $request->note,
                     'old_balance' => $agent->balanceFloat,
                     'new_balance' => $agent->balanceFloat - $request->amount,
-                ]);
+                ]
+            );
 
             return redirect()->back()->with('success', 'Money fill request submitted successfully!');
         } catch (Exception $e) {
@@ -248,7 +293,7 @@ class AgentController extends Controller
     {
         $randomNumber = mt_rand(10000000, 99999999);
 
-        return 'A'.$randomNumber;
+        return 'A' . $randomNumber;
     }
 
     public function banAgent($id): RedirectResponse
@@ -258,7 +303,7 @@ class AgentController extends Controller
 
         return redirect()->back()->with(
             'success',
-            'User '.($user->status == 1 ? 'activate' : 'inactive').' successfully'
+            'User ' . ($user->status == 1 ? 'activate' : 'inactive') . ' successfully'
         );
     }
 
@@ -473,20 +518,30 @@ class AgentController extends Controller
     // KS Upgrade RPIndex
     public function agentReportIndex($id)
     {
-        $user = User::with(['roles', 'children.poneWinePlayer', 'children.results', 'children.betNResults'])
-            ->find($id);
+        $agent = User::with([
+            'roles',
+            'children.poneWinePlayer',
+        ])->find($id);
 
-        $poneWineAmt = $user->children->flatMap->poneWinePlayer->sum('win_lose_amt');
-        $result = $user->children->flatMap->results->sum('net_win');
-        $betNResults = $user->children->flatMap->results->sum('betNResults');
+        $poneWineTotalAmt = $agent->children->flatMap->poneWinePlayer->sum('win_lose_amt');
 
-        $slotTotalAmt = $result + $betNResults;
+        $reportData = DB::table('users as a')
+            ->join('users as p', 'p.agent_id', '=', 'a.id')          // player
+            ->join('reports', 'reports.member_name', '=', 'p.user_name')
+            ->groupBy('a.id')
+            ->selectRaw('
+                a.id as agent_id,
+                SUM(reports.bet_amount) as total_bet_amount,
+                SUM(reports.payout_amount) as total_payout_amount
+            ')
+            ->get()
+            ->keyBy('agent_id');
 
-        $report = [
-            'poneWineTotalAmt' => $poneWineAmt,
-            'slotTotalAmt' => $slotTotalAmt,
+        $report = $reportData->get($agent->id);
+        $report =  (object)[
+            'win_lose' => ($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0),
+            'total_win_lose_pone_wine' =>  $poneWineTotalAmt ?? 0
         ];
-
         return view('admin.agent.report_index', compact('report'));
     }
 

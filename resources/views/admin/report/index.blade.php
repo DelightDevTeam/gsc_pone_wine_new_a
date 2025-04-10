@@ -76,14 +76,24 @@
                                                     $net_win = $row->total_payout_amount - $row->total_bet_amount;
                                                  ?>
                                             <td class="{{ $net_win >= 0 ? 'text-success' : 'text-danger' }}">
-                                                
+
                                                 {{ number_format($net_win, 2) }}</td>
                                             <td><a href="{{ route('admin.reports.details', $row->user_name) }}">Detail</a>
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
-                                
+                                <tfoot>
+                                    <th></th>
+                                    <th>Total Stake</th>
+                                    <th>{{$total['totalstake']}}</th>
+                                    <th>Total Bet Amt</th>
+                                    <th>{{$total['totalBetAmt']}}</th>
+                                    <th>Total Win Amt</th>
+                                    <th>{{$total['totalWinAmt']}}</th>
+
+                                </tfoot>
+
                             </table>
                         </div>
                         <!-- /.card-body -->

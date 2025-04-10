@@ -2,21 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\TransactionName;
-use App\Enums\UserType;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\OwnerRequest;
-use App\Http\Requests\TransferLogRequest;
-use App\Models\Admin\TransferLog;
-use App\Models\User;
-use App\Services\WalletService;
 use Exception;
+use Carbon\Carbon;
+use App\Models\User;
+use App\Enums\UserType;
 use Illuminate\Http\Request;
+use App\Enums\TransactionName;
+use App\Services\WalletService;
+use App\Models\Admin\TransferLog;
+use Illuminate\Support\Facades\DB;
+use App\Http\Requests\OwnerRequest;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
+use App\Http\Requests\TransferLogRequest;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -34,21 +36,60 @@ class OwnerController extends Controller
             Response::HTTP_FORBIDDEN,
             '403 Forbidden |You cannot  Access this page because you do not have permission'
         );
+        // //kzt
+        // $users = User::with([
+        //     'roles',
+        //     'children.children.children.children.children.poneWinePlayer',
+        //     'children.children.children.children.children.results',
+        //     'children.children.children.children.children.betNResults',
+        // ]
+        // )->whereHas('roles', function ($query) {
+        //     $query->where('role_id', self::OWNER_ROLE);
+        // })
+        //     ->where('agent_id', auth()->id())
+        //     ->orderBy('id', 'desc')
+        //     ->get();
         //kzt
-        $users = User::with([
-            'roles',
-            'children.children.children.children.children.poneWinePlayer',
-            'children.children.children.children.children.results',
-            'children.children.children.children.children.betNResults',
-        ]
-        )->whereHas('roles', function ($query) {
-            $query->where('role_id', self::OWNER_ROLE);
-        })
+
+        #KS
+        $owners = User::with(['roles','children.children.children.children.poneWinePlayer'])->whereHas('roles', fn($query) => $query->where('role_id', self::OWNER_ROLE))
+            ->select('id', 'name', 'user_name', 'phone', 'status')
             ->where('agent_id', auth()->id())
-            ->orderBy('id', 'desc')
+            ->orderBy('created_at','desc')
             ->get();
 
-        //kzt
+
+        $reportData = DB::table('users as o')
+            ->join('users as s', 's.agent_id', '=', 'o.id')          // senior
+            ->join('users as m', 'm.agent_id', '=', 's.id')          // master
+            ->join('users as a', 'a.agent_id', '=', 'm.id')          // agent
+            ->join('users as p', 'p.agent_id', '=', 'a.id')          // player
+            ->join('reports', 'reports.member_name', '=', 'p.user_name')
+            ->groupBy('o.id')
+            ->selectRaw('
+        o.id as owner_id,
+        SUM(reports.bet_amount) as total_bet_amount,
+        SUM(reports.payout_amount) as total_payout_amount
+    ')
+            ->get()
+            ->keyBy('owner_id');
+
+
+        $users = $owners->map(function ($owner) use ($reportData) {
+            $report = $reportData->get($owner->id);
+            $poneWineTotalAmt = $owner->children->flatMap->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
+            return (object)[
+                'id' => $owner->id,
+                'name' => $owner->name,
+                'user_name' => $owner->user_name,
+                'phone' => $owner->phone,
+                'balanceFloat' => $owner->balanceFloat,
+                'status' => $owner->status,
+                'win_lose' => (($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0)) + $poneWineTotalAmt,
+            ];
+        });
+
+  #KS
         return view('admin.owner.index', compact('users'));
     }
 
@@ -113,7 +154,7 @@ class OwnerController extends Controller
         if ($request->agent_logo) {
             $image = $request->file('agent_logo');
             $ext = $image->getClientOriginalExtension();
-            $filename = uniqid('logo').'.'.$ext; // Generate a unique filename
+            $filename = uniqid('logo') . '.' . $ext; // Generate a unique filename
             $image->move(public_path('assets/img/logo/'), $filename); // Save the file
             $userPrepare['agent_logo'] = $filename;
         }
@@ -153,7 +194,7 @@ class OwnerController extends Controller
     {
         $randomNumber = mt_rand(10000000, 99999999);
 
-        return 'O'.$randomNumber;
+        return 'O' . $randomNumber;
     }
 
     /**
@@ -312,7 +353,7 @@ class OwnerController extends Controller
 
         return redirect()->back()->with(
             'success',
-            'User '.($user->status == 1 ? 'activate' : 'inactive').' successfully'
+            'User ' . ($user->status == 1 ? 'activate' : 'inactive') . ' successfully'
         );
     }
 
@@ -336,12 +377,12 @@ class OwnerController extends Controller
         ]);
 
         if ($request->file('agent_logo')) {
-            if ($user->agent_logo && File::exists(public_path('assets/img/logo/'.$user->agent_logo))) {
-                File::delete(public_path('assets/img/logo/'.$user->agent_logo));
+            if ($user->agent_logo && File::exists(public_path('assets/img/logo/' . $user->agent_logo))) {
+                File::delete(public_path('assets/img/logo/' . $user->agent_logo));
             }
 
             $image = $request->file('agent_logo');
-            $filename = uniqid('logo').'.'.$image->getClientOriginalExtension();
+            $filename = uniqid('logo') . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('assets/img/logo/'), $filename);
             $user->agent_logo = $filename;
         } else {
@@ -412,22 +453,39 @@ class OwnerController extends Controller
     // KS Upgrade RPIndex
     public function ownerReportIndex($id)
     {
-        $user = User::with([
-            'roles',
-            'children.children.children.children.children.poneWinePlayer',
-            'children.children.children.children.children.results',
-            'children.children.children.children.children.betNResults',
-        ])->find($id);
+        $owner = User::with(['children.children.children.children.poneWinePlayer'])->where('id', $id)
+            ->select('id', 'name', 'user_name', 'phone', 'status')
+            ->first();
 
-        $poneWineAmt = $user->children->flatMap->children->flatMap->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
-        $result = $user->children->flatMap->children->flatMap->children->flatMap->children->flatMap->children->flatMap->results->sum('net_win');
-        $betNResults = $user->children->flatMap->children->flatMap->children->flatMap->children->flatMap->results->sum('betNResults');
+        $reportData = DB::table('users as o')
+            ->join('users as s', 's.agent_id', '=', 'o.id')          // senior
+            ->join('users as m', 'm.agent_id', '=', 's.id')          // master
+            ->join('users as a', 'a.agent_id', '=', 'm.id')          // agent
+            ->join('users as p', 'p.agent_id', '=', 'a.id')          // player
+            ->join('reports', 'reports.member_name', '=', 'p.user_name')
+            ->groupBy('o.id')
+            ->selectRaw('
+    o.id as owner_id,
+    SUM(reports.bet_amount) as total_bet_amount,
+    SUM(reports.payout_amount) as total_payout_amount
+')
+            ->get()
+            ->keyBy('owner_id');
 
-        $slotTotalAmt = $result + $betNResults;
 
-        $report = [
-            'poneWineTotalAmt' => $poneWineAmt,
-            'slotTotalAmt' => $slotTotalAmt,
+        $report = $reportData->get($owner->id);
+        $poneWineTotalAmt = $owner->children->flatMap->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
+
+        $report =  (object)[
+            'id' => $owner->id,
+            'name' => $owner->name,
+            'user_name' => $owner->user_name,
+            'phone' => $owner->phone,
+            'balanceFloat' => $owner->balanceFloat,
+            'status' => $owner->status,
+            'win_lose' => ($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0),
+            'total_win_lose_pone_wine'      =>      $poneWineTotalAmt
+
         ];
 
         return view('admin.owner.report_index', compact('report'));
