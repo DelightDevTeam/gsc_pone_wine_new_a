@@ -100,7 +100,8 @@
                                             data-bs-toggle="tooltip" data-bs-original-title="Edit Agent">
                                             <i class="fas fa-edit text-info" style="font-size: 20px;"></i>
                                         </a>
-                                        <form class="d-inline" action="{{ route('admin.senior.destroy', $user->id) }}"
+
+                                        {{-- <form class="d-inline" action="{{ route('admin.senior.destroy', $user->id) }}"
                                             method="POST">
                                             @csrf
                                             @method('DELETE')
@@ -108,7 +109,7 @@
                                                 data-bs-original-title="Delete Banner">
                                                 <i class="fa fa-trash  text-danger" style="font-size: 20px;"></i>
                                             </button>
-                                        </form>
+                                        </form> --}}
                                     </td>
                                     <td>
                                         <a href="{{ route('admin.senior.getCashIn', $user->id) }}"

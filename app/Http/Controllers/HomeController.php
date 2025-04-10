@@ -262,11 +262,11 @@ class HomeController extends Controller
 
     // update for user count #KS
     private function userCountGet($user) {
-        $totalSuper = $totalSenior = $totalMaster = $totalAgent = $totalPlayer = 0;
+        $totalSenior = $totalMaster = $totalAgent = $totalPlayer = 0;
 
         if ($user->hasRole('Owner')) {
 
-            $totalSenior = User::whereIn('agent_id', $user->id)->where('type', 40)->pluck('id');
+            $totalSenior = User::where('agent_id', $user->id)->where('type',40)->pluck('id');
             $totalMaster = User::whereIn('agent_id', $totalSenior)->where('type', 50)->pluck('id');
             $totalAgent = User::whereIn('agent_id', $totalMaster)->where('type', 60)->pluck('id');
             $totalPlayer = User::whereIn('agent_id', $totalAgent)->count();
