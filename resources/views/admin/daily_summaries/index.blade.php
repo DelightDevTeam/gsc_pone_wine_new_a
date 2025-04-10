@@ -65,22 +65,21 @@
                             <a href="{{ route('admin.daily_summaries.index') }}" class="btn btn-secondary">Clear</a>
                         </form> --}}
 
-                            <form method="POST" action="{{ route('admin.generate_daily_sammary') }}"
-                                class="date-filter-form">
-                                @csrf
-                                <div class="form-group">
-                                    <label for="start_date">Start Date</label>
-                                    <input type="date" name="start_date" id="start_date" class="form-control" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="end_date">End Date</label>
-                                    <input type="date" name="end_date" id="end_date" class="form-control" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Generate Summaries</button>
-                            </form>
+                        <form method="POST" action="{{ route('admin.generate_daily_sammary') }}" class="date-filter-form">
+    @csrf
+    <div class="form-group">
+        <label for="start_date">Start Date</label>
+        <input type="date" name="start_date" id="start_date" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="end_date">End Date</label>
+        <input type="date" name="end_date" id="end_date" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Generate Summaries</button>
+</form>
 
-                            <!-- Add this to display results -->
-                            <div id="generationResult" class="mt-3"></div>
+<!-- Add this to display results -->
+<div id="generationResult" class="mt-3"></div>
 
                             <table id="ponewineTable" class="table table-bordered table-hover">
                                 <thead>
@@ -131,17 +130,17 @@
 @endsection
 
 @section('script')
-    <script>
-        // Handle form submission with AJAX
-        $('.date-filter-form').on('submit', function(e) {
-            e.preventDefault();
-
-            $.ajax({
-                url: $(this).attr('action'),
-                method: 'POST',
-                data: $(this).serialize(),
-                success: function(response) {
-                    let html = `<div class="alert alert-success">
+<script>
+// Handle form submission with AJAX
+$('.date-filter-form').on('submit', function(e) {
+    e.preventDefault();
+    
+    $.ajax({
+        url: $(this).attr('action'),
+        method: 'POST',
+        data: $(this).serialize(),
+        success: function(response) {
+            let html = `<div class="alert alert-success">
                 <strong>Success!</strong> ${response.message}<br>
                 Processed dates: ${response.processed_dates.join(', ')}<br>
                 Total summaries created: ${response.total_summaries_created}
