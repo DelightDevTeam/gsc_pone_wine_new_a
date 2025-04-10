@@ -404,6 +404,15 @@
                                         </p>
                                     </a>
                                 </li>
+                                 <li class="nav-item menu-open">
+                                    <a href="{{ route('admin.transaction_cleanup.index') }}"
+                                        class="nav-link {{ Route::current()->getName() == 'admin.transaction_cleanup.index' ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>
+                                            Del PlayerTransaction
+                                        </p>
+                                    </a>
+                                </li>
                                 @endcan
                             </ul>
                         </li>

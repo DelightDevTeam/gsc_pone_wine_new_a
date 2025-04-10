@@ -207,4 +207,9 @@ Route::group([
     Route::post('/seamless-transactions/delete', [DailySummaryController::class, 'deleteByDateRange'])
         ->name('seamless_transactions.delete');
 
+    Route::get('/transaction-cleanup', [DailySummaryController::class, 'TransactionCleanupIndex'])
+        ->name('transaction_cleanup.index');
+    Route::post('/transaction-cleanup/delete', [DailySummaryController::class, 'delete'])
+        ->name('transaction_cleanup.delete');
+
 });
