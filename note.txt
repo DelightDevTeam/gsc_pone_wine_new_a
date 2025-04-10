@@ -10,7 +10,7 @@ sudo ln -s /etc/nginx/sites-available/ponewine20x.xyz /etc/nginx/sites-available
 php -r "file_put_contents('/var/www/gsc_pone_wine_new_a/storage/logs/laravel.log', '');"
 // created dev branch for kzt
 
-php artisan migrate:rollback --path=database/migrations/2022_10_12_000000_create_users_table.php
+php artisan migrate:rollback --path=database/migrations/2024_03_10_135549_create_reports_table.php
 // tail log
 
 tail -f /var/www/gsc_pone_wine_new_a/storage/logs/laravel.log
