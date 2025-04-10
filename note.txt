@@ -12,6 +12,8 @@ php -r "file_put_contents('/var/www/gsc_pone_wine_new_a/storage/logs/laravel.log
 
 php artisan migrate:rollback --path=database/migrations/2024_11_15_022950_create_daily_summaries_table.php
 
+// tail log
+
 tail -f /var/www/gsc_pone_wine_new_a/storage/logs/laravel.log
 
 sudo apt update && sudo apt install supervisor -y
