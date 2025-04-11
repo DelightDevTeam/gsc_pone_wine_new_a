@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Admin\Product;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,5 +23,6 @@ class Report extends Model
         return $this->belongsTo(User::class, 'agent_id');
     }
 
-    
+
+
 }

@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use Exception;
 use App\Models\User;
+use App\Models\Report;
 use App\Enums\UserType;
 use App\Models\PaymentType;
 use Illuminate\Http\Request;
 use App\Services\UserService;
 use App\Enums\TransactionName;
+use Illuminate\Support\Carbon;
 use App\Services\WalletService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -18,7 +20,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\TransferLogRequest;
-use App\Models\Report;
 use Symfony\Component\HttpFoundation\Response;
 
 class PlayerController extends Controller
@@ -368,10 +369,32 @@ class PlayerController extends Controller
     }
 
     public function playerReportIndex($id) {
-       $reportDetail = Report::where('member_name',$id)->paginate(20);
-       dd($reportDetail->toArray());
+    //    $reportDetail = Report::with('product')->where('member_name',$id)->paginate(20);
+    //    dd($reportDetail);
+    $startDate = request('start_date') ?? Carbon::today()->startOfDay()->toDateString();
+    $endDate = request('end_date') ?? Carbon::today()->endOfDay()->toDateString();
 
-        return view('admin.player.report_index',compact('reportDetail'));
+    // dd($startDate,$endDate);
+       $reportDetail = DB::table('reports')
+       ->join('products','products.code','=','reports.product_code')
+       ->select(
+        'reports.*', 'products.name as provider_name',
+        )
+       ->where('reports.member_name',$id)
+       ->whereBetween('reports.created_at',[$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+       ->paginate(20)
+       ->appends([
+        'start_date' => $startDate,
+        'end_date' => $endDate
+    ]);;
+
+    $total = [
+        'total_bet_amt' => $reportDetail->sum('bet_amount'),
+        'total_payout_amt'  => $reportDetail->sum('payout_amount'),
+        'total_net_win' => $reportDetail->sum('bet_amount')-$reportDetail->sum('payout_amount')
+    ];
+
+        return view('admin.player.report_index',compact('reportDetail','total'));
     }
 
 

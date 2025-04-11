@@ -59,8 +59,6 @@ class ReportController extends Controller
             ->groupBy('player_totals.user_id', 'player_totals.user_name', 'player_totals.total_win_lose_amt')
             ->get();
 
-
-
         return view('admin.report.ponewine.index', compact('reports'));
     }
 

@@ -48,42 +48,47 @@
                     <thead class="table-primary text-center">
                         <tr>
                             <th>Player ID</th>
-                            {{-- <th>Player Name</th> --}}
-                            <th>Game Code</th>
+                            <th>Provider</th>
                             <th>Game Name</th>
-                            {{-- <th>Game Provider</th> --}}
-                            <th>Total valid bet amount</th>
-                            <th>Total Bet Amount</th>
-                            <th>Total Payout Amount</th>
-                            <th>Total Net Win Amount</th>
-                            {{-- <th>BeforeBalance</th> --}}
-                            {{-- <th>AfterBalance</th> --}}
+                            <th>Game round id</th>
+                            <th>Bet Amounts</th>
+                            <th>Payout Amounts</th>
+                            <th>Net Win Amounts</th>
                             <th>Bet Time</th>
-                            {{-- <th>Result Time</th> --}}
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($reportDetail as $data)
-                            <tr class="text-center"  style="font-size: 14px !important;">
+                            <tr class="text-center "  style="font-size: 14px !important;">
                                 <td>{{ $data->member_name }}</td>
-                                {{-- <td>{{ $data->player_name }}</td> --}}
-                                 <td>{{ $data->game_round_id }}</td>
+                                <td>{{ $data->provider_name }}</td>
                                 <td>{{ $data->game_name }}</td>
-                                <td>{{ $data->valid_bet_amount }}</td>
-                                <td>{{ number_format($data->bet_amount, 2) }}</td>
+                                <td>{{ $data->game_round_id }}</td>
+                                {{-- <td>{{ $data->valid_bet_amount }}</td> --}}
+                                <td class="text-bold">{{ number_format($data->bet_amount, 2) }}</td>
                                 {{-- <td>{{ number_format($data->total_win_amount, 2) }}</td> --}}
-                                <td>{{ number_format($data->payout_amount, 2) }}</td>
-                                <td>{{ number_format( $data->bet_amount -$data->payout_amount, 2) }}</td>
-                                {{-- <td>{{ number_format($data->old_balance, 2) }}</td> --}}
-                                {{-- <td>{{ number_format($data->new_balance, 2) }}</td> --}}
-                                {{-- <td>{{ $data->result_time }}</td> --}}
-                                {{-- <td>{{ $data->bet_time }}</td> --}}
+                                <td class="text-bold">{{ number_format($data->payout_amount, 2) }}</td>
+                                <?php
+                                    $netWin =  number_format( $data->bet_amount -$data->payout_amount, 2);
+                                ?>
+                                <td class="{{$netWin >= 0 ? "text-success" : 'text-danger'}} text-bold">{{$netWin}}</td>
+
                                 <td>{{ \Carbon\Carbon::parse($data->created_at)->timezone('Asia/Yangon')->format('Y-m-d H:i:s') }}
                                 </td>
                             </tr>
 
                         @endforeach
                     </tbody>
+                    <tfoot class="text-center">
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>Total Amount</th>
+                        <th>{{ number_format($total['total_bet_amt'],2)}}</th>
+                        <th>{{ number_format($total['total_payout_amt'],2)}}</th>
+                        <th class="{{$total['total_net_win'] >= 0 ? 'text-success' : 'text-danger'}}">{{ number_format($total['total_net_win'],2)}}</th>
+                        <th></th>
+                    </tfoot>
                 </table>
                 <div class="text-center " style="font-weight: bold;">
                     {{$reportDetail->links()}}
