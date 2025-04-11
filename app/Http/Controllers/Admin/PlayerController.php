@@ -69,7 +69,7 @@ class PlayerController extends Controller
         ->get()
         ->keyBy('player_id');
 
-      
+
     $users = $players->map(function ($player) use ($reportData) {
         $report = $reportData->get($player->id);
         $poneWineTotalAmt = $player->children->flatMap->poneWinePlayer->sum('win_lose_amt');
@@ -369,6 +369,7 @@ class PlayerController extends Controller
 
     public function playerReportIndex($id) {
        $reportDetail = Report::where('member_name',$id)->paginate(20);
+       dd($reportDetail->toArray());
 
         return view('admin.player.report_index',compact('reportDetail'));
     }
