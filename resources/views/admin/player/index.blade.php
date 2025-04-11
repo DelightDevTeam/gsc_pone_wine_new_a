@@ -122,7 +122,7 @@
                                                             <i class="fas fa-right-left text-white me-1"></i>
                                                             transferLogs
                                                         </a>
-                                                        <a href="{{ route('admin.reports.player.index', $user->id) }}"
+                                                        <a href="{{ route('admin.player.report', $user->user_name) }}"
                                                             data-bs-toggle="tooltip" data-bs-original-title="Reports"
                                                             class="btn btn-info btn-sm ">
                                                             <i class="fas fa-right-left text-white me-1"></i>

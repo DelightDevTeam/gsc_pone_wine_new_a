@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\TransferLogRequest;
+use App\Models\Report;
 use Symfony\Component\HttpFoundation\Response;
 
 class PlayerController extends Controller
@@ -68,7 +69,7 @@ class PlayerController extends Controller
         ->get()
         ->keyBy('player_id');
 
-        // dd($reportData);
+      
     $users = $players->map(function ($player) use ($reportData) {
         $report = $reportData->get($player->id);
         $poneWineTotalAmt = $player->children->flatMap->poneWinePlayer->sum('win_lose_amt');
@@ -366,6 +367,13 @@ class PlayerController extends Controller
             ->with('username', $player->user_name);
     }
 
+    public function playerReportIndex($id) {
+       $reportDetail = Report::where('member_name',$id)->paginate(20);
+
+        return view('admin.player.report_index',compact('reportDetail'));
+    }
+
+
     private function generateRandomString()
     {
         $randomNumber = mt_rand(10000000, 99999999);
@@ -402,4 +410,6 @@ class PlayerController extends Controller
     {
         return $this->isExistingAgent(Auth::id());
     }
+
+
 }

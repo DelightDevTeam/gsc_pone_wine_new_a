@@ -187,11 +187,13 @@ Route::group([
 
     });
 
+    // Each Person Report
     Route::get('/owner-report/{id}', [OwnerController::class, 'ownerReportIndex'])->name('owner.report');
     Route::get('/super-report/{id}', [SuperController::class, 'superReportIndex'])->name('super.report');
     Route::get('/senior-report/{id}', [SeniorController::class, 'seniorReportIndex'])->name('senior.report');
     Route::get('/master-report/{id}', [MasterController::class, 'MasterReportIndex'])->name('master.report');
     Route::get('/agent-report/{id}', [AgentController::class, 'agentReportIndex'])->name('agent.report');
+    Route::get('/player-report/{id}', [PlayerController::class, 'playerReportIndex'])->name('player.report');
 
     // report backup
      Route::get('/resultsdata', [ResultArchiveController::class, 'getAllResults'])->name('backup_results.index');

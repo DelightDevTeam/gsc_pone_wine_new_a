@@ -63,6 +63,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+
                                     @foreach ($report as $row)
                                         <tr>
                                             <td>{{ $row->user_name }}</td>
