@@ -13,8 +13,15 @@ class ContactTypeSeeder extends Seeder
     public function run(): void
     {
         $types = [
-            ['name' => 'Telegram', 'image' => 'telegram.png'],
+            ['name' => 'Facebook', 'image' => 'facebook.png'],
+            ['name' => 'Email', 'image' => 'email.png'],
+            ['name' => 'Instagram', 'image' => 'instagram.png'],
+            ['name' => 'Line', 'image' => 'line.png'],
+            ['name' => 'Phone', 'image' => 'phone.png'],
             ['name' => 'Viber', 'image' => 'viber.png'],
+            ['name' => 'Telegram', 'image' => 'telegram.png'],
+            ['name' => 'WhatsApp', 'image' => 'whatsapp.png']
+
         ];
         foreach ($types as $type) {
             \App\Models\ContactType::create($type);

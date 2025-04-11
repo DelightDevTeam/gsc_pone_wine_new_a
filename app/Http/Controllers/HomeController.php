@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\TransactionName;
-use App\Enums\UserType;
-use App\Models\Admin\UserLog;
-use App\Models\Transaction;
-use App\Models\User;
-use App\Services\WalletService;
 use Exception;
+use Carbon\Carbon;
+use App\Models\User;
+use App\Enums\UserType;
+use App\Models\Transaction;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Admin\UserLog;
+use App\Enums\TransactionName;
+use App\Services\WalletService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class HomeController extends Controller
@@ -76,10 +77,10 @@ class HomeController extends Controller
             ->first();
 
         if ($role[0] === 'Agent') {
-            $todayWinlose = $this->getTodayWinlose();
-            $totalWinlose = $this->getTotalWinlose();
-            $todayDeposit = $this->fetchTotalAmount($user, 'deposit');
-            $todayWithdraw = $this->fetchTotalAmount($user, 'withdraw');
+            $todayWinlose = $this->getWinLose($user->id, true);
+            $totalWinlose = $this->getWinLose($user->id);
+            $todayDeposit = $this->fetchTotalTransactions($user->id, 'deposit');
+            $todayWithdraw = $this->fetchTotalTransactions($user->id, 'withdraw');
         }
 
         $playerBalance = DB::table('users')
@@ -89,13 +90,13 @@ class HomeController extends Controller
             })
             ->first();
 
-            $userCountGet =  $this->userCountGet($user);
+        $userCountGet =  $this->userCountGet($user);
 
 
-            $totalSenior = $userCountGet['totalSenior'] ?? 0;
-            $totalMaster = $userCountGet['totalMaster'] ?? 0;
-            $totalAgent = $userCountGet['totalAgent'] ?? 0;
-            $totalPlayer = $userCountGet['totalPlayer'] ?? 0;
+        $totalSenior = $userCountGet['totalSenior'] ?? 0;
+        $totalMaster = $userCountGet['totalMaster'] ?? 0;
+        $totalAgent = $userCountGet['totalAgent'] ?? 0;
+        $totalPlayer = $userCountGet['totalPlayer'] ?? 0;
 
         return view('admin.dashboard', compact(
             'user',
@@ -208,65 +209,73 @@ class HomeController extends Controller
         return view('admin.player_list', compact('users'));
     }
 
-    private function getTodayWinlose()
-    {
-        return User::withSum([
-            'poneWinePlayer as pone_wine_player_win_lose_amt' => function ($query) {
-                $query->whereDate('created_at', today());
-            },
-        ], 'win_lose_amt')
-            ->withSum([
-                'results as results_net_win' => function ($query) {
-                    $query->whereDate('created_at', today());
-                },
-            ], 'net_win')
-            ->withSum([
-                'betNResults as bet_n_results_net_win' => function ($query) {
-                    $query->whereDate('created_at', today());
-                },
-            ], 'net_win')
-            ->whereHas('roles', function ($query) {
-                $query->where('role_id', self::PLAYER_ROLE);
-            })
-            ->where('agent_id', Auth::id())
-            ->get()
-            ->sum(fn ($user) => ($user->pone_wine_player_win_lose_amt ?? 0)
-                + ($user->results_net_win ?? 0)
-                + ($user->bet_n_results_net_win ?? 0));
+    // private function getTodayWinlose()
+    // {
+    //     return User::withSum([
+    //         'poneWinePlayer as pone_wine_player_win_lose_amt' => function ($query) {
+    //             $query->whereDate('created_at', today());
+    //         },
+    //     ], 'win_lose_amt')
+    //         ->withSum([
+    //             'results as results_net_win' => function ($query) {
+    //                 $query->whereDate('created_at', today());
+    //             },
+    //         ], 'net_win')
+    //         ->withSum([
+    //             'betNResults as bet_n_results_net_win' => function ($query) {
+    //                 $query->whereDate('created_at', today());
+    //             },
+    //         ], 'net_win')
+    //         ->whereHas('roles', function ($query) {
+    //             $query->where('role_id', self::PLAYER_ROLE);
+    //         })
+    //         ->where('agent_id', Auth::id())
+    //         ->get()
+    //         ->sum(fn ($user) => ($user->pone_wine_player_win_lose_amt ?? 0)
+    //             + ($user->results_net_win ?? 0)
+    //             + ($user->bet_n_results_net_win ?? 0));
+    // }
+
+    // private function getTotalWinlose()
+    // {
+    //     return User::withSum('poneWinePlayer as pone_wine_player_win_lose_amt', 'win_lose_amt')
+    //         ->withSum('results as results_net_win', 'net_win')
+    //         ->withSum('betNResults as bet_n_results_net_win', 'net_win')
+    //         ->whereHas('roles', function ($query) {
+    //             $query->where('role_id', self::PLAYER_ROLE);
+    //         })
+    //         ->where('agent_id', Auth::id())
+    //         ->get()
+    //         ->sum(fn ($user) => $user->pone_wine_player_win_lose_amt
+    //             + $user->results_net_win
+    //             + $user->bet_n_results_net_win);
+    // }
+
+    // private function fetchTotalAmount(User $agent, string $type): float
+    // {
+    //     return $agent->transactions()
+    //         ->with('targetUser')
+    //         ->where('type', $type)
+    //         ->whereDate('created_at', today())
+    //         ->whereIn('name', ['credit_transfer', 'debit_transfer'])
+    //         ->sum('amount');
+    // }
+
+    // updated by KS
+    private function fetchTotalTransactions($id,string $type) {
+       $data= Transaction::where('target_user_id',$id)->where('type',$type)->where('confirmed',1)->whereDate('created_at', today())->sum('amount');
+
+       return  $data/100 ;
     }
 
-    private function getTotalWinlose()
+    // updated by KS
+    private function userCountGet($user)
     {
-        return User::withSum('poneWinePlayer as pone_wine_player_win_lose_amt', 'win_lose_amt')
-            ->withSum('results as results_net_win', 'net_win')
-            ->withSum('betNResults as bet_n_results_net_win', 'net_win')
-            ->whereHas('roles', function ($query) {
-                $query->where('role_id', self::PLAYER_ROLE);
-            })
-            ->where('agent_id', Auth::id())
-            ->get()
-            ->sum(fn ($user) => $user->pone_wine_player_win_lose_amt
-                + $user->results_net_win
-                + $user->bet_n_results_net_win);
-    }
-
-    private function fetchTotalAmount(User $agent, string $type): float
-    {
-        return $agent->transactions()
-            ->with('targetUser')
-            ->where('type', $type)
-            ->whereDate('created_at', today())
-            ->whereIn('name', ['credit_transfer', 'debit_transfer'])
-            ->sum('amount');
-    }
-
-    // update for user count #KS
-    private function userCountGet($user) {
         $totalSenior = $totalMaster = $totalAgent = $totalPlayer = 0;
 
         if ($user->hasRole('Owner')) {
 
-            $totalSenior = User::where('agent_id', $user->id)->where('type',40)->pluck('id');
+            $totalSenior = User::where('agent_id', $user->id)->where('type', 40)->pluck('id');
             $totalMaster = User::whereIn('agent_id', $totalSenior)->where('type', 50)->pluck('id');
             $totalAgent = User::whereIn('agent_id', $totalMaster)->where('type', 60)->pluck('id');
             $totalPlayer = User::whereIn('agent_id', $totalAgent)->count();
@@ -274,7 +283,7 @@ class HomeController extends Controller
             $totalSenior = $totalSenior->count();
             $totalMaster = $totalMaster->count();
             $totalAgent = $totalAgent->count();
-        }  elseif ($user->hasRole('Senior')) {
+        } elseif ($user->hasRole('Senior')) {
             $totalMaster = User::where('agent_id', $user->id)->where('type', 50)->pluck('id');
             $totalAgent = User::whereIn('agent_id', $totalMaster)->where('type', 60)->pluck('id');
             $totalPlayer = User::whereIn('agent_id', $totalAgent)->count();
@@ -291,5 +300,28 @@ class HomeController extends Controller
         }
 
         return compact('totalSenior', 'totalMaster', 'totalAgent', 'totalPlayer');
+    }
+
+    // updated by KS
+    private function getWinLose($id, $todayOnly = false)
+    {
+        $query = DB::table('reports')
+            ->join('pone_wine_player_bets', 'pone_wine_player_bets.user_name', '=', 'reports.member_name')
+            ->select(
+                DB::raw('SUM(reports.bet_amount) as total_bet_amount'),
+                DB::raw('SUM(reports.payout_amount) as total_payout_amount'),
+                DB::raw('SUM(pone_wine_player_bets.win_lose_amt) as total_pone_wine_net_win')
+            )
+            ->where('reports.agent_id', $id);
+
+        if ($todayOnly === true) {
+            $startDate =  Carbon::today()->startOfDay()->toDateString();
+            $endDate = Carbon::today()->endOfDay()->toDateString();
+
+            $query->whereBetween('reports.created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+        }
+
+        $reportDetail = $query->first();
+        return ($reportDetail->total_bet_amount - $reportDetail->total_payout_amount) + $reportDetail->total_pone_wine_net_win;
     }
 }

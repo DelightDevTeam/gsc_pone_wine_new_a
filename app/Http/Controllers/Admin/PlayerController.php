@@ -394,6 +394,8 @@ class PlayerController extends Controller
         'total_net_win' => $reportDetail->sum('bet_amount')-$reportDetail->sum('payout_amount')
     ];
 
+
+
         return view('admin.player.report_index',compact('reportDetail','total'));
     }
 
