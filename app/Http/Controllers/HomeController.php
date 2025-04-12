@@ -319,15 +319,11 @@ class HomeController extends Controller
             ->where('reports.agent_id', $id);
 
         if ($todayOnly == true) {
-            $startDate =  Carbon::today()->startOfDay()->toDateString();
-            $endDate = Carbon::today()->endOfDay()->toDateString();
-            $query->whereBetween('reports.created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+            $query->whereDate('reports.created_at', today());
         }
         Log::info('Query', [
             'agent_id' => $id,
             'today' => $todayOnly,
-            'start' => $startDate ?? null,
-            'end' => $endDate ?? null,
         ]);
         $reportDetail = $query->first();
         Log::info('report', (array) $reportDetail);
