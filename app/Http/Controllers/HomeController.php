@@ -319,14 +319,14 @@ class HomeController extends Controller
             ->where('reports.agent_id', $id);
 
         if ($todayOnly == true) {
-            $query->whereDate('reports.created_at', today());
+            $startDate =  Carbon::today()->startOfDay()->toDateString();
+            $endDate = Carbon::today()->endOfDay()->toDateString();
+            $query->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+            // dd(true);
         }
-        Log::info('Query', [
-            'agent_id' => $id,
-            'today' => $todayOnly,
-        ]);
+
         $reportDetail = $query->first();
-        Log::info('report', (array) $reportDetail);
+
         return ($reportDetail->total_bet_amount - $reportDetail->total_payout_amount) ;
     }
 }
