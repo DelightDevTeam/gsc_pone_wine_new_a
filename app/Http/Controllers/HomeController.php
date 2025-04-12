@@ -310,11 +310,11 @@ class HomeController extends Controller
     private function getWinLose($id, $todayOnly = false)
     {
         $query = DB::table('reports')
-            ->join('pone_wine_player_bets', 'pone_wine_player_bets.user_name', '=', 'reports.member_name')
+            // ->join('pone_wine_player_bets', 'pone_wine_player_bets.user_name', '=', 'reports.member_name')
             ->select(
                 DB::raw('SUM(reports.bet_amount) as total_bet_amount'),
                 DB::raw('SUM(reports.payout_amount) as total_payout_amount'),
-                DB::raw('SUM(pone_wine_player_bets.win_lose_amt) as total_pone_wine_net_win')
+                // DB::raw('SUM(pone_wine_player_bets.win_lose_amt) as total_pone_wine_net_win')
             )
             ->where('reports.agent_id', $id);
 
@@ -327,6 +327,6 @@ class HomeController extends Controller
 
         $reportDetail = $query->first();
         Log::info('report', (array) $reportDetail);
-        return ($reportDetail->total_bet_amount - $reportDetail->total_payout_amount) + $reportDetail->total_pone_wine_net_win;
+        return ($reportDetail->total_bet_amount - $reportDetail->total_payout_amount) ;
     }
 }
