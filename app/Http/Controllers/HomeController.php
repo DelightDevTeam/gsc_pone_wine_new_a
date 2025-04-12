@@ -12,7 +12,9 @@ use Illuminate\Http\Request;
 use App\Models\Admin\UserLog;
 use App\Enums\TransactionName;
 use App\Services\WalletService;
+use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -82,6 +84,8 @@ class HomeController extends Controller
             $todayDeposit = $this->fetchTotalTransactions($user->id, 'deposit');
             $todayWithdraw = $this->fetchTotalTransactions($user->id, 'withdraw');
         }
+
+        // dd($todayWinlose, $totalWinlose);
 
         $playerBalance = DB::table('users')
             ->join('wallets', 'wallets.holder_id', '=', 'users.id')
@@ -322,6 +326,7 @@ class HomeController extends Controller
         }
 
         $reportDetail = $query->first();
+        Log::info('report', (array) $reportDetail);
         return ($reportDetail->total_bet_amount - $reportDetail->total_payout_amount) + $reportDetail->total_pone_wine_net_win;
     }
 }
