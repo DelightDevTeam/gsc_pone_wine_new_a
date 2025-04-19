@@ -63,6 +63,7 @@ class HomeController extends Controller
 
     // Fetch data
     $banners = Banner::where('admin_id', $admin->agent_id)->get();
+    return $banners;
     $rewards = TopTenWithdraw::where('admin_id', $admin->agent_id)->get();
     $banner_text = BannerText::where('admin_id', $admin->agent_id)->latest()->first();
     $ads_banner = BannerAds::where('admin_id', $admin->agent_id)->latest()->first();
