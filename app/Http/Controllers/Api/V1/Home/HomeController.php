@@ -61,11 +61,11 @@ class HomeController extends Controller
     $admin = $user->parent->parent->parent->parent;
 
     // Fetch data
-    $banners = Banner::latest()->get();
-    $rewards = TopTenWithdraw::latest()->get();
-    $banner_text = BannerText::latest()->first();
-    $ads_banner = BannerAds::latest()->first();
-    $promotions = Promotion::latest()->get();
+    $banners = Banner::where('agent_id', $user->agent_id)->latest()->get();
+    $rewards = TopTenWithdraw::where('agent_id', $user->agent_id)->latest()->get();
+    $banner_text = BannerText::where('agent_id', $user->agent_id)->latest()->first();
+    $ads_banner = BannerAds::where('agent_id', $user->agent_id)->latest()->first();
+    $promotions = Promotion::where('agent_id', $user->agent_id)->latest()->get();
     $contacts = Contact::where('agent_id', $user->agent_id)->get();
 
     // Handle null values
