@@ -58,7 +58,7 @@ class HomeController extends Controller
     public function index()
 {
     $user = Auth::user();
-    $admin = $user->parent->parent->parent->parent;
+    $admin = $user->parent->parent;
 
     // Fetch data
     $banners = Banner::where('admin_id', $admin->agent_id)->get();
