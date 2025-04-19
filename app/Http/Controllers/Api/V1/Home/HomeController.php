@@ -58,7 +58,7 @@ class HomeController extends Controller
     public function index()
 {
     $user = Auth::user();
-    $admin = $user->parent->parent->parent;
+    $admin = $user->parent->parent->parent->parent;
     return $admin;
 
     // Fetch data
