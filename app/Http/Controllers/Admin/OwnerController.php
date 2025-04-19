@@ -52,10 +52,10 @@ class OwnerController extends Controller
         //kzt
 
         #KS
-        $owners = User::with(['roles','children.children.children.children.poneWinePlayer'])->whereHas('roles', fn($query) => $query->where('role_id', self::OWNER_ROLE))
+        $owners = User::with(['roles', 'children.children.children.children.poneWinePlayer'])->whereHas('roles', fn($query) => $query->where('role_id', self::OWNER_ROLE))
             ->select('id', 'name', 'user_name', 'phone', 'status')
             ->where('agent_id', auth()->id())
-            ->orderBy('created_at','desc')
+            ->orderBy('created_at', 'desc')
             ->get();
 
 
@@ -78,6 +78,8 @@ class OwnerController extends Controller
         $users = $owners->map(function ($owner) use ($reportData) {
             $report = $reportData->get($owner->id);
             $poneWineTotalAmt = $owner->children->flatMap->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
+            $winLose =  ($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0) ;
+
             return (object)[
                 'id' => $owner->id,
                 'name' => $owner->name,
@@ -85,11 +87,11 @@ class OwnerController extends Controller
                 'phone' => $owner->phone,
                 'balanceFloat' => $owner->balanceFloat,
                 'status' => $owner->status,
-                'win_lose' => (($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0)) + $poneWineTotalAmt,
+                'win_lose' => $winLose  + $poneWineTotalAmt,
             ];
         });
 
-  #KS
+        #KS
         return view('admin.owner.index', compact('users'));
     }
 
@@ -457,23 +459,44 @@ class OwnerController extends Controller
             ->select('id', 'name', 'user_name', 'phone', 'status')
             ->first();
 
+        //         $reportData = DB::table('users as o')
+        //             ->join('users as s', 's.agent_id', '=', 'o.id')
+        //             ->join('users as m', 'm.agent_id', '=', 's.id')
+        //             ->join('users as a', 'a.agent_id', '=', 'm.id')
+        //             ->join('users as p', 'p.agent_id', '=', 'a.id')
+        //             ->join('reports', 'reports.member_name', '=', 'p.user_name')
+        //             ->groupBy('o.id')
+        //             ->selectRaw([
+        //   'o.id as owner_id',
+        //             'p.user_name as player_name',
+        //             'reports.bet_amount',
+        //             'reports.payout_amount',
+        //             'reports.created_at',
+        // ])
+        //             ->get()
+        //             ->keyBy('owner_id');
+
         $reportData = DB::table('users as o')
             ->join('users as s', 's.agent_id', '=', 'o.id')          // senior
             ->join('users as m', 'm.agent_id', '=', 's.id')          // master
             ->join('users as a', 'a.agent_id', '=', 'm.id')          // agent
             ->join('users as p', 'p.agent_id', '=', 'a.id')          // player
             ->join('reports', 'reports.member_name', '=', 'p.user_name')
-            ->groupBy('o.id')
-            ->selectRaw('
-    o.id as owner_id,
-    SUM(reports.bet_amount) as total_bet_amount,
-    SUM(reports.payout_amount) as total_payout_amount
-')
-            ->get()
-            ->keyBy('owner_id');
+            ->where('o.id', $owner->id)
+            ->select([
+                'o.id as owner_id',
+                'p.user_name as player_name',
+                'reports.bet_amount',
+                'reports.payout_amount',
+                'reports.created_at',
+            ])
+            ->get();
 
+        $winLose = [];
+        foreach ($reportData as $item) {
+            $winLose = $item->payout_amount == 0 ? ($item->bet_amount - $item->bet_amount) : ($item->bet_amount - $item->payout_amount);
+        }
 
-        $report = $reportData->get($owner->id);
         $poneWineTotalAmt = $owner->children->flatMap->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
 
         $report =  (object)[
@@ -483,8 +506,8 @@ class OwnerController extends Controller
             'phone' => $owner->phone,
             'balanceFloat' => $owner->balanceFloat,
             'status' => $owner->status,
-            'win_lose' => ($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0),
-            'total_win_lose_pone_wine'      =>      $poneWineTotalAmt
+            'win_lose' => $winLose,
+            'total_win_lose_pone_wine'      =>   $poneWineTotalAmt
 
         ];
 
