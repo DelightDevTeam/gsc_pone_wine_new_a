@@ -22,6 +22,11 @@ class Banner extends Model
         return $this->belongsTo(User::class, 'agent_id'); // The admin that owns the banner
     }
 
+    public function scopeAdmin($query, $id)
+    {
+        return $query->where('admin_id', $id)->latest();
+    }    
+
     public function getImgUrlAttribute()
     {
         return asset('assets/img/banners/'.$this->image);
