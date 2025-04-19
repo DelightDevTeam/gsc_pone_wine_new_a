@@ -22,7 +22,7 @@ class Banner extends Model
         return $this->belongsTo(User::class, 'agent_id'); // The admin that owns the banner
     }
 
-    public function scopeAdmin($query, $id)
+    public function scopeGetAll($query, $id)
     {
         return $query->where('admin_id', $id)->latest();
     }    

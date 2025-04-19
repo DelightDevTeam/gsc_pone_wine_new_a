@@ -58,10 +58,10 @@ class HomeController extends Controller
     public function index()
 {
     $user = Auth::user();
-    $admin = $user->parent->parent->parent->parent;
+    $admin = $user->agent->admin->id;
 
     // Fetch data
-    $banners = Banner::admin($admin->id)->get();
+    $banners = Banner::getAll($admin)->get();
     $rewards = TopTenWithdraw::where('admin_id', $user->agent_id)->latest()->get();
     $banner_text = BannerText::where('admin_id', $user->agent_id)->latest()->first();
     $ads_banner = BannerAds::where('admin_id', $user->agent_id)->latest()->first();
