@@ -59,6 +59,7 @@ class HomeController extends Controller
 {
     $user = Auth::user();
     $admin = $user->parent->parent;
+    return $admin;
 
     // Fetch data
     $banners = Banner::where('admin_id', $admin->agent_id)->get();
