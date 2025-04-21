@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\ShanTransactionController;
 use App\Http\Controllers\Api\V1\TransactionController;
 use App\Http\Controllers\Api\V1\WagerController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\GetGameListController;
 use App\Http\Controllers\Api\V1\Webhook\Gsc\GetBalanceController;
 use App\Http\Controllers\Api\V1\Webhook\Gsc\PlaceBetController;
 use App\Http\Controllers\Api\V1\Webhook\Gsc\GameResultController;
@@ -36,6 +37,9 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/player-change-password', [AuthController::class, 'playerChangePassword']);
 Route::post('/logout', [AuthController::class, 'logout']);
+
+//get game list operator
+Route::post('/getgamelist', [GetGameListController::class, 'getGameList']);
 
 // sameless route
 Route::group(['prefix' => 'Seamless'], function () {
