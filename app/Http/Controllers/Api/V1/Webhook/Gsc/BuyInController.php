@@ -15,6 +15,7 @@ use App\Services\WalletService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+
 class BuyInController extends Controller
 {
     use UseWebhook;
@@ -68,6 +69,7 @@ class BuyInController extends Controller
                 Log::info('Returning duplicate transaction response', [
                     'transaction_id' => $request->getTransactions()[0]['TransactionID'] ?? 'unknown',
                 ]);
+
                 return SlotWebhookService::buildResponse(
                     SlotWebhookResponseCode::DuplicateTransaction,
                     $before_balance,

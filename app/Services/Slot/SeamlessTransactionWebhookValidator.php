@@ -9,7 +9,6 @@ use App\Models\Wager;
 use App\Services\Slot\Dto\RequestTransaction;
 use Illuminate\Support\Facades\Log;
 
-
 class SeamlessTransactionWebhookValidator
 {
     protected ?SeamlessTransaction $existingTransaction;
@@ -79,25 +78,25 @@ class SeamlessTransactionWebhookValidator
     // }
 
     protected function isValidSignature()
-{
-    $method = $this->request->getMethodName();
-    $operatorCode = $this->request->getOperatorCode();
-    $requestTime = $this->request->getRequestTime();
+    {
+        $method = $this->request->getMethodName();
+        $operatorCode = $this->request->getOperatorCode();
+        $requestTime = $this->request->getRequestTime();
 
-    $secretKey = $this->getSecretKey();
+        $secretKey = $this->getSecretKey();
 
-    $signature = md5($operatorCode.$requestTime.$method.$secretKey);
+        $signature = md5($operatorCode.$requestTime.$method.$secretKey);
 
-    if ($this->request->getSign() != $signature) {
-        Log::warning('Signature validation failed', [
-            'provided_sign' => $this->request->getSign(),
-            'expected_sign' => $signature,
-            'concatenated_string' => $operatorCode.$requestTime.$method.$secretKey,
-        ]);
+        if ($this->request->getSign() != $signature) {
+            Log::warning('Signature validation failed', [
+                'provided_sign' => $this->request->getSign(),
+                'expected_sign' => $signature,
+                'concatenated_string' => $operatorCode.$requestTime.$method.$secretKey,
+            ]);
+        }
+
+        return $this->request->getSign() == $signature;
     }
-
-    return $this->request->getSign() == $signature;
-}
 
     protected function isNewWager(RequestTransaction $transaction)
     {
@@ -128,10 +127,10 @@ class SeamlessTransactionWebhookValidator
     // }
 
     public function getExistingTransaction(RequestTransaction $transaction)
-{
-    // Remove caching to ensure we always check the database for the current TransactionID
-    return SeamlessTransaction::where('transaction_id', $transaction->TransactionID)->first();
-}
+    {
+        // Remove caching to ensure we always check the database for the current TransactionID
+        return SeamlessTransaction::where('transaction_id', $transaction->TransactionID)->first();
+    }
 
     public function getAfterBalance()
     {
@@ -161,10 +160,10 @@ class SeamlessTransactionWebhookValidator
         return $this->requestTransactions;
     }
 
-//     public function getRequestTransactions()
-// {
-//     return $this->requestTransactions ?? []; // Return an empty array if null
-// }
+    //     public function getRequestTransactions()
+    // {
+    //     return $this->requestTransactions ?? []; // Return an empty array if null
+    // }
 
     protected function getSecretKey()
     {

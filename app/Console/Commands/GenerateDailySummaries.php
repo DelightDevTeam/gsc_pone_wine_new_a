@@ -1,19 +1,21 @@
 <?php
+
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class GenerateDailySummaries extends Command
 {
     protected $signature = 'generate:daily-summaries {date?}';
+
     protected $description = 'Generate daily summaries from reports data';
 
     public function handle()
     {
         $date = $this->argument('date') ? Carbon::parse($this->argument('date')) : Carbon::yesterday();
-        
+
         $startOfDay = $date->copy()->startOfDay();
         $endOfDay = $date->copy()->endOfDay();
 
@@ -25,7 +27,7 @@ class GenerateDailySummaries extends Command
 
         // 3. Generate per-member summaries (with agent_id)
         $this->generateMemberSummaries($date, $startOfDay, $endOfDay);
-        
+
         $this->info("Daily summaries for {$date->format('Y-m-d')} generated successfully!");
     }
 
@@ -42,12 +44,12 @@ class GenerateDailySummaries extends Command
             )
             ->whereBetween('created_on', [$startOfDay, $endOfDay])
             ->first();
-            
+
         DB::table('daily_summaries')->updateOrInsert(
             [
                 'report_date' => $date->format('Y-m-d'),
                 'member_name' => null,
-                'agent_id' => null
+                'agent_id' => null,
             ],
             [
                 'total_valid_bet_amount' => $summary->total_valid_bet_amount ?? 0,
@@ -82,7 +84,7 @@ class GenerateDailySummaries extends Command
                 [
                     'report_date' => $date->format('Y-m-d'),
                     'member_name' => null,
-                    'agent_id' => $summary->agent_id
+                    'agent_id' => $summary->agent_id,
                 ],
                 [
                     'total_valid_bet_amount' => $summary->total_valid_bet_amount ?? 0,
@@ -119,7 +121,7 @@ class GenerateDailySummaries extends Command
                 [
                     'report_date' => $date->format('Y-m-d'),
                     'member_name' => $summary->member_name,
-                    'agent_id' => $summary->agent_id
+                    'agent_id' => $summary->agent_id,
                 ],
                 [
                     'total_valid_bet_amount' => $summary->total_valid_bet_amount ?? 0,

@@ -1,9 +1,9 @@
 <?php
+
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Game\LaunchGameController;
 use App\Http\Controllers\Api\V1\Home\HomeController;
 use Illuminate\Support\Facades\Route;
-
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -25,9 +25,3 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/hot_game_lists', [HomeController::class, 'hotGameLists']);
     Route::post('/launch_game', [LaunchGameController::class, 'launchGame']);
 });
-
-
-
-
-
-

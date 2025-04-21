@@ -20,7 +20,7 @@ class ContactTypeSeeder extends Seeder
             ['name' => 'Phone', 'image' => 'phone.png'],
             ['name' => 'Viber', 'image' => 'viber.png'],
             ['name' => 'Telegram', 'image' => 'telegram.png'],
-            ['name' => 'WhatsApp', 'image' => 'whatsapp.png']
+            ['name' => 'WhatsApp', 'image' => 'whatsapp.png'],
 
         ];
         foreach ($types as $type) {

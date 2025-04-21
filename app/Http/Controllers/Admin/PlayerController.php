@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Exception;
-use App\Models\User;
-use App\Models\Report;
-use App\Enums\UserType;
-use App\Models\PaymentType;
-use Illuminate\Http\Request;
-use App\Services\UserService;
 use App\Enums\TransactionName;
-use Illuminate\Support\Carbon;
-use App\Services\WalletService;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PlayerRequest;
+use App\Http\Requests\TransferLogRequest;
+use App\Models\PaymentType;
+use App\Models\Report;
+use App\Models\User;
+use App\Services\UserService;
+use App\Services\WalletService;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\TransferLogRequest;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class PlayerController extends Controller
@@ -56,34 +56,33 @@ class PlayerController extends Controller
         //     ->orderBy('id', 'desc')
         //     ->get();
 
-        $players = User::with(['roles','poneWinePlayer'])->whereHas('roles', fn($query) => $query->where('role_id', self::PLAYER_ROLE))
-        ->select('id', 'name', 'user_name', 'phone', 'status','referral_code')
-        ->where('agent_id', auth()->id())
-        ->orderBy('created_at', 'desc')
-        ->get();
+        $players = User::with(['roles', 'poneWinePlayer'])->whereHas('roles', fn ($query) => $query->where('role_id', self::PLAYER_ROLE))
+            ->select('id', 'name', 'user_name', 'phone', 'status', 'referral_code')
+            ->where('agent_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
 
+        $reportData = DB::table('users as p')
+            ->join('reports', 'reports.member_name', '=', 'p.user_name')
+            ->groupBy('p.id')
+            ->selectRaw('p.id as player_id,SUM(reports.bet_amount) as total_bet_amount,SUM(reports.payout_amount) as total_payout_amount')
+            ->get()
+            ->keyBy('player_id');
 
-    $reportData = DB::table('users as p')
-        ->join('reports', 'reports.member_name', '=', 'p.user_name')
-        ->groupBy('p.id')
-        ->selectRaw('p.id as player_id,SUM(reports.bet_amount) as total_bet_amount,SUM(reports.payout_amount) as total_payout_amount')
-        ->get()
-        ->keyBy('player_id');
+        $users = $players->map(function ($player) use ($reportData) {
+            $report = $reportData->get($player->id);
+            $poneWineTotalAmt = $player->children->flatMap->poneWinePlayer->sum('win_lose_amt');
 
-
-    $users = $players->map(function ($player) use ($reportData) {
-        $report = $reportData->get($player->id);
-        $poneWineTotalAmt = $player->children->flatMap->poneWinePlayer->sum('win_lose_amt');
-        return (object)[
-            'id' => $player->id,
-            'name' => $player->name,
-            'user_name' => $player->user_name,
-            'phone' => $player->phone,
-            'balanceFloat' => $player->balanceFloat,
-            'status' => $player->status,
-            'win_lose' => (($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0)) + $poneWineTotalAmt,
-        ];
-    });
+            return (object) [
+                'id' => $player->id,
+                'name' => $player->name,
+                'user_name' => $player->user_name,
+                'phone' => $player->phone,
+                'balanceFloat' => $player->balanceFloat,
+                'status' => $player->status,
+                'win_lose' => (($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0)) + $poneWineTotalAmt,
+            ];
+        });
 
         return view('admin.player.index', compact('users'));
     }
@@ -368,37 +367,35 @@ class PlayerController extends Controller
             ->with('username', $player->user_name);
     }
 
-    public function playerReportIndex($id) {
-    //    $reportDetail = Report::with('product')->where('member_name',$id)->paginate(20);
-    //    dd($reportDetail);
-    $startDate = request('start_date') ?? Carbon::today()->startOfDay()->toDateString();
-    $endDate = request('end_date') ?? Carbon::today()->endOfDay()->toDateString();
+    public function playerReportIndex($id)
+    {
+        //    $reportDetail = Report::with('product')->where('member_name',$id)->paginate(20);
+        //    dd($reportDetail);
+        $startDate = request('start_date') ?? Carbon::today()->startOfDay()->toDateString();
+        $endDate = request('end_date') ?? Carbon::today()->endOfDay()->toDateString();
 
-    // dd($startDate,$endDate);
-       $reportDetail = DB::table('reports')
-       ->join('products','products.code','=','reports.product_code')
-       ->select(
-        'reports.*', 'products.name as provider_name',
-        )
-       ->where('reports.member_name',$id)
-       ->whereBetween('reports.created_at',[$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
-       ->paginate(20)
-       ->appends([
-        'start_date' => $startDate,
-        'end_date' => $endDate
-    ]);;
+        // dd($startDate,$endDate);
+        $reportDetail = DB::table('reports')
+            ->join('products', 'products.code', '=', 'reports.product_code')
+            ->select(
+                'reports.*', 'products.name as provider_name',
+            )
+            ->where('reports.member_name', $id)
+            ->whereBetween('reports.created_at', [$startDate.' 00:00:00', $endDate.' 23:59:59'])
+            ->paginate(20)
+            ->appends([
+               'start_date' => $startDate,
+               'end_date' => $endDate,
+           ]);
 
-    $total = [
-        'total_bet_amt' => $reportDetail->sum('bet_amount'),
-        'total_payout_amt'  => $reportDetail->sum('payout_amount'),
-        'total_net_win' => $reportDetail->sum('bet_amount')-$reportDetail->sum('payout_amount')
-    ];
+        $total = [
+            'total_bet_amt' => $reportDetail->sum('bet_amount'),
+            'total_payout_amt' => $reportDetail->sum('payout_amount'),
+            'total_net_win' => $reportDetail->sum('bet_amount') - $reportDetail->sum('payout_amount'),
+        ];
 
-
-
-        return view('admin.player.report_index',compact('reportDetail','total'));
+        return view('admin.player.report_index', compact('reportDetail', 'total'));
     }
-
 
     private function generateRandomString()
     {
@@ -436,6 +433,4 @@ class PlayerController extends Controller
     {
         return $this->isExistingAgent(Auth::id());
     }
-
-
 }

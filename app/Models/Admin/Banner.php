@@ -25,7 +25,7 @@ class Banner extends Model
     public function scopeGetAll($query, $id)
     {
         return $query->where('admin_id', $id)->latest();
-    }    
+    }
 
     public function getImgUrlAttribute()
     {

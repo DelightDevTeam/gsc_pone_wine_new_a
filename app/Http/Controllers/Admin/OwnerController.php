@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Exception;
-use Carbon\Carbon;
-use App\Models\User;
-use App\Enums\UserType;
-use Illuminate\Http\Request;
 use App\Enums\TransactionName;
-use App\Services\WalletService;
-use App\Models\Admin\TransferLog;
-use Illuminate\Support\Facades\DB;
-use App\Http\Requests\OwnerRequest;
-use Illuminate\Support\Facades\Log;
+use App\Enums\UserType;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OwnerRequest;
+use App\Http\Requests\TransferLogRequest;
+use App\Models\Admin\TransferLog;
+use App\Models\User;
+use App\Services\WalletService;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\TransferLogRequest;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -51,13 +51,12 @@ class OwnerController extends Controller
         //     ->get();
         //kzt
 
-        #KS
-        $owners = User::with(['roles', 'children.children.children.children.poneWinePlayer'])->whereHas('roles', fn($query) => $query->where('role_id', self::OWNER_ROLE))
+        //KS
+        $owners = User::with(['roles', 'children.children.children.children.poneWinePlayer'])->whereHas('roles', fn ($query) => $query->where('role_id', self::OWNER_ROLE))
             ->select('id', 'name', 'user_name', 'phone', 'status')
             ->where('agent_id', auth()->id())
             ->orderBy('created_at', 'desc')
             ->get();
-
 
         $reportData = DB::table('users as o')
             ->join('users as s', 's.agent_id', '=', 'o.id')          // senior
@@ -74,24 +73,23 @@ class OwnerController extends Controller
             ->get()
             ->keyBy('owner_id');
 
-
         $users = $owners->map(function ($owner) use ($reportData) {
             $report = $reportData->get($owner->id);
             $poneWineTotalAmt = $owner->children->flatMap->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
-            $winLose =  ($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0) ;
+            $winLose = ($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0);
 
-            return (object)[
+            return (object) [
                 'id' => $owner->id,
                 'name' => $owner->name,
                 'user_name' => $owner->user_name,
                 'phone' => $owner->phone,
                 'balanceFloat' => $owner->balanceFloat,
                 'status' => $owner->status,
-                'win_lose' => $winLose  + $poneWineTotalAmt,
+                'win_lose' => $winLose + $poneWineTotalAmt,
             ];
         });
 
-        #KS
+        //KS
         return view('admin.owner.index', compact('users'));
     }
 
@@ -156,7 +154,7 @@ class OwnerController extends Controller
         if ($request->agent_logo) {
             $image = $request->file('agent_logo');
             $ext = $image->getClientOriginalExtension();
-            $filename = uniqid('logo') . '.' . $ext; // Generate a unique filename
+            $filename = uniqid('logo').'.'.$ext; // Generate a unique filename
             $image->move(public_path('assets/img/logo/'), $filename); // Save the file
             $userPrepare['agent_logo'] = $filename;
         }
@@ -196,7 +194,7 @@ class OwnerController extends Controller
     {
         $randomNumber = mt_rand(10000000, 99999999);
 
-        return 'O' . $randomNumber;
+        return 'O'.$randomNumber;
     }
 
     /**
@@ -355,7 +353,7 @@ class OwnerController extends Controller
 
         return redirect()->back()->with(
             'success',
-            'User ' . ($user->status == 1 ? 'activate' : 'inactive') . ' successfully'
+            'User '.($user->status == 1 ? 'activate' : 'inactive').' successfully'
         );
     }
 
@@ -379,12 +377,12 @@ class OwnerController extends Controller
         ]);
 
         if ($request->file('agent_logo')) {
-            if ($user->agent_logo && File::exists(public_path('assets/img/logo/' . $user->agent_logo))) {
-                File::delete(public_path('assets/img/logo/' . $user->agent_logo));
+            if ($user->agent_logo && File::exists(public_path('assets/img/logo/'.$user->agent_logo))) {
+                File::delete(public_path('assets/img/logo/'.$user->agent_logo));
             }
 
             $image = $request->file('agent_logo');
-            $filename = uniqid('logo') . '.' . $image->getClientOriginalExtension();
+            $filename = uniqid('logo').'.'.$image->getClientOriginalExtension();
             $image->move(public_path('assets/img/logo/'), $filename);
             $user->agent_logo = $filename;
         } else {
@@ -499,7 +497,7 @@ class OwnerController extends Controller
 
         $poneWineTotalAmt = $owner->children->flatMap->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
 
-        $report =  (object)[
+        $report = (object) [
             'id' => $owner->id,
             'name' => $owner->name,
             'user_name' => $owner->user_name,
@@ -507,7 +505,7 @@ class OwnerController extends Controller
             'balanceFloat' => $owner->balanceFloat,
             'status' => $owner->status,
             'win_lose' => $winLose,
-            'total_win_lose_pone_wine'      =>   $poneWineTotalAmt
+            'total_win_lose_pone_wine' => $poneWineTotalAmt,
 
         ];
 

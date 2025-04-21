@@ -66,9 +66,10 @@ class AdsVedioController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-     public function edit(string $id)
+    public function edit(string $id)
     {
         $video = AdsVedio::findOrFail($id);
+
         return view('admin.videos.edit', compact('video'));
     }
 
@@ -85,8 +86,8 @@ class AdsVedioController extends Controller
 
         if ($request->hasFile('video_ads')) {
             // Delete the old video file
-            if (file_exists(public_path('assets/img/video_ads/' . $video->video_ads))) {
-                unlink(public_path('assets/img/video_ads/' . $video->video_ads));
+            if (file_exists(public_path('assets/img/video_ads/'.$video->video_ads))) {
+                unlink(public_path('assets/img/video_ads/'.$video->video_ads));
             }
 
             // Upload the new video file
@@ -102,17 +103,16 @@ class AdsVedioController extends Controller
         return redirect()->route('admin.video-upload.index')->with('success', 'Video updated successfully!');
     }
 
-
     /**
      * Remove the specified resource from storage.
      */
-     public function destroy(string $id)
+    public function destroy(string $id)
     {
         $video = AdsVedio::findOrFail($id);
 
         // Delete the video file
-        if (file_exists(public_path('assets/img/video_ads/' . $video->video_ads))) {
-            unlink(public_path('assets/img/video_ads/' . $video->video_ads));
+        if (file_exists(public_path('assets/img/video_ads/'.$video->video_ads))) {
+            unlink(public_path('assets/img/video_ads/'.$video->video_ads));
         }
 
         $video->delete();

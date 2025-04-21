@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class WinnerTextController extends Controller
 {
-    
     public function index()
     {
         $texts = WinnerText::where('owner_id', auth()->id())->get(); // Fetch banners for the logged-in admin
@@ -53,7 +52,7 @@ class WinnerTextController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(WinnerText $winnerText)
-    {   
+    {
         return view('admin.winner_text.edit', compact('winnerText'));
     }
 

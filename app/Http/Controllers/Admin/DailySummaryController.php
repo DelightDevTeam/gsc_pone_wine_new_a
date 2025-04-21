@@ -2,121 +2,122 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Carbon\Carbon;
-use App\Models\User;
-use Carbon\CarbonPeriod;
-use Illuminate\Http\Request;
-use App\Models\Admin\DailySummary;
-use Illuminate\Support\Facades\DB;
-use App\Models\SeamlessTransaction;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Admin\DailySummary;
+use App\Models\SeamlessTransaction;
+use App\Models\User;
 use Bavix\Wallet\Models\Transaction;
 use Bavix\Wallet\Models\Wallet;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DailySummaryController extends Controller
 {
     protected const SUB_AGENT_ROlE = 'Sub Agent';
+
     protected const MAX_REPORTS_PER_DAY = 10000; // Maximum allowed reports per day
 
     public function index(Request $request)
-{
-    // Log the incoming request parameters
-    // Log::debug('Index method called', [
-    //     'request_params' => $request->all(),
-    //     'user_id' => Auth::id(),
-    // ]);
+    {
+        // Log the incoming request parameters
+        // Log::debug('Index method called', [
+        //     'request_params' => $request->all(),
+        //     'user_id' => Auth::id(),
+        // ]);
 
-    $agent = $this->getAgent() ?? Auth::user()->load('roles');
+        $agent = $this->getAgent() ?? Auth::user()->load('roles');
 
-    // Log the agent details
-    // Log::debug('Agent determined', [
-    //     'agent_id' => $agent->id,
-    //     'agent_roles' => $agent->roles->pluck('name')->toArray(),
-    // ]);
+        // Log the agent details
+        // Log::debug('Agent determined', [
+        //     'agent_id' => $agent->id,
+        //     'agent_roles' => $agent->roles->pluck('name')->toArray(),
+        // ]);
 
-    $hierarchy = [
-        'Owner' => ['Senior', 'Master', 'Agent'],
-        'Senior' => ['Master', 'Agent'],
-        'Master' => ['Agent'],
-    ];
+        $hierarchy = [
+            'Owner' => ['Senior', 'Master', 'Agent'],
+            'Senior' => ['Master', 'Agent'],
+            'Master' => ['Agent'],
+        ];
 
-    $query = DailySummary::query()
+        $query = DailySummary::query()
             ->join('users', 'users.user_name', '=', 'daily_summaries.member_name')
             ->select('daily_summaries.*');
-        
-    // Log the initial query state
-    // Log::debug('Initial query built', [
-    //     'sql' => $query->toSql(),
-    //     'bindings' => $query->getBindings(),
-    // ]);
 
-    // Set default date range if not provided (e.g., last 7 days)
-    $startDate = $request->filled('start_date') ? Carbon::parse($request->start_date) : Carbon::now()->subDays(7);
-    $endDate = $request->filled('end_date') ? Carbon::parse($request->end_date) : Carbon::now();
+        // Log the initial query state
+        // Log::debug('Initial query built', [
+        //     'sql' => $query->toSql(),
+        //     'bindings' => $query->getBindings(),
+        // ]);
 
-    $query->whereDate('report_date', '>=', $startDate);
-    // Log::debug('Applied start_date filter', [
-    //     'start_date' => $startDate->toDateString(),
-    //     'sql' => $query->toSql(),
-    //     'bindings' => $query->getBindings(),
-    // ]);
+        // Set default date range if not provided (e.g., last 7 days)
+        $startDate = $request->filled('start_date') ? Carbon::parse($request->start_date) : Carbon::now()->subDays(7);
+        $endDate = $request->filled('end_date') ? Carbon::parse($request->end_date) : Carbon::now();
 
-    $query->whereDate('report_date', '<=', $endDate);
-    // Log::debug('Applied end_date filter', [
-    //     'end_date' => $endDate->toDateString(),
-    //     'sql' => $query->toSql(),
-    //     'bindings' => $query->getBindings(),
-    // ]);
+        $query->whereDate('report_date', '>=', $startDate);
+        // Log::debug('Applied start_date filter', [
+        //     'start_date' => $startDate->toDateString(),
+        //     'sql' => $query->toSql(),
+        //     'bindings' => $query->getBindings(),
+        // ]);
 
-    if ($agent->hasRole('Senior Owner')) {
-        $result = $query;
-        Log::debug('Agent has Senior Owner role, no additional filtering applied');
-    } elseif ($agent->hasRole('Agent')) {
-        $agentChildrenIds = $agent->children->pluck('id')->toArray();
-        $result = $query->whereIn('users.id', $agentChildrenIds);
-        // Log::debug('Agent role detected, filtered by children IDs', [
-        //     'agent_children_ids' => $agentChildrenIds,
+        $query->whereDate('report_date', '<=', $endDate);
+        // Log::debug('Applied end_date filter', [
+        //     'end_date' => $endDate->toDateString(),
+        //     'sql' => $query->toSql(),
+        //     'bindings' => $query->getBindings(),
+        // ]);
+
+        if ($agent->hasRole('Senior Owner')) {
+            $result = $query;
+            Log::debug('Agent has Senior Owner role, no additional filtering applied');
+        } elseif ($agent->hasRole('Agent')) {
+            $agentChildrenIds = $agent->children->pluck('id')->toArray();
+            $result = $query->whereIn('users.id', $agentChildrenIds);
+            // Log::debug('Agent role detected, filtered by children IDs', [
+            //     'agent_children_ids' => $agentChildrenIds,
+            //     'sql' => $result->toSql(),
+            //     'bindings' => $result->getBindings(),
+            // ]);
+        } else {
+            $agentChildrenIds = $this->getAgentChildrenIds($agent, $hierarchy);
+            $result = $query->whereIn('users.id', $agentChildrenIds);
+            // Log::debug('Non-Senior Owner/Agent role, filtered by hierarchical children IDs', [
+            //     'agent_children_ids' => $agentChildrenIds,
+            //     'sql' => $result->toSql(),
+            //     'bindings' => $result->getBindings(),
+            // ]);
+        }
+
+        // Log before executing the query
+        // Log::debug('Executing final query for summaries', [
         //     'sql' => $result->toSql(),
         //     'bindings' => $result->getBindings(),
         // ]);
-    } else {
-        $agentChildrenIds = $this->getAgentChildrenIds($agent, $hierarchy);
-        $result = $query->whereIn('users.id', $agentChildrenIds);
-        // Log::debug('Non-Senior Owner/Agent role, filtered by hierarchical children IDs', [
-        //     'agent_children_ids' => $agentChildrenIds,
-        //     'sql' => $result->toSql(),
-        //     'bindings' => $result->getBindings(),
+
+        $summaries = $result->orderBy('report_date', 'desc')
+            ->paginate(10)
+            ->appends($request->only(['start_date', 'end_date'])); // Preserve query parameters in pagination links
+
+        // Log the pagination results
+        // Log::debug('Summaries retrieved', [
+        //     'total' => $summaries->total(),
+        //     'per_page' => $summaries->perPage(),
+        //     'current_page' => $summaries->currentPage(),
+        //     'summary_ids' => $summaries->pluck('id')->toArray(),
         // ]);
+
+        // // Log the pagination links to verify query parameters
+        // Log::debug('Pagination links generated', [
+        //     'links' => $summaries->toArray()['links'],
+        //     'appended_params' => $request->only(['start_date', 'end_date']),
+        // ]);
+
+        return view('admin.daily_summaries.index', compact('summaries'));
     }
-
-    // Log before executing the query
-    // Log::debug('Executing final query for summaries', [
-    //     'sql' => $result->toSql(),
-    //     'bindings' => $result->getBindings(),
-    // ]);
-
-    $summaries = $result->orderBy('report_date', 'desc')
-        ->paginate(10)
-        ->appends($request->only(['start_date', 'end_date'])); // Preserve query parameters in pagination links
-
-    // Log the pagination results
-    // Log::debug('Summaries retrieved', [
-    //     'total' => $summaries->total(),
-    //     'per_page' => $summaries->perPage(),
-    //     'current_page' => $summaries->currentPage(),
-    //     'summary_ids' => $summaries->pluck('id')->toArray(),
-    // ]);
-
-    // // Log the pagination links to verify query parameters
-    // Log::debug('Pagination links generated', [
-    //     'links' => $summaries->toArray()['links'],
-    //     'appended_params' => $request->only(['start_date', 'end_date']),
-    // ]);
-
-    return view('admin.daily_summaries.index', compact('summaries'));
-}
     // public function index(Request $request)
     // {
     //     $agent = $this->getAgent() ?? Auth::user();
@@ -130,7 +131,7 @@ class DailySummaryController extends Controller
     //     $query = DailySummary::query()
     //             ->join('users', 'users.user_name', '=', 'daily_summaries.member_name')
     //             ->select('daily_summaries.*');
-            
+
     //     // Apply date filters if provided
     //     if ($request->filled('start_date')) {
     //         $query->whereDate('report_date', '>=', Carbon::parse($request->start_date));
@@ -160,7 +161,7 @@ class DailySummaryController extends Controller
     {
         $request->validate([
             'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date'
+            'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
         $startDate = Carbon::parse($request->input('start_date'));
@@ -170,7 +171,7 @@ class DailySummaryController extends Controller
         if ($startDate->diffInDays($endDate) > 31) {
             return response()->json([
                 'success' => false,
-                'message' => 'Date range cannot exceed 31 days'
+                'message' => 'Date range cannot exceed 31 days',
             ], 400);
         }
 
@@ -186,7 +187,7 @@ class DailySummaryController extends Controller
             if ($averageReportsPerDay > self::MAX_REPORTS_PER_DAY) {
                 return response()->json([
                     'success' => false,
-                    'message' => "Too many reports to process. Average reports per day ($averageReportsPerDay) exceeds the limit of " . self::MAX_REPORTS_PER_DAY,
+                    'message' => "Too many reports to process. Average reports per day ($averageReportsPerDay) exceeds the limit of ".self::MAX_REPORTS_PER_DAY,
                     'total_reports' => $totalReports,
                     'days' => $daysInRange,
                 ], 400);
@@ -226,20 +227,20 @@ class DailySummaryController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => "Daily summaries generated successfully and reports deleted!",
+                'message' => 'Daily summaries generated successfully and reports deleted!',
                 'processed_dates' => $processedDates,
                 'total_summaries_created' => $totalSummaries,
                 'total_reports_deleted' => $totalReportsDeleted,
                 'date_range' => [
                     'start' => $startDate->format('Y-m-d'),
-                    'end' => $endDate->format('Y-m-d')
-                ]
+                    'end' => $endDate->format('Y-m-d'),
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to generate summaries or delete reports',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -269,7 +270,7 @@ class DailySummaryController extends Controller
             [
                 'report_date' => $date->format('Y-m-d'),
                 'member_name' => null,
-                'agent_id' => null
+                'agent_id' => null,
             ],
             [
                 'total_valid_bet_amount' => $summary->total_valid_bet_amount,
@@ -305,7 +306,7 @@ class DailySummaryController extends Controller
                 [
                     'report_date' => $date->format('Y-m-d'),
                     'member_name' => null,
-                    'agent_id' => $summary->agent_id
+                    'agent_id' => $summary->agent_id,
                 ],
                 [
                     'total_valid_bet_amount' => $summary->total_valid_bet_amount,
@@ -343,7 +344,7 @@ class DailySummaryController extends Controller
                 [
                     'report_date' => $date->format('Y-m-d'),
                     'member_name' => $summary->member_name,
-                    'agent_id' => $summary->agent_id
+                    'agent_id' => $summary->agent_id,
                 ],
                 [
                     'total_valid_bet_amount' => $summary->total_valid_bet_amount,
@@ -375,7 +376,7 @@ class DailySummaryController extends Controller
         foreach ($hierarchy as $role => $levels) {
             if ($agent->hasRole($role)) {
                 return collect([$agent])
-                    ->flatMap(fn($levelAgent) => $this->getChildrenRecursive($levelAgent, $levels))
+                    ->flatMap(fn ($levelAgent) => $this->getChildrenRecursive($levelAgent, $levels))
                     ->pluck('id')
                     ->toArray();
             }
@@ -455,7 +456,7 @@ class DailySummaryController extends Controller
             ]);
 
             return redirect()->route('admin.seamless_transactions.index')
-                ->with('error', 'Failed to delete transactions: ' . $e->getMessage());
+                ->with('error', 'Failed to delete transactions: '.$e->getMessage());
         }
     }
 
@@ -497,6 +498,7 @@ class DailySummaryController extends Controller
                     Log::info('No wallets found for user', [
                         'user_id' => $user->id,
                     ]);
+
                     return 0;
                 }
 
@@ -565,7 +567,7 @@ class DailySummaryController extends Controller
             ]);
 
             return redirect()->route('admin.transaction_cleanup.index')
-                ->with('error', 'Failed to delete transactions: ' . $e->getMessage());
+                ->with('error', 'Failed to delete transactions: '.$e->getMessage());
         }
     }
 
@@ -670,7 +672,7 @@ class DailySummaryController extends Controller
 //         $query = DailySummary::query()
 //                 ->join('users', 'users.user_name', '=', 'daily_summaries.member_name')
 //                 ->select('daily_summaries.*');
-            
+
 //         // Apply date filters if provided
 //         if ($request->filled('start_date')) {
 //             $query->whereDate('report_date', '>=', Carbon::parse($request->start_date));
@@ -919,7 +921,6 @@ class DailySummaryController extends Controller
 //     }
 // }
 
-
 // class DailySummaryController extends Controller
 // {
 //     protected const SUB_AGENT_ROlE = 'Sub Agent';
@@ -937,7 +938,7 @@ class DailySummaryController extends Controller
 //         $query = DailySummary::query()
 //                 ->join('users', 'users.user_name', '=', 'daily_summaries.member_name')
 //                 ->select('daily_summaries.*');
-            
+
 //         // Apply date filters if provided
 //         if ($request->filled('start_date')) {
 //             $query->whereDate('report_date', '>=', Carbon::parse($request->start_date));

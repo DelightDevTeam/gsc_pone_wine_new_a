@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin\BetresultBackup;
+use App\Models\BackupReport;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
-use App\Models\Admin\BetresultBackup;
-use App\Models\BackupReport;
 
 class ResultArchiveController extends Controller
 {
-
     public function getAllResults()
     {
         // Fetch results with pagination (10 results per page)
@@ -42,6 +41,7 @@ class ResultArchiveController extends Controller
                 ->chunk(1000, function ($oldResults) {
                     if ($oldResults->isEmpty()) {
                         session()->flash('info', 'No results found to archive.');
+
                         return;
                     }
 
@@ -74,7 +74,7 @@ class ResultArchiveController extends Controller
                                     })->toArray()
                                 );
                             } catch (\Exception $e) {
-                                Log::error('Error inserting results into result_backups: ' . $e->getMessage());
+                                Log::error('Error inserting results into result_backups: '.$e->getMessage());
                             }
                         });
 
@@ -86,7 +86,8 @@ class ResultArchiveController extends Controller
 
             return back()->with('success', 'Results have been archived and deleted successfully.');
         } catch (\Exception $e) {
-            Log::error('Error archiving results: ' . $e->getMessage());
+            Log::error('Error archiving results: '.$e->getMessage());
+
             return back()->with('error', 'An error occurred while archiving results. Check logs for details.');
         }
     }
@@ -99,7 +100,6 @@ class ResultArchiveController extends Controller
         // Pass the results to the view
         return view('report.backup.bet_n_result_index', compact('results'));
     }
-
 
     public function archiveBetNResults(Request $request)
     {
@@ -122,6 +122,7 @@ class ResultArchiveController extends Controller
                 ->chunk(1000, function ($oldResults) {
                     if ($oldResults->isEmpty()) {
                         session()->flash('info', 'No results found to archive.');
+
                         return;
                     }
 
@@ -155,7 +156,7 @@ class ResultArchiveController extends Controller
                                     })->toArray()
                                 );
                             } catch (\Exception $e) {
-                                Log::error('Error inserting results into result_backups: ' . $e->getMessage());
+                                Log::error('Error inserting results into result_backups: '.$e->getMessage());
                             }
                         });
 
@@ -167,11 +168,11 @@ class ResultArchiveController extends Controller
 
             return back()->with('success', 'Results have been archived and deleted successfully.');
         } catch (\Exception $e) {
-            Log::error('Error archiving results: ' . $e->getMessage());
+            Log::error('Error archiving results: '.$e->getMessage());
+
             return back()->with('error', 'An error occurred while archiving results. Check logs for details.');
         }
     }
-
 
     // public function archiveResults(Request $request)
     // {

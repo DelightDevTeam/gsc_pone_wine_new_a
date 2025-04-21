@@ -15,11 +15,11 @@ class GameTypeResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "id" => $this->id,
-            "name" => $this->name,
-            "code" => $this->code,
-            "img" => $this->img_url,
-            "providers" => $this->products->map(function($item) {
+            'id' => $this->id,
+            'name' => $this->name,
+            'code' => $this->code,
+            'img' => $this->img_url,
+            'providers' => $this->products->map(function ($item) {
                 return [
                     'id' => $item->id,
                     'code' => $item->code,

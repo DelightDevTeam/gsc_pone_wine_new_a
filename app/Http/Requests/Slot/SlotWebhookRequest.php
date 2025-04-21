@@ -49,30 +49,30 @@ class SlotWebhookRequest extends FormRequest
     // }
 
     public function rules(): array
-{
-    $transaction_rules = [];
+    {
+        $transaction_rules = [];
 
-    if (in_array($this->getMethodName(), ['getbalance', 'buyin', 'buyout'])) {
-        $transaction_rules['Transactions'] = ['nullable'];
-        if ($this->getMethodName() !== 'getbalance') {
-            $transaction_rules['Transaction'] = ['required'];
+        if (in_array($this->getMethodName(), ['getbalance', 'buyin', 'buyout'])) {
+            $transaction_rules['Transactions'] = ['nullable'];
+            if ($this->getMethodName() !== 'getbalance') {
+                $transaction_rules['Transaction'] = ['required'];
+            }
+        } else {
+            $transaction_rules['Transactions'] = ['required', 'array'];
+            // Add validation for each transaction in the Transactions array
+            $transaction_rules['Transactions.*.TransactionID'] = ['required', 'string'];
         }
-    } else {
-        $transaction_rules['Transactions'] = ['required', 'array'];
-        // Add validation for each transaction in the Transactions array
-        $transaction_rules['Transactions.*.TransactionID'] = ['required', 'string'];
-    }
 
-    return [
-        'MemberName' => ['required'],
-        'OperatorCode' => ['required'],
-        'ProductID' => ['required'],
-        'MessageID' => ['required'],
-        'RequestTime' => ['required'],
-        'Sign' => ['required'],
-        ...$transaction_rules,
-    ];
-}
+        return [
+            'MemberName' => ['required'],
+            'OperatorCode' => ['required'],
+            'ProductID' => ['required'],
+            'MessageID' => ['required'],
+            'RequestTime' => ['required'],
+            'Sign' => ['required'],
+            ...$transaction_rules,
+        ];
+    }
 
     public function check()
     {
@@ -109,8 +109,6 @@ class SlotWebhookRequest extends FormRequest
     {
         return strtolower(str($this->url())->explode('/')->last());
     }
-
-    
 
     public function getOperatorCode()
     {

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Carbon\Carbon;
-use App\Models\User;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Models\Admin\Product;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
@@ -91,12 +91,12 @@ class ReportController extends Controller
         $totalWinAmt = $report->sum('total_payout_amount');
 
         $total = [
-            'totalstake'  => $totalstake,
+            'totalstake' => $totalstake,
             'totalBetAmt' => $totalBetAmt,
-            'totalWinAmt' => $totalWinAmt
+            'totalWinAmt' => $totalWinAmt,
         ];
 
-        return view('admin.report.index', compact('report','total'));
+        return view('admin.report.index', compact('report', 'total'));
     }
 
     public function getReportDetails(Request $request, $playerId)
@@ -205,8 +205,8 @@ class ReportController extends Controller
             )
             ->leftjoin('users', 'reports.member_name', '=', 'users.user_name')
             ->leftJoin('wallets', 'wallets.holder_id', '=', 'users.id')
-            ->when($request->player_id, fn($query) => $query->where('users.user_name', $request->player_id))
-            ->whereBetween('reports.created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+            ->when($request->player_id, fn ($query) => $query->where('users.user_name', $request->player_id))
+            ->whereBetween('reports.created_at', [$startDate.' 00:00:00', $endDate.' 23:59:59']);
 
         if ($agent->hasRole('Senior Owner')) {
             $result = $query;
@@ -228,7 +228,7 @@ class ReportController extends Controller
         $query = DB::table('reports')
             ->join('products', 'products.code', '=', 'reports.product_code')
             ->where('member_name', $playerId)
-            ->when($request->product_id, fn($query) => $query->where('products.id', $request->product_id));
+            ->when($request->product_id, fn ($query) => $query->where('products.id', $request->product_id));
 
         return $query->orderBy('created_on', 'desc')->get();
     }
@@ -238,7 +238,7 @@ class ReportController extends Controller
         foreach ($hierarchy as $role => $levels) {
             if ($agent->hasRole($role)) {
                 return collect([$agent])
-                    ->flatMap(fn($levelAgent) => $this->getChildrenRecursive($levelAgent, $levels))
+                    ->flatMap(fn ($levelAgent) => $this->getChildrenRecursive($levelAgent, $levels))
                     ->pluck('id')
                     ->toArray();
             }

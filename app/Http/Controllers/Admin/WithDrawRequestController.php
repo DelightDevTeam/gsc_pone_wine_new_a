@@ -27,18 +27,17 @@ class WithDrawRequestController extends Controller
             ->when($request->filled('status') && $request->input('status') !== 'all', function ($query) use ($request) {
                 $query->where('status', $request->input('status'));
             })
-            ->whereBetween('created_at',[$startDate.' 00:00:00', $endDate.' 23:59:59'])
+            ->whereBetween('created_at', [$startDate.' 00:00:00', $endDate.' 23:59:59'])
             ->orderBy('id', 'desc')
             ->get();
 
-            if($request->input('status') !== 'all') {
-                $totalWithdraws = $withdraws->sum('amount');
-            } else {
-                $totalWithdraws = $withdraws->where('status',$request->input('status'))->sum('amount');
-            }
+        if ($request->input('status') !== 'all') {
+            $totalWithdraws = $withdraws->sum('amount');
+        } else {
+            $totalWithdraws = $withdraws->where('status', $request->input('status'))->sum('amount');
+        }
 
-
-        return view('admin.withdraw_request.index', compact('withdraws','totalWithdraws'));
+        return view('admin.withdraw_request.index', compact('withdraws', 'totalWithdraws'));
     }
 
     public function statusChangeIndex(Request $request, WithDrawRequest $withdraw)

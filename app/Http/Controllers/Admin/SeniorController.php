@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Exception;
-use App\Models\User;
-use App\Enums\UserType;
-use Illuminate\Http\Request;
 use App\Enums\TransactionName;
-use App\Services\WalletService;
-use App\Models\Admin\TransferLog;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SeniorRequest;
+use App\Http\Requests\TransferLogRequest;
+use App\Models\Admin\TransferLog;
+use App\Models\User;
+use App\Services\WalletService;
+use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\TransferLogRequest;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -43,7 +43,7 @@ class SeniorController extends Controller
         //     ->orderBy('id', 'desc')
         //     ->get();
 
-        $seniors = User::with(['roles','children.children.children.poneWinePlayer'])->whereHas('roles', fn($query) => $query->where('role_id', self::SENIOR_ROLE))
+        $seniors = User::with(['roles', 'children.children.children.poneWinePlayer'])->whereHas('roles', fn ($query) => $query->where('role_id', self::SENIOR_ROLE))
             ->select('id', 'name', 'user_name', 'phone', 'status')
             ->where('agent_id', auth()->id())
             ->orderBy('created_at', 'desc')
@@ -59,11 +59,12 @@ class SeniorController extends Controller
             ->get()
             ->keyBy('senior_id');
 
-// dd($reportData);
+        // dd($reportData);
         $users = $seniors->map(function ($senior) use ($reportData) {
             $report = $reportData->get($senior->id);
             $poneWineTotalAmt = $senior->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
-            return (object)[
+
+            return (object) [
                 'id' => $senior->id,
                 'name' => $senior->name,
                 'user_name' => $senior->user_name,
@@ -74,7 +75,7 @@ class SeniorController extends Controller
             ];
         });
 
-        #KS
+        //KS
 
         return view('admin.senior.index', compact('users'));
     }
@@ -150,7 +151,7 @@ class SeniorController extends Controller
     {
         $randomNumber = mt_rand(10000000, 99999999);
 
-        return 'S' . $randomNumber;
+        return 'S'.$randomNumber;
     }
 
     /**
@@ -328,7 +329,7 @@ class SeniorController extends Controller
 
         return redirect()->back()->with(
             'success',
-            'User ' . ($user->status == 1 ? 'activate' : 'inactive') . ' successfully'
+            'User '.($user->status == 1 ? 'activate' : 'inactive').' successfully'
         );
     }
 
@@ -402,12 +403,10 @@ class SeniorController extends Controller
             ->keyBy('senior_id');
 
         $report = $reportData->get($senior->id);
-       $report =  (object)[
-        'win_lose' => ($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0),
-        'total_win_lose_pone_wine' =>  $poneWineTotalAmt ?? 0
-    ];
-
-
+        $report = (object) [
+            'win_lose' => ($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0),
+            'total_win_lose_pone_wine' => $poneWineTotalAmt ?? 0,
+        ];
 
         return view('admin.senior.report_index', compact('report'));
     }

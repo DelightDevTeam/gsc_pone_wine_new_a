@@ -56,32 +56,32 @@ class HomeController extends Controller
     // }
 
     public function index()
-{
-    $user = Auth::user();
-    $admin = $user->parent->parent->parent->parent->id;
-    // return $admin;
+    {
+        $user = Auth::user();
+        $admin = $user->parent->parent->parent->parent->id;
+        // return $admin;
 
-    // Fetch data
-    $banners = Banner::where('admin_id', $admin)->get();
-    $rewards = TopTenWithdraw::where('admin_id', $admin)->get();
-    $banner_text = BannerText::where('admin_id', $admin)->latest()->first();
-    $ads_banner = BannerAds::where('admin_id', $admin)->latest()->first();
-    $promotions = Promotion::where('admin_id', $admin)->latest()->get();
-    $contacts = Contact::where('agent_id', $user->agent_id)->get();
+        // Fetch data
+        $banners = Banner::where('admin_id', $admin)->get();
+        $rewards = TopTenWithdraw::where('admin_id', $admin)->get();
+        $banner_text = BannerText::where('admin_id', $admin)->latest()->first();
+        $ads_banner = BannerAds::where('admin_id', $admin)->latest()->first();
+        $promotions = Promotion::where('admin_id', $admin)->latest()->get();
+        $contacts = Contact::where('agent_id', $user->agent_id)->get();
 
-    // Handle null values
-    $banner_text_resource = $banner_text ? new BannerTextResource($banner_text) : null;
-    $ads_banner_resource = $ads_banner ? new AdsBannerResource($ads_banner) : null;
+        // Handle null values
+        $banner_text_resource = $banner_text ? new BannerTextResource($banner_text) : null;
+        $ads_banner_resource = $ads_banner ? new AdsBannerResource($ads_banner) : null;
 
-    return $this->success([
-        "banners" => BannerResource::collection($banners),
-        "banner_text" => $banner_text_resource,
-        "ads_banner" => $ads_banner_resource,
-        "rewards" => $rewards,
-        "promotions" => PromotionResource::collection($promotions),
-        "contacts" => ContactResource::collection($contacts)
-    ]);
-}
+        return $this->success([
+            'banners' => BannerResource::collection($banners),
+            'banner_text' => $banner_text_resource,
+            'ads_banner' => $ads_banner_resource,
+            'rewards' => $rewards,
+            'promotions' => PromotionResource::collection($promotions),
+            'contacts' => ContactResource::collection($contacts),
+        ]);
+    }
 
     public function gameTypes()
     {
@@ -89,6 +89,7 @@ class HomeController extends Controller
             $query->where('status', 1);
             $query->orderBy('order', 'asc');
         }])->where('status', 1)->get();
+
         return $this->success(GameTypeResource::collection($types));
     }
 
@@ -98,9 +99,9 @@ class HomeController extends Controller
             $query->where('status', 1);
             $query->orderBy('order', 'asc');
         }])->where('id', $type)->where('status', 1)->first();
-        if($providers){
+        if ($providers) {
             return $this->success(new GameProviderResource($providers));
-        }else{
+        } else {
             return $this->error('', 'Providers Not Found', 404);
         }
     }
@@ -114,12 +115,14 @@ class HomeController extends Controller
             ->OrderBy('order', 'asc')
             ->where('name', 'like', '%'.$request->name.'%')
             ->get();
+
         return $this->success(GameListResource::collection($gameLists));
     }
 
     public function hotGameLists()
     {
         $hot_games = GameList::hotGame()->get();
+
         return $this->success(GameListResource::collection($hot_games));
     }
 
@@ -127,6 +130,7 @@ class HomeController extends Controller
     {
         $player = Auth::user();
         $data = Bank::where('agent_id', $player->agent_id)->get();
+
         return $this->success(BankResource::collection($data), 'Payment Type list successfule');
     }
 }

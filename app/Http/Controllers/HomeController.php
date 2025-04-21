@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Exception;
-use Carbon\Carbon;
-use App\Models\User;
-use App\Enums\UserType;
-use App\Models\Transaction;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use App\Models\Admin\UserLog;
 use App\Enums\TransactionName;
+use App\Enums\UserType;
+use App\Models\Admin\UserLog;
+use App\Models\Transaction;
+use App\Models\User;
 use App\Services\WalletService;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Log\Logger;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class HomeController extends Controller
@@ -94,8 +94,7 @@ class HomeController extends Controller
             })
             ->first();
 
-        $userCountGet =  $this->userCountGet($user);
-
+        $userCountGet = $this->userCountGet($user);
 
         $totalSenior = $userCountGet['totalSenior'] ?? 0;
         $totalMaster = $userCountGet['totalMaster'] ?? 0;
@@ -266,10 +265,11 @@ class HomeController extends Controller
     // }
 
     // updated by KS
-    private function fetchTotalTransactions($id,string $type) {
-       $data= Transaction::where('target_user_id',$id)->where('type',$type)->where('confirmed',1)->whereDate('created_at', today())->sum('amount');
+    private function fetchTotalTransactions($id, string $type)
+    {
+        $data = Transaction::where('target_user_id', $id)->where('type', $type)->where('confirmed', 1)->whereDate('created_at', today())->sum('amount');
 
-       return  $data/100 ;
+        return $data / 100;
     }
 
     // updated by KS
@@ -319,14 +319,14 @@ class HomeController extends Controller
             ->where('reports.agent_id', $id);
 
         if ($todayOnly == true) {
-            $startDate =  Carbon::today()->startOfDay()->toDateString();
+            $startDate = Carbon::today()->startOfDay()->toDateString();
             $endDate = Carbon::today()->endOfDay()->toDateString();
-            $query->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+            $query->whereBetween('created_at', [$startDate.' 00:00:00', $endDate.' 23:59:59']);
             // dd(true);
         }
 
         $reportDetail = $query->first();
 
-        return ($reportDetail->total_bet_amount - $reportDetail->total_payout_amount) ;
+        return $reportDetail->total_bet_amount - $reportDetail->total_payout_amount;
     }
 }

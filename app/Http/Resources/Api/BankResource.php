@@ -20,7 +20,7 @@ class BankResource extends JsonResource
             'no' => $this->account_number,
             'bank_id' => $this->payment_type_id,
             'bank_name' => $this->paymentType->name,
-            'img' => $this->paymentType->image_url
+            'img' => $this->paymentType->image_url,
         ];
     }
 }

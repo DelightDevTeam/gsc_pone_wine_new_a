@@ -108,129 +108,129 @@ trait OptimizedBettingProcess
     // }
 
     public function insertBets(array $bets, SeamlessEvent $event)
-{
-    $chunkSize = 50;
-    $batches = array_chunk($bets, $chunkSize);
+    {
+        $chunkSize = 50;
+        $batches = array_chunk($bets, $chunkSize);
 
-    $totalBets = count($bets);
-    $processedBets = 0;
+        $totalBets = count($bets);
+        $processedBets = 0;
 
-    foreach ($batches as $batch) {
-        $this->createWagerTransactions($batch, $event);
-        $processedBets += count($batch);
+        foreach ($batches as $batch) {
+            $this->createWagerTransactions($batch, $event);
+            $processedBets += count($batch);
+        }
+
+        return "$processedBets bets inserted successfully.";
     }
-
-    return "$processedBets bets inserted successfully.";
-}
 
     /**
      * Creates wagers in chunks and inserts them along with related seamless transactions.
      */
     public function createWagerTransactions(array $betBatch, SeamlessEvent $event)
-{
-    $retryCount = 0;
-    $maxRetries = 5;
-    $userId = $event->user_id;
-    $seamlessEventId = $event->id;
+    {
+        $retryCount = 0;
+        $maxRetries = 5;
+        $userId = $event->user_id;
+        $seamlessEventId = $event->id;
 
-    do {
-        try {
-            DB::transaction(function () use ($betBatch, $userId, $seamlessEventId) {
-                $seamlessTransactionsData = [];
+        do {
+            try {
+                DB::transaction(function () use ($betBatch, $userId, $seamlessEventId) {
+                    $seamlessTransactionsData = [];
 
-                foreach ($betBatch as $transaction) {
-                    if ($transaction instanceof \App\Services\Slot\Dto\RequestTransaction) {
-                        $transactionData = [
-                            'MemberID' => $transaction->MemberID,
-                            'Status' => $transaction->Status,
-                            'ProductID' => $transaction->ProductID,
-                            'GameType' => $transaction->GameType,
-                            'TransactionID' => $transaction->TransactionID,
-                            'WagerID' => $transaction->WagerID,
-                            'BetAmount' => $transaction->BetAmount,
-                            'TransactionAmount' => $transaction->TransactionAmount,
-                            'PayoutAmount' => $transaction->PayoutAmount,
-                            'ValidBetAmount' => $transaction->ValidBetAmount,
-                            'MemberName' => $transaction->MemberName,
-                        ];
-                    } else {
-                        throw new \Exception('Invalid transaction data format.');
+                    foreach ($betBatch as $transaction) {
+                        if ($transaction instanceof \App\Services\Slot\Dto\RequestTransaction) {
+                            $transactionData = [
+                                'MemberID' => $transaction->MemberID,
+                                'Status' => $transaction->Status,
+                                'ProductID' => $transaction->ProductID,
+                                'GameType' => $transaction->GameType,
+                                'TransactionID' => $transaction->TransactionID,
+                                'WagerID' => $transaction->WagerID,
+                                'BetAmount' => $transaction->BetAmount,
+                                'TransactionAmount' => $transaction->TransactionAmount,
+                                'PayoutAmount' => $transaction->PayoutAmount,
+                                'ValidBetAmount' => $transaction->ValidBetAmount,
+                                'MemberName' => $transaction->MemberName,
+                            ];
+                        } else {
+                            throw new \Exception('Invalid transaction data format.');
+                        }
+
+                        // Check for duplicate transaction_id
+                        $existingTransaction = SeamlessTransaction::where('transaction_id', $transactionData['TransactionID'])->first();
+                        if ($existingTransaction) {
+                            Log::warning('Duplicate transaction_id detected in createWagerTransactions', [
+                                'transaction_id' => $transactionData['TransactionID'],
+                                'wager_id' => $transactionData['WagerID'],
+                            ]);
+                            throw new \Exception('Duplicate transaction detected: '.$transactionData['TransactionID']);
+                        }
+
+                        // Remove lockForUpdate() to reduce contention
+                        $existingWager = SeamlessTransaction::where('wager_id', $transactionData['WagerID'])->first();
+
+                        $game_type = GameType::where('code', $transactionData['GameType'])->first();
+                        if (! $game_type) {
+                            throw new \Exception("Game type not found for {$transactionData['GameType']}");
+                        }
+
+                        $product = Product::where('code', $transactionData['ProductID'])->first();
+                        if (! $product) {
+                            throw new \Exception("Product not found for {$transactionData['ProductID']}");
+                        }
+
+                        $game_type_product = GameTypeProduct::where('game_type_id', $game_type->id)
+                            ->where('product_id', $product->id)
+                            ->first();
+
+                        $rate = $game_type_product->rate;
+
+                        if (! $existingWager) {
+                            $seamlessTransactionsData[] = [
+                                'user_id' => $userId,
+                                'wager_id' => $transactionData['WagerID'],
+                                'game_type_id' => $transactionData['GameType'],
+                                'product_id' => $transactionData['ProductID'],
+                                'transaction_id' => $transactionData['TransactionID'],
+                                'rate' => $rate,
+                                'transaction_amount' => $transactionData['TransactionAmount'],
+                                'payout_amount' => $transactionData['PayoutAmount'],
+                                'bet_amount' => $transactionData['BetAmount'],
+                                'valid_bet_amount' => $transactionData['ValidBetAmount'],
+                                'status' => $transactionData['Status'],
+                                'wager_status' => $transactionData['TransactionAmount'] > 0 ? WagerStatus::Win : WagerStatus::Lose,
+                                'seamless_event_id' => $seamlessEventId,
+                                'member_name' => $transactionData['MemberName'],
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ];
+                        }
                     }
 
-                    // Check for duplicate transaction_id
-                    $existingTransaction = SeamlessTransaction::where('transaction_id', $transactionData['TransactionID'])->first();
-                    if ($existingTransaction) {
-                        Log::warning('Duplicate transaction_id detected in createWagerTransactions', [
-                            'transaction_id' => $transactionData['TransactionID'],
-                            'wager_id' => $transactionData['WagerID'],
-                        ]);
-                        throw new \Exception('Duplicate transaction detected: ' . $transactionData['TransactionID']);
+                    if (! empty($seamlessTransactionsData)) {
+                        DB::table('seamless_transactions')->insert($seamlessTransactionsData);
                     }
+                });
 
-                    // Remove lockForUpdate() to reduce contention
-                    $existingWager = SeamlessTransaction::where('wager_id', $transactionData['WagerID'])->first();
+                break;
 
-                    $game_type = GameType::where('code', $transactionData['GameType'])->first();
-                    if (! $game_type) {
-                        throw new \Exception("Game type not found for {$transactionData['GameType']}");
+            } catch (\Illuminate\Database\QueryException $e) {
+                if ($e->getCode() === '40001') {
+                    $retryCount++;
+                    if ($retryCount >= $maxRetries) {
+                        throw $e;
                     }
-
-                    $product = Product::where('code', $transactionData['ProductID'])->first();
-                    if (! $product) {
-                        throw new \Exception("Product not found for {$transactionData['ProductID']}");
-                    }
-
-                    $game_type_product = GameTypeProduct::where('game_type_id', $game_type->id)
-                        ->where('product_id', $product->id)
-                        ->first();
-
-                    $rate = $game_type_product->rate;
-
-                    if (! $existingWager) {
-                        $seamlessTransactionsData[] = [
-                            'user_id' => $userId,
-                            'wager_id' => $transactionData['WagerID'],
-                            'game_type_id' => $transactionData['GameType'],
-                            'product_id' => $transactionData['ProductID'],
-                            'transaction_id' => $transactionData['TransactionID'],
-                            'rate' => $rate,
-                            'transaction_amount' => $transactionData['TransactionAmount'],
-                            'payout_amount' => $transactionData['PayoutAmount'],
-                            'bet_amount' => $transactionData['BetAmount'],
-                            'valid_bet_amount' => $transactionData['ValidBetAmount'],
-                            'status' => $transactionData['Status'],
-                            'wager_status' => $transactionData['TransactionAmount'] > 0 ? WagerStatus::Win : WagerStatus::Lose,
-                            'seamless_event_id' => $seamlessEventId,
-                            'member_name' => $transactionData['MemberName'],
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ];
-                    }
-                }
-
-                if (! empty($seamlessTransactionsData)) {
-                    DB::table('seamless_transactions')->insert($seamlessTransactionsData);
-                }
-            });
-
-            break;
-
-        } catch (\Illuminate\Database\QueryException $e) {
-            if ($e->getCode() === '40001') {
-                $retryCount++;
-                if ($retryCount >= $maxRetries) {
+                    sleep(pow(2, $retryCount)); // Exponential backoff
+                } else {
                     throw $e;
                 }
-                sleep(pow(2, $retryCount)); // Exponential backoff
-            } else {
+            } catch (\Exception $e) {
                 throw $e;
             }
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    } while ($retryCount < $maxRetries);
-}
-     // staging test pass but this method found deadlock
+        } while ($retryCount < $maxRetries);
+    }
+    // staging test pass but this method found deadlock
     // public function createWagerTransactions(array $betBatch, SeamlessEvent $event)
     // {
     //     $retryCount = 0;
@@ -312,7 +312,6 @@ trait OptimizedBettingProcess
     //                         ];
     //                     }
     //                 }
-
 
     //                 if (! empty($seamlessTransactionsData)) {
     //                     DB::table('seamless_transactions')->insert($seamlessTransactionsData); // Insert transactions in bulk

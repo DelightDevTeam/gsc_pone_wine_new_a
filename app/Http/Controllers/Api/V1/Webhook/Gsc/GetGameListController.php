@@ -44,7 +44,7 @@ class GetGameListController extends Controller
             ];
 
             // Generate the signature: MD5(OperatorCode + RequestTime + MethodName + SecretKey)
-            $signatureString = $operatorCode . $requestTime . $methodName . $secretKey;
+            $signatureString = $operatorCode.$requestTime.$methodName.$secretKey;
             $sign = md5($signatureString);
 
             // Add the signature to the parameters
@@ -56,12 +56,14 @@ class GetGameListController extends Controller
             // Check if the request was successful
             if ($response->successful()) {
                 $responseData = $response->json();
+
                 return response()->json($responseData, 200);
             } else {
                 Log::error('GetGameList API request failed', [
                     'status' => $response->status(),
                     'response' => $response->body(),
                 ]);
+
                 return response()->json([
                     'error' => 'Failed to retrieve game list',
                 ], $response->status());
@@ -71,6 +73,7 @@ class GetGameListController extends Controller
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
+
             return response()->json([
                 'error' => 'An unexpected error occurred',
             ], 500);

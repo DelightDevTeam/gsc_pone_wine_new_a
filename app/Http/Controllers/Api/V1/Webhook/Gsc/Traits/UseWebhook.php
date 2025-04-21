@@ -10,8 +10,8 @@ use App\Models\Admin\GameType;
 use App\Models\Admin\GameTypeProduct;
 use App\Models\Admin\Product;
 use App\Models\SeamlessEvent;
-use App\Models\User;
 use App\Models\SeamlessTransaction;
+use App\Models\User;
 use App\Services\Slot\Dto\RequestTransaction;
 use App\Services\WalletService;
 use Exception;
@@ -23,7 +23,6 @@ use Illuminate\Support\Facades\Log;
 
 trait UseWebhook
 {
-    
     public function createEvent(WebhookRequest $request): SeamlessEvent
     {
         return SeamlessEvent::create([
@@ -49,7 +48,7 @@ trait UseWebhook
                     'transaction_id' => $transaction->TransactionID,
                     'wager_id' => $transaction->WagerID,
                 ]);
-                throw new \Exception('Duplicate transaction detected: ' . $transaction->TransactionID);
+                throw new \Exception('Duplicate transaction detected: '.$transaction->TransactionID);
             }
 
             // Assuming rate is fetched or set elsewhere; for now, we'll set a default rate

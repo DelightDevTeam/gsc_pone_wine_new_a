@@ -53,6 +53,7 @@ class SlotWebhookValidator
                     'transaction_id' => $requestTransaction->TransactionID,
                 ]);
                 $this->hasDuplicateTransaction = true;
+
                 return $this->response(SlotWebhookResponseCode::DuplicateTransaction);
             }
 
@@ -77,6 +78,7 @@ class SlotWebhookValidator
         $method = $this->request->getMethodName();
         $secretKey = $this->getSecretKey();
         $signature = md5($operatorCode.$requestTime.$method.$secretKey);
+
         return $this->request->getSign() == $signature;
     }
 
@@ -103,6 +105,7 @@ class SlotWebhookValidator
                 'existing_id' => $existing->id,
             ]);
         }
+
         return ! $existing;
     }
 

@@ -47,35 +47,36 @@ class AgentController extends Controller
         //     ->orderBy('id', 'desc')
         //     ->get();
 
-        $agents = User::with(['roles','children.children.poneWinePlayer'])->whereHas('roles', fn($q) => $q->where('role_id', self::AGENT_ROLE))
-        ->select('id', 'name', 'user_name', 'phone', 'status','referral_code')
-        ->where('agent_id', auth()->id())
-        ->orderBy('created_at', 'desc')
-        ->get();
+        $agents = User::with(['roles', 'children.children.poneWinePlayer'])->whereHas('roles', fn ($q) => $q->where('role_id', self::AGENT_ROLE))
+            ->select('id', 'name', 'user_name', 'phone', 'status', 'referral_code')
+            ->where('agent_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    $reportData = DB::table('users as a')
-        ->join('users as p', 'p.agent_id', '=', 'a.id')          // player
-        ->join('reports', 'reports.member_name', '=', 'p.user_name')
-        ->groupBy('a.id')
-        ->selectRaw('a.id as agent_id,SUM(reports.bet_amount) as total_bet_amount,SUM(reports.payout_amount) as total_payout_amount')
-        ->get()
-        ->keyBy('agent_id');
+        $reportData = DB::table('users as a')
+            ->join('users as p', 'p.agent_id', '=', 'a.id')          // player
+            ->join('reports', 'reports.member_name', '=', 'p.user_name')
+            ->groupBy('a.id')
+            ->selectRaw('a.id as agent_id,SUM(reports.bet_amount) as total_bet_amount,SUM(reports.payout_amount) as total_payout_amount')
+            ->get()
+            ->keyBy('agent_id');
 
         // dd($reportData);
-    $users = $agents->map(function ($agent) use ($reportData) {
-        $report = $reportData->get($agent->id);
-        $poneWineTotalAmt = $agent->children->flatMap->poneWinePlayer->sum('win_lose_amt');
-        return (object)[
-            'id' => $agent->id,
-            'name' => $agent->name,
-            'user_name' => $agent->user_name,
-            'referral_code' => $agent->referral_code,
-            'phone' => $agent->phone,
-            'balanceFloat' => $agent->balanceFloat,
-            'status' => $agent->status,
-            'win_lose' => (($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0)) + $poneWineTotalAmt,
-        ];
-    });
+        $users = $agents->map(function ($agent) use ($reportData) {
+            $report = $reportData->get($agent->id);
+            $poneWineTotalAmt = $agent->children->flatMap->poneWinePlayer->sum('win_lose_amt');
+
+            return (object) [
+                'id' => $agent->id,
+                'name' => $agent->name,
+                'user_name' => $agent->user_name,
+                'referral_code' => $agent->referral_code,
+                'phone' => $agent->phone,
+                'balanceFloat' => $agent->balanceFloat,
+                'status' => $agent->status,
+                'win_lose' => (($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0)) + $poneWineTotalAmt,
+            ];
+        });
 
         return view('admin.agent.index', compact('users'));
     }
@@ -293,7 +294,7 @@ class AgentController extends Controller
     {
         $randomNumber = mt_rand(10000000, 99999999);
 
-        return 'A' . $randomNumber;
+        return 'A'.$randomNumber;
     }
 
     public function banAgent($id): RedirectResponse
@@ -303,7 +304,7 @@ class AgentController extends Controller
 
         return redirect()->back()->with(
             'success',
-            'User ' . ($user->status == 1 ? 'activate' : 'inactive') . ' successfully'
+            'User '.($user->status == 1 ? 'activate' : 'inactive').' successfully'
         );
     }
 
@@ -538,10 +539,11 @@ class AgentController extends Controller
             ->keyBy('agent_id');
 
         $report = $reportData->get($agent->id);
-        $report =  (object)[
+        $report = (object) [
             'win_lose' => ($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0),
-            'total_win_lose_pone_wine' =>  $poneWineTotalAmt ?? 0
+            'total_win_lose_pone_wine' => $poneWineTotalAmt ?? 0,
         ];
+
         return view('admin.agent.report_index', compact('report'));
     }
 
@@ -557,6 +559,4 @@ class AgentController extends Controller
 
         return $randomString;
     }
-
-
 }

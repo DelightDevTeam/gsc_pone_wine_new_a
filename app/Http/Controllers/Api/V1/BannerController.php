@@ -89,6 +89,4 @@ class BannerController extends Controller
 
         return $this->success($data, 'AdsVedio retrieved successfully.');
     }
-
-    
 }

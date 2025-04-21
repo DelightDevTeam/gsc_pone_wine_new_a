@@ -25,7 +25,7 @@ class WagerController extends Controller
         };
 
         $user = auth()->user();
-        
+
         $transactions = DB::table('reports')
             ->select(
                 DB::raw('MIN(reports.updated_at) as from_date'),
@@ -36,7 +36,7 @@ class WagerController extends Controller
                 'products.name as provider_name',
                 'products.code as code'
             )
-            ->join('products', 'products.code', '=' , 'reports.product_code')
+            ->join('products', 'products.code', '=', 'reports.product_code')
             ->where('reports.member_name', $user->user_name)
             ->whereBetween('reports.updated_at', [$from, $to])
             ->groupBy('products.code', 'products.name')

@@ -25,7 +25,7 @@ class RollbackController extends Controller
     public function rollback(WebhookRequest $request)
     {
         $event = $this->createEvent($request);
-        
+
         DB::beginTransaction();
         try {
             $validator = $request->check();
@@ -35,7 +35,6 @@ class RollbackController extends Controller
             }
 
             $before_balance = $request->getMember()->balanceFloat;
-
 
             $seamless_transactions = $this->createWagerTransactions($validator->getRequestTransactions(), $event, true);
 

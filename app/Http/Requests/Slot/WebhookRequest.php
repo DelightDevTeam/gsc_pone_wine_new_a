@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
 
 class WebhookRequest extends FormRequest
 {
-   private ?User $member;
+    private ?User $member;
 
     /**
      * Determine if the user is authorized to make this request.
@@ -100,19 +100,19 @@ class WebhookRequest extends FormRequest
     }
 
     public function getTransactions()
-{
-    $transactions = $this->get('Transactions', []);
+    {
+        $transactions = $this->get('Transactions', []);
 
-    if ($transactions) {
-        return $transactions;
+        if ($transactions) {
+            return $transactions;
+        }
+
+        $transaction = $this->get('Transaction', []);
+
+        if ($transaction) {
+            return [$transaction];
+        }
+
+        return []; // Always return an array, even if empty
     }
-
-    $transaction = $this->get('Transaction', []);
-
-    if ($transaction) {
-        return [$transaction];
-    }
-
-    return []; // Always return an array, even if empty
-}
 }

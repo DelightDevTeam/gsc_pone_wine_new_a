@@ -19,32 +19,40 @@ class GameProductSeeder extends Seeder
                 'name' => 'Pragmatic Play',
                 'short_name' => 'PP',
                 'order' => 1,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1012',
                 'name' => 'SBO',
                 'short_name' => 'SBO',
                 'order' => 11,
-                'game_list_status' => '0',
+                'status' => '1',
+                'game_list_status' => '1', // 0
             ],
             [
                 'code' => '1013',
                 'name' => 'Joker',
                 'short_name' => 'Joker',
                 'order' => 12,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1016',
                 'name' => 'YEE Bet',
                 'short_name' => 'YEE Bet',
                 'order' => 13,
-                'game_list_status' => '0',
+                'status' => '1',
+                'game_list_status' => '1', // 0
             ],
             [
                 'code' => '1020',
                 'name' => 'WM Casino',
                 'short_name' => 'WM Casino',
                 'order' => 14,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1027',
@@ -52,6 +60,9 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'Yggdrasil',
 
                 'order' => 15,
+
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1034',
@@ -59,13 +70,16 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'SG',
 
                 'order' => 16,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1035',
                 'name' => 'Vivo Gaming',
                 'short_name' => 'VG',
                 'order' => 17,
-                'game_list_status' => '0',
+                'status' => '1',
+                'game_list_status' => '1', // 0
 
             ],
             [
@@ -74,6 +88,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'PlayStar',
 
                 'order' => 6,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1056',
@@ -81,6 +97,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'TL',
 
                 'order' => 18,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1058',
@@ -88,6 +106,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'BGaming',
 
                 'order' => 19,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1060',
@@ -95,6 +115,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'Wazdan',
 
                 'order' => 20,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1062',
@@ -109,6 +131,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'Play Pearls',
 
                 'order' => 22,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1064',
@@ -116,6 +140,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'Net Game',
 
                 'order' => 23,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1065',
@@ -123,6 +149,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'Kiron',
 
                 'order' => 24,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1067',
@@ -130,6 +158,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'Red Rake',
 
                 'order' => 25,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1070',
@@ -137,6 +167,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'Boongo',
 
                 'order' => 26,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1077',
@@ -144,6 +176,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'SW',
 
                 'order' => 29,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1085',
@@ -151,6 +185,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'JDB',
 
                 'order' => 4,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1086',
@@ -158,6 +194,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'GENESIS',
 
                 'order' => 30,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1097',
@@ -165,6 +203,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'FG',
 
                 'order' => 31,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1098',
@@ -172,6 +212,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'FelixGaming',
 
                 'order' => 32,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1101',
@@ -179,6 +221,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'ZeusPlay',
 
                 'order' => 33,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1102',
@@ -186,6 +230,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'KA',
 
                 'order' => 7,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1109',
@@ -193,6 +239,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'Netent',
 
                 'order' => 34,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1111',
@@ -200,13 +248,16 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'GamingWorld',
 
                 'order' => 35,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1001',
                 'name' => 'Asia Gaming',
                 'short_name' => 'AsiaGaming',
                 'order' => 36,
-                'game_list_status' => '0',
+                'status' => '1',
+                'game_list_status' => '1', // 0
 
             ],
             [
@@ -215,6 +266,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'EG',
 
                 'order' => 37,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1004',
@@ -222,6 +275,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'BG',
 
                 'order' => 10,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1007',
@@ -229,6 +284,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'PGSoft',
 
                 'order' => 2,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1009',
@@ -236,6 +293,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'CQ9',
 
                 'order' => 8,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1022',
@@ -250,6 +309,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'RealTimeGaming',
 
                 'order' => 39,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1091',
@@ -257,13 +318,16 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'JILI',
 
                 'order' => 3,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1038',
                 'name' => 'King 855',
                 'short_name' => 'K855',
                 'order' => 40,
-                'game_list_status' => '0',
+                'status' => '1',
+                'game_list_status' => '1', // 0
             ],
             [
                 'code' => '1041',
@@ -271,6 +335,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'Habanero',
 
                 'order' => 41,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1150',
@@ -278,6 +344,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'Live22',
 
                 'order' => 42,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1132',
@@ -285,13 +353,16 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'YesgetRich',
 
                 'order' => 43,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1089',
                 'name' => 'Simple Play	',
                 'short_name' => 'SP',
                 'order' => 44,
-                'game_list_status' => '0',
+                'status' => '1',
+                'game_list_status' => '1', // 0
 
             ],
             [
@@ -299,13 +370,16 @@ class GameProductSeeder extends Seeder
                 'name' => 'Advant Play',
                 'short_name' => 'AP',
                 'order' => 45,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1104',
                 'name' => 'SSports',
                 'short_name' => 'Sport',
                 'order' => 46,
-                'game_list_status' => '0',
+                'status' => '1',
+                'game_list_status' => '1',
 
             ],
             // [
@@ -321,6 +395,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'MrSlotty',
 
                 'order' => 48,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1110',
@@ -328,6 +404,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'RedTiger',
 
                 'order' => 50,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
             [
                 'code' => '1100',
@@ -335,6 +413,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'SmartSoft',
 
                 'order' => 9,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
 
             [
@@ -343,6 +423,8 @@ class GameProductSeeder extends Seeder
                 'short_name' => 'RTiger',
 
                 'order' => 50,
+                'status' => '1',
+                'game_list_status' => '1',
             ],
         ];
 

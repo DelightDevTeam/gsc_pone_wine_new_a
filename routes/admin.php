@@ -1,14 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\AdsVedioController;
-use App\Http\Controllers\Admin\TopTenWithdrawController;
-use App\Http\Controllers\Admin\WinnerTextController;
 use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\BannerAdsController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\BannerTextController;
 use App\Http\Controllers\Admin\ContactController;
+use App\Http\Controllers\Admin\DailySummaryController;
 use App\Http\Controllers\Admin\DepositRequestController;
 use App\Http\Controllers\Admin\GameListController;
 use App\Http\Controllers\Admin\GameTypeProductController;
@@ -23,12 +22,13 @@ use App\Http\Controllers\Admin\RolesController;
 use App\Http\Controllers\Admin\SeniorController;
 use App\Http\Controllers\Admin\SubAccountController;
 use App\Http\Controllers\Admin\SuperController;
+use App\Http\Controllers\Admin\TopTenWithdrawController;
 use App\Http\Controllers\Admin\TransferLog\TransferLogController;
+use App\Http\Controllers\Admin\WinnerTextController;
 use App\Http\Controllers\Admin\WithDrawRequestController;
 use App\Http\Controllers\HomeController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ResultArchiveController;
-use App\Http\Controllers\Admin\DailySummaryController;
+use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => 'admin',
@@ -196,13 +196,13 @@ Route::group([
     Route::get('/player-report/{id}', [PlayerController::class, 'playerReportIndex'])->name('player.report');
 
     // report backup
-     Route::get('/resultsdata', [ResultArchiveController::class, 'getAllResults'])->name('backup_results.index');
-     Route::post('/archive-results', [ResultArchiveController::class, 'archiveResults'])->name('archive.results');
+    Route::get('/resultsdata', [ResultArchiveController::class, 'getAllResults'])->name('backup_results.index');
+    Route::post('/archive-results', [ResultArchiveController::class, 'archiveResults'])->name('archive.results');
 
-     Route::post('/generate-daily-summaries', [DailySummaryController::class, 'generateSummaries'])->name('generate_daily_sammary');
+    Route::post('/generate-daily-summaries', [DailySummaryController::class, 'generateSummaries'])->name('generate_daily_sammary');
 
-     Route::get('/daily-summaries', [DailySummaryController::class, 'index'])
-    ->name('daily_summaries.index');
+    Route::get('/daily-summaries', [DailySummaryController::class, 'index'])
+        ->name('daily_summaries.index');
 
     Route::get('/seamless-transactions', [DailySummaryController::class, 'SeamlessTransactionIndex'])
         ->name('seamless_transactions.index');

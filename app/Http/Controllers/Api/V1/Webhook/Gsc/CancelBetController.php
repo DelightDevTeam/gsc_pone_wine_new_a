@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1\Webhook\Gsc;
 
-use Illuminate\Http\Request;
 use App\Enums\SlotWebhookResponseCode;
 use App\Enums\TransactionName;
 use App\Http\Controllers\Api\V1\Webhook\Gsc\Traits\UseWebhook;
@@ -13,9 +12,9 @@ use App\Models\User;
 use App\Services\Slot\SlotWebhookService;
 use App\Services\Slot\SlotWebhookValidator;
 use App\Services\WalletService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
 
 class CancelBetController extends Controller
 {

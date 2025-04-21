@@ -17,7 +17,7 @@ class DailySummary extends Model
         'total_bet_amount',
         'total_win_amount',
         'total_lose_amount',
-        'total_stake_count'
+        'total_stake_count',
     ];
 
     protected $casts = [
