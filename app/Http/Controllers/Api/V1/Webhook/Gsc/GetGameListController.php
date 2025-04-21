@@ -43,6 +43,7 @@ class GetGameListController extends Controller
                 'LanguageCode' => $request->input('LanguageCode'),
                 'Platform' => $request->input('Platform'),
                 //'IPAddress' => $request->input('IPAddress'),
+                'IPAddress' => $request->ip(),
                 'RequestTime' => $requestTime,
             ];
 
