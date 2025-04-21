@@ -18,14 +18,13 @@ class GetGameListController extends Controller
             $secretKey = $config['secret_key'];
             $apiUrl = $config['url'];
 
-            // Validate required request parameters
+            // Validate required request parameters (removed IPAddress from validation)
             $validated = $request->validate([
                 'MemberName' => 'required|string',
                 'ProductID' => 'required|integer',
                 'GameType' => 'required|integer',
                 'LanguageCode' => 'required|integer',
                 'Platform' => 'required|integer',
-                'IPAddress' => 'required|ip',
             ]);
 
             // Prepare request parameters
@@ -36,14 +35,11 @@ class GetGameListController extends Controller
                 'OperatorCode' => $operatorCode,
                 'MemberName' => $request->input('MemberName'),
                 'DisplayName' => $request->input('DisplayName', ''), // Optional
-                //'Password' => $request->input('Password', ''), // Optional
-                //'GameID' => $request->input('GameID', ''), // Optional
                 'ProductID' => $request->input('ProductID'),
                 'GameType' => $request->input('GameType'),
                 'LanguageCode' => $request->input('LanguageCode'),
                 'Platform' => $request->input('Platform'),
-                //'IPAddress' => $request->input('IPAddress'),
-                'IPAddress' => $request->ip(),
+                'IPAddress' => $request->ip(), // Set IP address from the request
                 'RequestTime' => $requestTime,
             ];
 
