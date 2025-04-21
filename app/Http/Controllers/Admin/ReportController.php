@@ -15,9 +15,13 @@ class ReportController extends Controller
 {
     protected const SUB_AGENT_ROlE = 'Sub Agent';
 
-    public function ponewine()
+    public function ponewine(Request $request)
     {
         $agent = $this->getAgent() ?? Auth::user();
+
+        $startDate = $request->start_date ?? Carbon::today()->startOfDay()->toDateString();
+        $endDate = $request->end_date ?? Carbon::today()->endOfDay()->toDateString();
+
 
         // Define role hierarchy
         $hierarchy = [
@@ -57,6 +61,7 @@ class ReportController extends Controller
                 DB::raw('SUM(pone_wine_bet_infos.bet_amount) as total_bet_amount'),
             ])
             ->groupBy('player_totals.user_id', 'player_totals.user_name', 'player_totals.total_win_lose_amt')
+            ->whereBetween('pone_wine_bet_infos.created_at',[$startDate.' 00:00:00', $endDate.' 23:59:59'])
             ->get();
 
         return view('admin.report.ponewine.index', compact('reports'));
