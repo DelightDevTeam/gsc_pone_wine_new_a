@@ -38,7 +38,7 @@
                                         @foreach ($gameType->products as $product)
                                             <tr>
                                                 <td class="text-center">{{ $gameType->name }}</td>
-                                                <td class="text-center">{{ $product->provider_name }}</td>
+                                                <td class="text-center">{{ $product->short_name }}</td>
                                                 <td class="text-center"><img src="{{ $product->getImgUrlAttribute() }}"
                                                         alt="" width="100px">
                                                 </td>
