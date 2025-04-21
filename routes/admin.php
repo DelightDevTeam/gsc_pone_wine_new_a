@@ -79,6 +79,7 @@ Route::group([
 
     // provider Game Type Start
     Route::get('gametypes', [GameTypeProductController::class, 'index'])->name('gametypes.index');
+    Route::post('/game-types/{productId}/toggle-status', [GameTypeProductController::class, 'toggleStatus'])->name('gametypes.toggle-status');
     Route::get('gametypes/{game_type_id}/product/{product_id}', [GameTypeProductController::class, 'edit'])->name('gametypes.edit');
     Route::post('gametypes/{game_type_id}/product/{product_id}', [GameTypeProductController::class, 'update'])->name('gametypes.update');
     // provider Game Type End

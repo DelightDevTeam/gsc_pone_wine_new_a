@@ -23,11 +23,23 @@ class Product extends Model
         return $this->belongsToMany(GameType::class)->withPivot('image');
     }
 
+
     public function getImgUrlAttribute()
     {
         if (isset($this->pivot) && isset($this->pivot->image)) {
             return asset('assets/img/game_logo/'.$this->pivot->image);
         }
 
+    }
+
+    /**
+     * Toggle the status between 1 and 0.
+     *
+     * @return bool
+     */
+    public function toggleStatus()
+    {
+        $this->status = $this->status == 1 ? 0 : 1;
+        return $this->save();
     }
 }

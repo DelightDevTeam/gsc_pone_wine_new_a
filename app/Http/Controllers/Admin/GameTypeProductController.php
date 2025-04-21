@@ -18,6 +18,24 @@ class GameTypeProductController extends Controller
         return view('admin.game_type.index', compact('gameTypes'));
     }
 
+    public function toggleStatus(Request $request, $productId)
+    {
+        $product = Product::findOrFail($productId);
+
+        if ($product->toggleStatus()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Status updated successfully.',
+                'newStatus' => $product->status,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to update status.',
+        ], 500);
+    }
+
     public function edit($gameTypeId, $productId)
     {
         $gameType = GameType::with([
