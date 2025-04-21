@@ -39,7 +39,7 @@ Route::post('/player-change-password', [AuthController::class, 'playerChangePass
 Route::post('/logout', [AuthController::class, 'logout']);
 
 //get game list operator
-Route::post('/getgamelist', [GetGameListController::class, 'getGameList']);
+Route::post('/operatorgetgamelist', [GetGameListController::class, 'getGameList']);
 
 // sameless route
 Route::group(['prefix' => 'Seamless'], function () {
