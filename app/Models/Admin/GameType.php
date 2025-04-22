@@ -9,7 +9,7 @@ class GameType extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'code', 'order', 'img', 'name_mm'];
+    protected $fillable = ['name', 'name_mm', 'code', 'img', 'status', 'order'];
 
     protected $appends = ['image', 'img_url'];
 
@@ -32,5 +32,16 @@ class GameType extends Model
     public function scopeActive($query)
     {
         return $this->where('status', 1);
+    }
+
+    /**
+     * Toggle the status between 1 and 0.
+     *
+     * @return bool
+     */
+    public function GameTypetoggleStatus()
+    {
+        $this->status = $this->status == 1 ? 0 : 1;
+        return $this->save();
     }
 }

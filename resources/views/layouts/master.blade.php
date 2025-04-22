@@ -118,9 +118,9 @@
                     <a class="nav-link"
                         href="{{ route('admin.changePassword', \Illuminate\Support\Facades\Auth::id()) }}">
                         {{ auth()->user()->name }}
-                        @if ( auth()->user()->referral_code )
-                        | {{ auth()->user()->referral_code }}
-                 @endif
+                        @if (auth()->user()->referral_code)
+                            | {{ auth()->user()->referral_code }}
+                        @endif
                     </a>
                 </li>
 
@@ -344,6 +344,14 @@
                                             <p>GSC GameProvider</p>
                                         </a>
                                     </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ route('admin.codegametypes.index') }}"
+                                            class="nav-link {{ Route::current()->getName() == 'admin.codegametypes.index' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>GSC GameType</p>
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                         @endcan
@@ -375,17 +383,17 @@
                                         </p>
                                     </a>
                                 </li>
-                                 <li class="nav-item">
-                                <a href="{{ route('admin.backup_results.index') }}"
-                                    class="nav-link {{ Route::current()->getName() === 'admin.backup_results.index' ? 'active' : '' }}">
-                                    <i class="fab fa-dochub"></i>
-                                    <p>
-                                        Backup Report
-                                    </p>
-                                </a>
-                            </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.backup_results.index') }}"
+                                        class="nav-link {{ Route::current()->getName() === 'admin.backup_results.index' ? 'active' : '' }}">
+                                        <i class="fab fa-dochub"></i>
+                                        <p>
+                                            Backup Report
+                                        </p>
+                                    </a>
+                                </li>
 
-                            <li class="nav-item menu-open">
+                                <li class="nav-item menu-open">
                                     <a href="{{ route('admin.daily_summaries.index') }}"
                                         class="nav-link {{ Route::current()->getName() == 'admin.daily_summaries.index' ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
@@ -394,17 +402,17 @@
                                         </p>
                                     </a>
                                 </li>
-                                 @can('senior_owner_access')
-                                <li class="nav-item menu-open">
-                                    <a href="{{ route('admin.seamless_transactions.index') }}"
-                                        class="nav-link {{ Route::current()->getName() == 'admin.seamless_transactions.index' ? 'active' : '' }}">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>
-                                            Del SeamlessTransaction
-                                        </p>
-                                    </a>
-                                </li>
-                                 {{-- <li class="nav-item menu-open">
+                                @can('senior_owner_access')
+                                    <li class="nav-item menu-open">
+                                        <a href="{{ route('admin.seamless_transactions.index') }}"
+                                            class="nav-link {{ Route::current()->getName() == 'admin.seamless_transactions.index' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>
+                                                Del SeamlessTransaction
+                                            </p>
+                                        </a>
+                                    </li>
+                                    {{-- <li class="nav-item menu-open">
                                     <a href="{{ route('admin.transaction_cleanup.index') }}"
                                         class="nav-link {{ Route::current()->getName() == 'admin.transaction_cleanup.index' ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
@@ -428,29 +436,29 @@
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                <a href="{{ route('admin.video-upload.index') }}"
-                                    class="nav-link  {{ Route::current()->getName() == 'admin.video-upload.index' ? 'active' : '' }}">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>AdsVideo</p>
-                                </a>
-                            </li>
+                                        <a href="{{ route('admin.video-upload.index') }}"
+                                            class="nav-link  {{ Route::current()->getName() == 'admin.video-upload.index' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>AdsVideo</p>
+                                        </a>
+                                    </li>
 
-                            <li class="nav-item">
-                                <a href="{{ route('admin.winner_text.index') }}"
-                                    class="nav-link  {{ Route::current()->getName() == 'admin.winner_text.index' ? 'active' : '' }}">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>WinnerText</p>
-                                </a>
-                            </li>
-                             <li class="nav-item">
-                        <a href="{{ route('admin.top-10-withdraws.index') }}"
-                            class="nav-link {{ Route::current()->getName() == 'admin.top-10-withdraws.index' ? 'active' : '' }}">
-                            <i class="fas fa-swatchbook"></i>
-                            <p>
-                                WithdrawTopTen
-                            </p>
-                        </a>
-                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ route('admin.winner_text.index') }}"
+                                            class="nav-link  {{ Route::current()->getName() == 'admin.winner_text.index' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>WinnerText</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ route('admin.top-10-withdraws.index') }}"
+                                            class="nav-link {{ Route::current()->getName() == 'admin.top-10-withdraws.index' ? 'active' : '' }}">
+                                            <i class="fas fa-swatchbook"></i>
+                                            <p>
+                                                WithdrawTopTen
+                                            </p>
+                                        </a>
+                                    </li>
                                     <li class="nav-item">
                                         <a href="{{ route('admin.text.index') }}"
                                             class="nav-link {{ Route::current()->getName() == 'admin.text.index' ? 'active' : '' }}">

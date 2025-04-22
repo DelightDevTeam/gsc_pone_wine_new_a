@@ -82,6 +82,10 @@ Route::group([
     Route::post('/game-types/{productId}/toggle-status', [GameTypeProductController::class, 'toggleStatus'])->name('gametypes.toggle-status');
     Route::get('gametypes/{game_type_id}/product/{product_id}', [GameTypeProductController::class, 'edit'])->name('gametypes.edit');
     Route::post('gametypes/{game_type_id}/product/{product_id}', [GameTypeProductController::class, 'update'])->name('gametypes.update');
+
+    Route::get('/codegametypes', [GameTypeProductController::class, 'GameTypeindex'])->name('codegametypes.index');
+    Route::post('/gametypes/toggle-status/{id}', [GameTypeProductController::class, 'toggleStatus'])->name('codegametypes.toggle-status');
+    //Route::get('/gametypes/edit/{id}', [GameTypeProductController::class, 'edit'])->name('codegametypes.edit');
     // provider Game Type End
 
     Route::post('/mark-notifications-read', function () {

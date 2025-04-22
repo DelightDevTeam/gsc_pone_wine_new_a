@@ -36,6 +36,33 @@ class GameTypeProductController extends Controller
         ], 500);
     }
 
+    public function GameTypeindex()
+    {
+        $gameTypes = GameType::all();
+
+        return view('admin.game_type.game_typeindex', compact('gameTypes'));
+    }
+
+    public function GametoggleStatus(Request $request, $productId)
+    {
+        $product = GameType::findOrFail($productId);
+
+        if ($product->GameTypetoggleStatus()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Status updated successfully.',
+                'newStatus' => $product->status,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to update status.',
+        ], 500);
+    }
+
+
+
     public function edit($gameTypeId, $productId)
     {
         $gameType = GameType::with([
