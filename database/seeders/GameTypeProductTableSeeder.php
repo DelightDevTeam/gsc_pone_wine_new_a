@@ -247,7 +247,7 @@ class GameTypeProductTableSeeder extends Seeder
             ],
             [
                 'product_id' => 32,
-                'game_type_id' => 4,
+                'game_type_id' => 8,
                 'image' => 'cq9.png',
                 'rate' => '1.0000',
             ],

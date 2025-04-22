@@ -28,6 +28,7 @@
                                     <tr>
                                         <th class="bg-success text-white">Game Type</th>
                                         <th class="bg-danger text-white">Product</th>
+                                        <th class="bg-danger text-white">Code</th>
                                         <th class="bg-warning text-white">Image</th>
                                         <th class="bg-info text-white">Status</th>
                                         <th class="bg-info text-white">Actions</th>
@@ -39,6 +40,7 @@
                                             <tr>
                                                 <td class="text-center">{{ $gameType->name }}</td>
                                                 <td class="text-center">{{ $product->short_name }}</td>
+                                                <td class="text-center">{{ $product->product_code }}</td>
                                                 <td class="text-center"><img src="{{ $product->getImgUrlAttribute() }}"
                                                         alt="" width="100px">
                                                 </td>
