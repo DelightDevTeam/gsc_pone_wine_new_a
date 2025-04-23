@@ -492,3 +492,16 @@ FLUSH PRIVILEGES;
     </div>
 </section>
 @endsection
+
+
+INSERT INTO game_types (name, name_mm, code, img, status, `order`, created_at, updated_at)
+VALUES (
+    'TableGame',
+    'Tableဂိမ်း',
+    '1',
+    'slot.png',
+    1,
+    '1',
+    NOW(),
+    NOW()
+);
