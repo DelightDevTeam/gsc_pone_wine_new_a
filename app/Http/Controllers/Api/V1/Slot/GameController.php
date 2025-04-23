@@ -8,6 +8,7 @@ use App\Http\Resources\Slot\GameDetailResource;
 use App\Http\Resources\Slot\HotGameListResource;
 use App\Models\Admin\GameList;
 use App\Models\Admin\GameType;
+use App\Models\Admin\SpecialGame;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
 
@@ -81,6 +82,30 @@ class GameController extends Controller
     public function HotgameList()
     {
         $gameLists = GameList::where('hot_status', 1)
+            ->get();
+
+        return $this->success(GameDetailResource::collection($gameLists), 'Hot Game Detail Successfully');
+    }
+
+    public function SpecialCardGameList()
+    {
+        $gameLists = SpecialGame::where('status', 1)
+            ->get();
+
+        return $this->success(GameDetailResource::collection($gameLists), 'Hot Game Detail Successfully');
+    }
+
+    public function SpecialTableGameList()
+    {
+        $gameLists = SpecialGame::where('status', 2)
+            ->get();
+
+        return $this->success(GameDetailResource::collection($gameLists), 'Hot Game Detail Successfully');
+    }
+
+    public function SpecialBingoGame()
+    {
+        $gameLists = GameList::where('status', 3)
             ->get();
 
         return $this->success(GameDetailResource::collection($gameLists), 'Hot Game Detail Successfully');

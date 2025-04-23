@@ -1,0 +1,48 @@
+{
+    "ProviderGames": [
+        {
+            "GameCode": "213",
+            "GameName": "Mini Roulette",
+            "GameType": 1,
+            "Category": "Games",
+            "ImageUrl": "http:\/\/prodmd.9977997.com\/Image\/CQ9\/en\/213.png",
+            "ProviderGameType": null,
+            "ProviderCode": null,
+            "game_type_id": 1,
+            "product_id": 32
+        },
+        {
+            "GameCode": "GB11",
+            "GameName": "Thai Fish Prawn Crab",
+            "GameType": 1,
+            "Category": "Games",
+            "ImageUrl": "http:\/\/prodmd.9977997.com\/Image\/CQ9\/en\/GB11.png",
+            "ProviderGameType": null,
+            "ProviderCode": null,
+            "game_type_id": 1,
+            "product_id": 32
+        },
+        {
+            "GameCode": "216",
+            "GameName": "Xoc Dia",
+            "GameType": 1,
+            "Category": "Games",
+            "ImageUrl": "http:\/\/prodmd.9977997.com\/Image\/CQ9\/en\/216.png",
+            "ProviderGameType": null,
+            "ProviderCode": null,
+            "game_type_id": 1,
+            "product_id": 32
+        },
+        {
+            "GameCode": "207",
+            "GameName": "Thai HILO",
+            "GameType": 1,
+            "Category": "Games",
+            "ImageUrl": "http:\/\/prodmd.9977997.com\/Image\/CQ9\/en\/207.png",
+            "ProviderGameType": null,
+            "ProviderCode": null,
+            "game_type_id": 1,
+            "product_id": 32
+        }
+    ]
+}

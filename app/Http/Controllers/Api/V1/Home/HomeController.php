@@ -19,11 +19,14 @@ use App\Models\Admin\BannerText;
 use App\Models\Admin\GameList;
 use App\Models\Admin\GameType;
 use App\Models\Admin\Promotion;
+use App\Models\Admin\SpecialGame;
 use App\Models\Admin\TopTenWithdraw;
 use App\Models\Contact;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\Slot\GameDetailResource;
+
 
 class HomeController extends Controller
 {
@@ -124,6 +127,30 @@ class HomeController extends Controller
         $hot_games = GameList::hotGame()->get();
 
         return $this->success(GameListResource::collection($hot_games));
+    }
+
+    public function SpecialCardGameList()
+    {
+        $gameLists = SpecialGame::where('status', 2)
+            ->get();
+
+        return $this->success(GameDetailResource::collection($gameLists), 'Hot Game Detail Successfully');
+    }
+
+    public function SpecialTableGameList()
+    {
+        $gameLists = SpecialGame::where('status', 1)
+            ->get();
+
+        return $this->success(GameDetailResource::collection($gameLists), 'Hot Game Detail Successfully');
+    }
+
+    public function SpecialBingoGame()
+    {
+        $gameLists = SpecialGame::where('status', 3)
+            ->get();
+
+        return $this->success(GameDetailResource::collection($gameLists), 'Hot Game Detail Successfully');
     }
 
     public function banks()

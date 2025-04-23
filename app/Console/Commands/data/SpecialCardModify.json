@@ -1,0 +1,70 @@
+{
+    "ProviderGames": [
+        {
+            "GameCode": "217",
+            "GameName": "Mahjong Fruit",
+            "GameType": 1,
+            "Category": "Games",
+            "ImageUrl": "http:\/\/prodmd.9977997.com\/Image\/CQ9\/en\/217.png",
+            "ProviderGameType": null,
+            "ProviderCode": null,
+            "game_type_id": 1,
+            "product_id": 32
+        },
+        {
+            "GameCode": "GB3",
+            "GameName": "Coin Spinner",
+            "GameType": 1,
+            "Category": "Games",
+            "ImageUrl": "http:\/\/prodmd.9977997.com\/Image\/CQ9\/en\/GB3.png",
+            "ProviderGameType": null,
+            "ProviderCode": null,
+            "game_type_id": 1,
+            "product_id": 32
+        },
+        {
+            "GameCode": "GB7",
+            "GameName": "Mummy's Treasure",
+            "GameType": 1,
+            "Category": "Games",
+            "ImageUrl": "http:\/\/prodmd.9977997.com\/Image\/CQ9\/en\/GB7.png",
+            "ProviderGameType": null,
+            "ProviderCode": null,
+            "game_type_id": 1,
+            "product_id": 32
+        },
+        {
+            "GameCode": "TGDragonTiger",
+            "GameName": "Dragon Tiger",
+            "GameType": 1,
+            "Category": "Games",
+            "ImageUrl": "http:\/\/prodmd.9977997.com\/Image\/Habanero\/en\/TGDragonTiger.png",
+            "ProviderGameType": null,
+            "ProviderCode": null,
+            "game_type_id": 1,
+            "product_id": 32
+        },
+        {
+            "GameCode": "SicBo",
+            "GameName": "Sic Bo",
+            "GameType": 1,
+            "Category": "Games",
+            "ImageUrl": "http:\/\/prodmd.9977997.com\/Image\/Habanero\/en\/SicBo.png",
+            "ProviderGameType": null,
+            "ProviderCode": null,
+            "game_type_id": 1,
+            "product_id": 32
+        },
+        {
+            "GameCode": "EURoulette",
+            "GameName": "Roulette",
+            "GameType": 1,
+            "Category": "Games",
+            "ImageUrl": "http:\/\/prodmd.9977997.com\/Image\/Habanero\/en\/EURoulette.png",
+            "ProviderGameType": null,
+            "ProviderCode": null,
+            "game_type_id": 1,
+            "product_id": 32
+        }
+    ]
+}

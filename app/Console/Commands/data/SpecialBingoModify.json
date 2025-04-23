@@ -1,0 +1,26 @@
+{
+    "ProviderGames": [
+        {
+            "GameCode": "GB14",
+            "GameName": "Funky Bingo",
+            "GameType": 1,
+            "Category": "Games",
+            "ImageUrl": "http:\/\/prodmd.9977997.com\/Image\/CQ9\/en\/GB14.png",
+            "ProviderGameType": null,
+            "ProviderCode": null,
+            "game_type_id": 1,
+            "product_id": 32
+        },
+        {
+            "GameCode": "NG-1015",
+            "GameName": "Dice Bingo",
+            "GameType": 1,
+            "Category": "Games",
+            "ImageUrl": "http:\/\/prodmd.9977997.com\/Image\/Genesis\/en\/NG-1015.png",
+            "ProviderGameType": null,
+            "ProviderCode": null,
+            "game_type_id": 1,
+            "product_id": 32
+        }
+    ]
+}

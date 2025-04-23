@@ -496,8 +496,8 @@ FLUSH PRIVILEGES;
 
 INSERT INTO game_types (name, name_mm, code, img, status, `order`, created_at, updated_at)
 VALUES (
-    'TableGame',
-    'Tableဂိမ်း',
+    'Bingo',
+    'Bingoဂိမ်း',
     '1',
     'slot.png',
     1,

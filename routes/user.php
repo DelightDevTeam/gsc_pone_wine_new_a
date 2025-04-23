@@ -24,4 +24,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/game_lists/{type}/{provider}', [HomeController::class, 'gameLists']);
     Route::get('/hot_game_lists', [HomeController::class, 'hotGameLists']);
     Route::post('/launch_game', [LaunchGameController::class, 'launchGame']);
+    Route::get('/special_card_game_lists', [HomeController::class, 'SpecialCardGameList']);
+
+    Route::get('/special_table_game_lists', [HomeController::class, 'SpecialTableGameList']);
+    Route::get('/special_bingo_game_lists', [HomeController::class, 'SpecialBingoGame']);
+
 });
