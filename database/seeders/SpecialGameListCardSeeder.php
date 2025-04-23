@@ -16,8 +16,7 @@ class SpecialGameListCardSeeder extends Seeder
      */
     public function run(): void
     {
-        $json = File::get(base_path('app/Console/Commands/data/Special
-        CardModify.json'));
+        $json = File::get(base_path('app/Console/Commands/data/SpecialCardModify.json'));
         $data = json_decode($json);
         foreach ($data->ProviderGames as $obj) {
             SpecialGame::create([
