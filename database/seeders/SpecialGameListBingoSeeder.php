@@ -16,8 +16,7 @@ class SpecialGameListBingoSeeder extends Seeder
      */
     public function run(): void
     {
-        $json = File::get(base_path('app/Console/Commands/data/Special
-        BingoModify.json'));
+        $json = File::get(base_path('app/Console/Commands/data/SpecialBingoModify.json'));
         $data = json_decode($json);
         foreach ($data->ProviderGames as $obj) {
             SpecialGame::create([
