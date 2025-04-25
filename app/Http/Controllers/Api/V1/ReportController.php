@@ -13,6 +13,9 @@ class ReportController extends Controller
 
     public function index()
     {
+        $startDate =  now()->startOfDay();
+        $endDate = now();
+
         $data = DB::table('pone_wine_bets')
             ->join('pone_wine_player_bets', 'pone_wine_player_bets.pone_wine_bet_id', '=', 'pone_wine_bets.id')
             ->join('pone_wine_bet_infos', 'pone_wine_bet_infos.pone_wine_player_bet_id', '=', 'pone_wine_player_bets.id')
@@ -30,6 +33,7 @@ class ReportController extends Controller
                 'pone_wine_bets.match_id',
                 'pone_wine_player_bets.win_lose_amt',
             ])
+            ->whereBetween('pone_wine_bets.created_at',[$startDate,$endDate])
             ->get();
 
         return $this->success($data, 'Player Report ');
