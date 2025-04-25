@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\MassAssignmentException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-trait UseWebhook
+trait OkUseWebhook
 {
     public function createEvent(
         WebhookRequest $request,

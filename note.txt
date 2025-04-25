@@ -15,6 +15,7 @@ php artisan migrate:rollback --path=database/migrations/2024_03_10_135549_create
 
 tail -f /var/www/gsc_pone_wine_new_a/storage/logs/laravel.log
 
+php artisan db:seed --class=SpecialGameListTableSeeder
 sudo apt update && sudo apt install supervisor -y
 sudo nano /etc/supervisor/conf.d/laravel-queue.conf
 [program:laravel-queue]
