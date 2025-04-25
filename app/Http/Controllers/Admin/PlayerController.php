@@ -80,7 +80,7 @@ class PlayerController extends Controller
                 'phone' => $player->phone,
                 'balanceFloat' => $player->balanceFloat,
                 'status' => $player->status,
-                'win_lose' => (($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0)) + $poneWineTotalAmt,
+                'win_lose' => (($report->total_payout_amount ?? 0) - ($report->total_bet_amount ?? 0)) + $poneWineTotalAmt,
             ];
         });
 
