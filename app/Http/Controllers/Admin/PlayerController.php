@@ -80,7 +80,7 @@ class PlayerController extends Controller
                 'phone' => $player->phone,
                 'balanceFloat' => $player->balanceFloat,
                 'status' => $player->status,
-                'win_lose' => (($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0)) + $poneWineTotalAmt,
+                'win_lose' => (($report->total_payout_amount ?? 0) - ($report->total_bet_amount ?? 0)) + $poneWineTotalAmt,
             ];
         });
 
@@ -391,7 +391,7 @@ class PlayerController extends Controller
         $total = [
             'total_bet_amt' => $reportDetail->sum('bet_amount'),
             'total_payout_amt' => $reportDetail->sum('payout_amount'),
-            'total_net_win' => $reportDetail->sum('bet_amount') - $reportDetail->sum('payout_amount'),
+            'total_net_win' =>   $reportDetail->sum('payout_amount') - $reportDetail->sum('bet_amount'),
         ];
 
         return view('admin.player.report_index', compact('reportDetail', 'total'));

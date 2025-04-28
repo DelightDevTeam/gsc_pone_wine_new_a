@@ -41,7 +41,7 @@ class WagerController extends Controller
             ->whereBetween('reports.updated_at', [$from, $to])
             ->groupBy('products.code', 'products.name')
             ->get();
-
+        
         return $this->success(SeamlessTransactionResource::collection($transactions));
     }
 }

@@ -21,7 +21,7 @@ class SeamlessTransactionResource extends JsonResource
             'product' => $this->provider_name,
             'total_count' => $this->total_count,
             'total_bet_amount' => number_format($this->total_bet_amount, 2),
-            'total_payount_amount' => number_format($this->total_payout_amount, 2),
+            'total_payount_amount' => number_format($this->total_payout_amount -  $this->total_bet_amount,2)
         ];
     }
 }

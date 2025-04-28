@@ -69,7 +69,7 @@
                                 {{-- <td>{{ number_format($data->total_win_amount, 2) }}</td> --}}
                                 <td class="text-bold">{{ number_format($data->payout_amount, 2) }}</td>
                                 <?php
-                                    $netWin =  number_format( $data->bet_amount -$data->payout_amount, 2);
+                                    $netWin =  number_format(  $data->payout_amount - $data->bet_amount, 2);
                                 ?>
                                 <td class="{{$netWin >= 0 ? "text-success" : 'text-danger'}} text-bold">{{$netWin}}</td>
 
