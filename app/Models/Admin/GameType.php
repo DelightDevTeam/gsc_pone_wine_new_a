@@ -42,6 +42,7 @@ class GameType extends Model
     public function GameTypetoggleStatus()
     {
         $this->status = $this->status == 1 ? 0 : 1;
+
         return $this->save();
     }
 }

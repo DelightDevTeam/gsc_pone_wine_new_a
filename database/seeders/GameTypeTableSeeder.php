@@ -120,7 +120,7 @@ class GameTypeTableSeeder extends Seeder
                 'status' => 0,
                 'img' => 'sportbook.png',
             ],
-             [
+            [
                 'name' => 'Card Game',
                 'name_mm' => 'ကဒ်ဂိမ်း',
                 'code' => '1',

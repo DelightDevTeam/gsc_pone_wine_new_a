@@ -24,13 +24,13 @@ class GameResultController extends Controller
 {
     use UseWebhook;
 
-
     public function gameResult(WebhookRequest $request)
     {
         $validator = $request->check();
 
         if ($validator->fails()) {
             Log::info('Validator failed', ['response' => $validator->getResponse()]);
+
             return $validator->getResponse();
         }
 
@@ -39,19 +39,19 @@ class GameResultController extends Controller
             Log::info('Duplicate transaction detected in controller', [
                 'transaction_id' => $request->getTransactions()[0]['TransactionID'] ?? null,
             ]);
+
             return SlotWebhookService::buildResponse(
                 SlotWebhookResponseCode::DuplicateTransaction,
                 $request->getMember()->balanceFloat,
                 $request->getMember()->balanceFloat
             );
         }
-        
+
         $event = $this->createEvent($request);
 
         DB::beginTransaction();
         try {
             $before_balance = $request->getMember()->balanceFloat;
-
 
             $seamlessTransactionsData = $this->createWagerTransactions($validator->getRequestTransactions(), $event);
 

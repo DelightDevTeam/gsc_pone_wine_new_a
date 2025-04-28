@@ -49,7 +49,7 @@
                                             @forelse ($games as $game)
                                                 <tr>
                                                     <td>{{ $loop->iteration + $games->firstItem() - 1 }}</td>
-                                                    <td>{{ $game->game_name }}</td>
+                                                    <td>{{ $game->name }}</td>
                                                     <td>
                                                         <a href="{{ route('admin.gameLists.edit', $game->id) }}"
                                                             class="btn btn-sm btn-primary">Edit</a>

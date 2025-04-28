@@ -12,6 +12,7 @@ use App\Http\Resources\Api\GameListResource;
 use App\Http\Resources\Api\GameProviderResource;
 use App\Http\Resources\Api\GameTypeResource;
 use App\Http\Resources\Api\PromotionResource;
+use App\Http\Resources\Slot\GameDetailResource;
 use App\Models\Admin\Bank;
 use App\Models\Admin\Banner;
 use App\Models\Admin\BannerAds;
@@ -25,8 +26,6 @@ use App\Models\Contact;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\Slot\GameDetailResource;
-
 
 class HomeController extends Controller
 {

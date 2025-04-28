@@ -61,8 +61,6 @@ class GameTypeProductController extends Controller
         ], 500);
     }
 
-
-
     public function edit($gameTypeId, $productId)
     {
         $gameType = GameType::with([
