@@ -24,7 +24,10 @@ class GameListController extends Controller
                     return $row->gameType->name ?? 'N/A';
                 })
                 ->addColumn('product', function ($row) {
-                    return $row->product->provider_name ?? 'N/A';
+                    return $row->product->name ?? 'N/A';
+                })
+                ->addColumn('game_name', function ($row) {
+                    return $row->name ?? 'N/A';
                 })
                 ->addColumn('status', function ($row) {
                     return $row->status == 1 ? 'Running Game' : 'Game is Closed';
