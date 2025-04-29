@@ -166,10 +166,10 @@
                         data: 'status',
                         name: 'status'
                     },
-                    {
-                        data: 'pp_hot',
-                        name: 'pp_hot'
-                    },
+                    // {
+                    //     data: 'pp_hot',
+                    //     name: 'pp_hot'
+                    // },
                     {
                         data: 'hot_status',
                         name: 'hot_status'
