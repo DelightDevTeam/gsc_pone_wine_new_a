@@ -153,7 +153,7 @@ class GameListController extends Controller
             $image->move(public_path('assets/img/game_list/'), $filename);
 
             $game->update([
-                'image_url' => 'https://delightmyanmarthb.xyz/assets/img/game_list/'.$filename,
+                'image_url' => 'https://ponewine20x.xyz/assets/img/game_list/'.$filename,
             ]);
 
             return redirect()->route('admin.gameLists.index')->with('success', 'Image updated successfully.');
