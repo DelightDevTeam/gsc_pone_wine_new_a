@@ -94,7 +94,7 @@
                                             <th class="bg-info text-white">GameName</th>
                                             <th class="bg-warning text-white">Image</th>
                                             <th class="bg-success text-white">Status</th>
-                                            <th class="bg-success text-white">PPHot</th>
+                                            {{-- <th class="bg-success text-white">PPHot</th> --}}
                                             <th class="bg-info text-white">HotStatus</th>
                                             <th class="bg-warning text-white">Actions</th>
                                         </tr>

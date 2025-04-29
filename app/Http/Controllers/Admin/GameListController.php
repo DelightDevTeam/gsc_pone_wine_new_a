@@ -32,9 +32,9 @@ class GameListController extends Controller
                 ->addColumn('status', function ($row) {
                     return $row->status == 1 ? 'Running Game' : 'Game is Closed';
                 })
-                ->addColumn('pp_hot', function ($row) {
-                    return $row->pp_hot == 1 ? 'PP Hot' : '--';
-                })
+                // ->addColumn('pp_hot', function ($row) {
+                //     return $row->pp_hot == 1 ? 'PP Hot' : '--';
+                // })
                 ->addColumn('hot_status', function ($row) {
                     return $row->hot_status == 1 ? 'This Game is Hot' : 'Game is Normal';
                 })
