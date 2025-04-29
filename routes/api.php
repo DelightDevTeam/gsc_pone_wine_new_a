@@ -79,7 +79,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('deposit', [DepositRequestController::class, 'deposit']);
     Route::get('depositlog', [DepositRequestController::class, 'log']);
     Route::get('paymentType', [BankController::class, 'paymentType']);
-    Route::post('withdraw', [WithDrawRequestController::class, 'withdraw']);
+    Route::post('withdraw', [WithDrawRequestController::class, 'withdraw']); 
     Route::get('withdrawlog', [WithDrawRequestController::class, 'log']);
     Route::get('sitelogo-name', [GetAdminSiteLogoNameController::class, 'GetSiteLogoAndSiteName']);
     Route::get('banner', [BannerController::class, 'index']);

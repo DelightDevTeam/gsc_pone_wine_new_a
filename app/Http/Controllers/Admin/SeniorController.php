@@ -71,7 +71,7 @@ class SeniorController extends Controller
                 'phone' => $senior->phone,
                 'balanceFloat' => $senior->balanceFloat,
                 'status' => $senior->status,
-                'win_lose' => (($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0)) + $poneWineTotalAmt,
+                'win_lose' => (($report->total_payout_amount ?? 0) - ($report->total_bet_amount ?? 0)) + $poneWineTotalAmt,
             ];
         });
 
@@ -404,7 +404,7 @@ class SeniorController extends Controller
 
         $report = $reportData->get($senior->id);
         $report = (object) [
-            'win_lose' => ($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0),
+            'win_lose' => (($report->total_payout_amount ?? 0) - ($report->total_bet_amount ?? 0)),
             'total_win_lose_pone_wine' => $poneWineTotalAmt ?? 0,
         ];
 

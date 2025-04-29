@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -14,11 +15,27 @@ class AdminLogoMiddleware
         if (Auth::check()) {
             $user = Auth::user();
 
-            $logoFilename = $user->agent_logo;
-            if ($user->hasRole('Agent')) {
-                $siteName = 'Agent Dashboard';
+            if($user->hasRole('Owner'))  {
+                $logoFilename = $user->agent_logo;
+                $siteName  =  $user->site_name;
+            } elseif ($user->hasRole('Senior')) {
+                $ownerId = User::where('id',$user->agent_id)->first();
+                $logoFilename = $ownerId->agent_logo;
+                $siteName  = $ownerId->site_name;
+            } elseif ($user->hasRole('Master')) {
+                $seniorId = User::where('id',$user->agent_id)->first();
+                $ownerId  = User::where('id', $seniorId->agent_id)->first();
+                $logoFilename =  $ownerId->agent_logo;
+                $siteName  =  $ownerId->site_name;
+            } elseif ($user->hasRole('Agent')) {
+                $masterId = User::where('id',$user->agent_id)->first();
+                $seniorId = User::where('id',$masterId->agent_id)->first();
+                $ownerId  = User::where('id', $seniorId->agent_id)->first();
+                $logoFilename =  $ownerId->agent_logo;
+                $siteName  =  $ownerId->site_name;
             } else {
-                $siteName = $user->site_name ?? 'PoneWine20x'; // Default site name
+                $logoFilename = $user->agent_logo;
+                $siteName  =  $user->site_name;
             }
 
             //Log::info('Auth User Logo:', ['logo' => $logoFilename]);
@@ -32,7 +49,7 @@ class AdminLogoMiddleware
 
             View::share([
                 'adminLogo' => $adminLogo,
-                'siteName' => $siteName, // Share site name globally
+                'siteName' => $siteName ?? "PoneWine20x", // Share site name globally
             ]);
         }
 
