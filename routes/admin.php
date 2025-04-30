@@ -200,6 +200,9 @@ Route::group([
     Route::get('/agent-report/{id}', [AgentController::class, 'agentReportIndex'])->name('agent.report');
     Route::get('/player-report/{id}', [PlayerController::class, 'playerReportIndex'])->name('player.report');
 
+    //Shan Report
+    Route::get('/shan-report', [ReportController::class, 'shanReportIndex'])->name('shan_report');
+
     // report backup
     Route::get('/resultsdata', [ResultArchiveController::class, 'getAllResults'])->name('backup_results.index');
     Route::post('/archive-results', [ResultArchiveController::class, 'archiveResults'])->name('archive.results');

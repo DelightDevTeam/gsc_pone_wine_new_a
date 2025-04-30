@@ -384,6 +384,15 @@
                                         </p>
                                     </a>
                                 </li>
+                                <li class="nav-item menu-open">
+                                    <a href="{{ route('admin.shan_report') }}"
+                                        class="nav-link {{ Route::current()->getName() == 'admin.shan_report' ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>
+                                           Shan Report
+                                        </p>
+                                    </a>
+                                </li>
                                 <li class="nav-item">
                                     <a href="{{ route('admin.backup_results.index') }}"
                                         class="nav-link {{ Route::current()->getName() === 'admin.backup_results.index' ? 'active' : '' }}">
