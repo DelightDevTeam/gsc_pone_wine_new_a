@@ -82,7 +82,7 @@ class PullReport extends Command
                 foreach ($data as $report) {
                     $wagerId = Report::where('wager_id', $report['WagerID'])->first();
                     $user = User::where('user_name', $report['MemberName'])->first();
-                    $game_name = GameList::where('game_id', $report['GameID'])->first();
+                    $game_name = GameList::where('code', $report['GameID'])->first();
                     $report_game_name = $game_name->name;
                     if ($wagerId) {
                         $wagerId->update([
