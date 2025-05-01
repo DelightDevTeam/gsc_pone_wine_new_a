@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\Admin\Product;
-use App\Models\User;
 use Carbon\Carbon;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Admin\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Admin\ReportTransaction;
 
 class ReportController extends Controller
 {
@@ -174,6 +175,85 @@ class ReportController extends Controller
         return view('admin.report.player.index', compact('poneWineReport', 'slotReports'));
     }
 
+    public function shanReportIndex(Request $request)
+    {
+        $startDate = $request->start_date ?? Carbon::today()->startOfDay()->toDateString();
+        $endDate = $request->end_date ?? Carbon::today()->endOfDay()->toDateString();
+
+        $owner = auth()->user();
+
+        $reportData = $this->getShanReportQuery($owner,$startDate,$endDate);
+
+        $filteredReports =  $reportData->paginate(50);
+
+        // dd($filteredReports);
+
+
+
+        // $user_id = Auth::id();
+
+        // $userTransactions = ReportTransaction::where('user_id', $user_id)
+        //     ->orderByDesc('created_at')
+        //     ->get();
+
+        // // Get player name
+        // $player = Auth::user();
+        // $playerName = $player ? $player->user_name : 'Unknown';
+
+
+
+
+        // $totalBet = $userTransactions->sum('bet_amount');
+
+        // $totalWin = $userTransactions->where('win_lose_status', 1)->sum('transaction_amount');
+
+        // // Calculate Total Lose Amount (win_lose_status = 0)
+        // $totalLose = $userTransactions->where('win_lose_status', 0)
+        //     ->sum(function ($transaction) {
+        //         return abs($transaction->transaction_amount);
+        //     });
+
+        // // Format the response data
+        // $data = [
+        //     'user_id' => $user_id,
+        //     'player_name' => $playerName,
+        //     'total_bet' => $totalBet,
+        //     'total_win' => $totalWin,
+        //     'total_lose' => $totalLose,
+        //     'transactions' => $userTransactions,
+        // ];
+
+        return view('admin.report.shan.index',compact('filteredReports'));
+    }
+
+    public function shanReportDetail($id) {
+        $owner = auth()->user();
+
+        // if($owner->hasRole('Senior Owner')) {
+        $reportData = DB::table('users as o')
+            ->join('users as s', 's.agent_id', '=', 'o.id')          // senior
+            ->join('users as m', 'm.agent_id', '=', 's.id')          // master
+            ->join('users as a', 'a.agent_id', '=', 'm.id')          // agent
+            ->join('users as p', 'p.agent_id', '=', 'a.id')          // player
+            ->join('report_transactions', 'report_transactions.user_id', '=', 'p.id')
+            ->where('o.id', $owner->id)
+            ->groupBy('o.id', 'p.id', 'p.name', 'p.user_name')
+            ->selectRaw('
+                o.id as owner_id,
+                s.id as senior_id
+                m.id as master_id
+                a.id as agent_id
+                p.id as player_id,
+                p.name as player_name,
+                p.user_name as player_username,
+                SUM(report_transactions.bet_amount) as bet_amount,
+                SUM(report_transactions.transaction_amount) as transaction_amount
+            ')
+            ->get();
+
+        dd($reportData);
+    }
+
     private function isExistingAgent($userId)
     {
         $user = User::find($userId);
@@ -259,5 +339,84 @@ class ReportController extends Controller
         }
 
         return $children->flatMap->children;
+    }
+
+    private function getShanReportQuery ($owner,$startDate,$endDate) {
+        $query = DB::table('users as so')
+            ->Leftjoin('users as o', 'o.agent_id', '=', 'so.id')
+            ->Leftjoin('users as s', 's.agent_id', '=', 'o.id')          // senior
+            ->Leftjoin('users as m', 'm.agent_id', '=', 's.id')          // master
+            ->Leftjoin('users as a', 'a.agent_id', '=', 'm.id')          // agent
+            ->Leftjoin('users as p', 'p.agent_id', '=', 'a.id')          // player
+            ->join('report_transactions as rt', 'rt.user_id', '=', 'p.id')
+            ->orderBy('rt.created_at', 'desc')
+            ->whereBetween('rt.created_at',[$startDate .' 00:00:00', $endDate .' 23:59:59']);
+            if($owner->hasRole('Senior Owner')){
+                $query->where('so.id', $owner->id)
+                ->selectRaw('
+                o.user_name as owner_id,
+                s.user_name as senior_id,
+                m.user_name as master_id,
+                a.user_name as agent_id,
+                p.user_name as player_id,
+                p.name as player_name,
+                rt.id as transaction_id,
+                rt.bet_amount,
+                rt.transaction_amount,
+                rt.created_at as transaction_date
+            ');
+            } elseif($owner->hasRole('Owner')) {
+                $query->whereNotNull('o.id')
+                ->where('o.id', $owner->id)
+                ->selectRaw('
+                s.user_name as senior_id,
+                m.user_name as master_id,
+                a.user_name as agent_id,
+                p.user_name as player_id,
+                p.name as player_name,
+                rt.id as transaction_id,
+                rt.bet_amount,
+                rt.transaction_amount,
+                rt.created_at as transaction_date
+            ');
+            } elseif($owner->hasRole('Senior')) {
+                $query->whereNotNull('s.id')
+                ->where('s.id', $owner->id)
+                ->selectRaw('
+                m.user_name as master_id,
+                a.user_name as agent_id,
+                p.user_name as player_id,
+                p.name as player_name,
+                rt.id as transaction_id,
+                rt.bet_amount,
+                rt.transaction_amount,
+                rt.created_at as transaction_date
+            ');
+            } elseif($owner->hasRole('Master')) {
+                $query->whereNotNull('m.id')
+                ->where('m.id', $owner->id)
+                ->selectRaw('
+                a.user_name as agent_id,
+                p.user_name as player_id,
+                p.name as player_name,
+                rt.id as transaction_id,
+                rt.bet_amount,
+                rt.transaction_amount,
+                rt.created_at as transaction_date
+            ');
+            }  elseif($owner->hasRole('Agent')) {
+                $query->whereNotNull('a.id')
+                ->where('a.id', $owner->id)
+                ->selectRaw('
+                p.user_name as player_id,
+                p.name as player_name,
+                rt.id as transaction_id,
+                rt.bet_amount,
+                rt.transaction_amount,
+                rt.created_at as transaction_date
+            ');
+            }
+
+            return $query;
     }
 }

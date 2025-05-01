@@ -86,7 +86,7 @@
                                 <div class="form-group">
                                     <label>Owner logo</label>
                                     <input type="file" class="form-control" name="agent_logo">
-                                    @error('phone')
+                                    @error('agent_logo')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>

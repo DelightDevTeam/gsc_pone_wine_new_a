@@ -369,12 +369,11 @@ class PlayerController extends Controller
 
     public function playerReportIndex($id)
     {
-        //    $reportDetail = Report::with('product')->where('member_name',$id)->paginate(20);
-        //    dd($reportDetail);
+
         $startDate = request('start_date') ?? Carbon::today()->startOfDay()->toDateString();
         $endDate = request('end_date') ?? Carbon::today()->endOfDay()->toDateString();
 
-        // dd($startDate,$endDate);
+
         $reportDetail = DB::table('reports')
             ->join('products', 'products.code', '=', 'reports.product_code')
             ->select(

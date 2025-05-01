@@ -52,7 +52,7 @@ class OwnerController extends Controller
         //kzt
 
         //KS
-        $owners = User::with(['roles', 'children.children.children.children.poneWinePlayer'])->whereHas('roles', fn ($query) => $query->where('role_id', self::OWNER_ROLE))
+        $owners = User::with(['roles', 'children.children.children.children.poneWinePlayer'])->whereHas('roles', fn($query) => $query->where('role_id', self::OWNER_ROLE))
             ->select('id', 'name', 'user_name', 'phone', 'status')
             ->where('agent_id', auth()->id())
             ->orderBy('created_at', 'desc')
@@ -76,7 +76,7 @@ class OwnerController extends Controller
         $users = $owners->map(function ($owner) use ($reportData) {
             $report = $reportData->get($owner->id);
             $poneWineTotalAmt = $owner->children->flatMap->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
-            $winLose = ($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0);
+            $winLose = (($report->total_payout_amount ?? 0) - ($report->total_bet_amount ?? 0));
 
             return (object) [
                 'id' => $owner->id,
@@ -154,7 +154,7 @@ class OwnerController extends Controller
         if ($request->agent_logo) {
             $image = $request->file('agent_logo');
             $ext = $image->getClientOriginalExtension();
-            $filename = uniqid('logo').'.'.$ext; // Generate a unique filename
+            $filename = uniqid('logo') . '.' . $ext; // Generate a unique filename
             $image->move(public_path('assets/img/logo/'), $filename); // Save the file
             $userPrepare['agent_logo'] = $filename;
         }
@@ -194,7 +194,7 @@ class OwnerController extends Controller
     {
         $randomNumber = mt_rand(10000000, 99999999);
 
-        return 'O'.$randomNumber;
+        return 'O' . $randomNumber;
     }
 
     /**
@@ -353,7 +353,7 @@ class OwnerController extends Controller
 
         return redirect()->back()->with(
             'success',
-            'User '.($user->status == 1 ? 'activate' : 'inactive').' successfully'
+            'User ' . ($user->status == 1 ? 'activate' : 'inactive') . ' successfully'
         );
     }
 
@@ -377,12 +377,12 @@ class OwnerController extends Controller
         ]);
 
         if ($request->file('agent_logo')) {
-            if ($user->agent_logo && File::exists(public_path('assets/img/logo/'.$user->agent_logo))) {
-                File::delete(public_path('assets/img/logo/'.$user->agent_logo));
+            if ($user->agent_logo && File::exists(public_path('assets/img/logo/' . $user->agent_logo))) {
+                File::delete(public_path('assets/img/logo/' . $user->agent_logo));
             }
 
             $image = $request->file('agent_logo');
-            $filename = uniqid('logo').'.'.$image->getClientOriginalExtension();
+            $filename = uniqid('logo') . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('assets/img/logo/'), $filename);
             $user->agent_logo = $filename;
         } else {
@@ -480,33 +480,23 @@ class OwnerController extends Controller
             ->join('users as a', 'a.agent_id', '=', 'm.id')          // agent
             ->join('users as p', 'p.agent_id', '=', 'a.id')          // player
             ->join('reports', 'reports.member_name', '=', 'p.user_name')
-            ->where('o.id', $owner->id)
-            ->select([
-                'o.id as owner_id',
-                'p.user_name as player_name',
-                'reports.bet_amount',
-                'reports.payout_amount',
-                'reports.created_at',
-            ])
-            ->get();
+            ->groupBy('o.id')
+            ->selectRaw('
+            o.id as owner_id,
+            SUM(reports.bet_amount) as total_bet_amount,
+            SUM(reports.payout_amount) as total_payout_amount
+        ')
+            ->get()
+            ->keyBy('owner_id');
 
-        $winLose = [];
-        foreach ($reportData as $item) {
-            $winLose = $item->payout_amount == 0 ? ($item->bet_amount - $item->bet_amount) : ($item->bet_amount - $item->payout_amount);
-        }
 
         $poneWineTotalAmt = $owner->children->flatMap->children->flatMap->children->flatMap->children->flatMap->poneWinePlayer->sum('win_lose_amt');
 
-        $report = (object) [
-            'id' => $owner->id,
-            'name' => $owner->name,
-            'user_name' => $owner->user_name,
-            'phone' => $owner->phone,
-            'balanceFloat' => $owner->balanceFloat,
-            'status' => $owner->status,
-            'win_lose' => $winLose,
-            'total_win_lose_pone_wine' => $poneWineTotalAmt,
+        $report = $reportData->get($owner->id);
 
+        $report = (object) [
+            'win_lose' => (($report->total_payout_amount ?? 0) - ($report->total_bet_amount ?? 0)),
+            'total_win_lose_pone_wine' => $poneWineTotalAmt,
         ];
 
         return view('admin.owner.report_index', compact('report'));

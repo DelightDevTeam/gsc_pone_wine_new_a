@@ -69,7 +69,7 @@ class MasterController extends Controller
                 'phone' => $master->phone,
                 'balanceFloat' => $master->balanceFloat,
                 'status' => $master->status,
-                'win_lose' => (($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0)) + $poneWineTotalAmt,
+                'win_lose' => (($report->total_payout_amount ?? 0) - ($report->total_bet_amount ?? 0)) + $poneWineTotalAmt,
             ];
         });
 
@@ -418,7 +418,7 @@ class MasterController extends Controller
 
         $report = $reportData->get($master->id);
         $report = (object) [
-            'win_lose' => ($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0),
+            'win_lose' => (($report->total_payout_amount ?? 0) - ($report->total_bet_amount ?? 0)),
             'total_win_lose_pone_wine' => $poneWineTotalAmt ?? 0,
         ];
 

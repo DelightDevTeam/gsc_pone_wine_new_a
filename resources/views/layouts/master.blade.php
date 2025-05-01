@@ -156,6 +156,7 @@
             <span class="brand-text font-weight-light">GoldenJack</span>
             </a> --}}
             <!-- Brand Logo -->
+
             <a href="{{ route('home') }}" class="brand-link">
                 <img src="{{ $adminLogo }}" alt="Admin Logo" class="brand-image img-circle elevation-3"
                     style="opacity: .8">
@@ -380,6 +381,15 @@
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>
                                             PoneWine Report
+                                        </p>
+                                    </a>
+                                </li>
+                                <li class="nav-item menu-open">
+                                    <a href="{{ route('admin.shan_report') }}"
+                                        class="nav-link {{ Route::current()->getName() == 'admin.shan_report' ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>
+                                           Shan Report
                                         </p>
                                     </a>
                                 </li>

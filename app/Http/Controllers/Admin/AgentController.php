@@ -74,7 +74,7 @@ class AgentController extends Controller
                 'phone' => $agent->phone,
                 'balanceFloat' => $agent->balanceFloat,
                 'status' => $agent->status,
-                'win_lose' => (($report->total_bet_amount ?? 0) - ($report->total_payout_amount ?? 0)) + $poneWineTotalAmt,
+                'win_lose' => (($report->total_payout_amount ?? 0) - ($report->total_bet_amount ?? 0) ) + $poneWineTotalAmt,
             ];
         });
 
