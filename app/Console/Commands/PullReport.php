@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Admin\GameList;
 use App\Models\Report;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -81,14 +82,16 @@ class PullReport extends Command
                 foreach ($data as $report) {
                     $wagerId = Report::where('wager_id', $report['WagerID'])->first();
                     $user = User::where('user_name', $report['MemberName'])->first();
-
+                    $game_name = GameList::where('game_id', $report['GameID'])->first();
+                    $report_game_name = $game_name->name;
                     if ($wagerId) {
                         $wagerId->update([
                             'member_name' => $report['MemberName'],
                             'wager_id' => $report['WagerID'],
                             'product_code' => $report['ProductID'],
                             'game_type_id' => $report['GameType'],
-                            'game_name' => $report['GameID'],
+                            //'game_name' => $report['GameID'],
+                            'game_name' => $report_game_name,
                             'game_round_id' => $report['GameRoundID'],
                             'valid_bet_amount' => $report['ValidBetAmount'],
                             'bet_amount' => $report['BetAmount'],
