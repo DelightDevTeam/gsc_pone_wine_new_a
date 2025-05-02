@@ -186,44 +186,41 @@ class ReportController extends Controller
 
         $filteredReports =  $reportData->paginate(50);
 
-        // dd($filteredReports);
 
+        $totalBet = $filteredReports->sum('bet_amount');
 
+        $totalPayout = 0;
+        $totalNetWin = 0;
 
-        // $user_id = Auth::id();
+        foreach ($filteredReports as $row) {
+            if($row->status != 1) {
+                if($row->transaction_amount < 0) {
+                    $payout = $row->transaction_amount;
+                } else {
+                    $payout = 0;
+                }
 
-        // $userTransactions = ReportTransaction::where('user_id', $user_id)
-        //     ->orderByDesc('created_at')
-        //     ->get();
+                if($payout == 0) {
+                    $netWin = - $row->bet_amount;
+                } else {
+                    $netWin = $row->transaction_amount - $row->bet_amount;
+                }
+            } else {
+                $payout = $row->transaction_amount + $row->bet_amount;
+                $netWin = $payout - $row->bet_amount;
+            }
 
-        // // Get player name
-        // $player = Auth::user();
-        // $playerName = $player ? $player->user_name : 'Unknown';
+            $totalPayout += $payout;
+            $totalNetWin += $netWin;
+        }
 
+        $data = [
+            'total_bet' => $totalBet,
+            'total_payout' => $totalPayout,
+            'total_netWin' => $totalNetWin,
+        ];
 
-
-
-        // $totalBet = $userTransactions->sum('bet_amount');
-
-        // $totalWin = $userTransactions->where('win_lose_status', 1)->sum('transaction_amount');
-
-        // // Calculate Total Lose Amount (win_lose_status = 0)
-        // $totalLose = $userTransactions->where('win_lose_status', 0)
-        //     ->sum(function ($transaction) {
-        //         return abs($transaction->transaction_amount);
-        //     });
-
-        // // Format the response data
-        // $data = [
-        //     'user_id' => $user_id,
-        //     'player_name' => $playerName,
-        //     'total_bet' => $totalBet,
-        //     'total_win' => $totalWin,
-        //     'total_lose' => $totalLose,
-        //     'transactions' => $userTransactions,
-        // ];
-
-        return view('admin.report.shan.index',compact('filteredReports'));
+        return view('admin.report.shan.index',compact('filteredReports','data'));
     }
 
     public function shanReportDetail($id) {
@@ -368,6 +365,7 @@ class ReportController extends Controller
                 rt.id as transaction_id,
                 rt.bet_amount,
                 rt.transaction_amount,
+                rt.status,
                 rt.created_at as transaction_date
             ');
             } elseif($owner->hasRole('Owner')) {
@@ -382,6 +380,7 @@ class ReportController extends Controller
                 rt.id as transaction_id,
                 rt.bet_amount,
                 rt.transaction_amount,
+                rt.status,
                 rt.created_at as transaction_date
             ');
             } elseif($owner->hasRole('Senior')) {
@@ -395,6 +394,7 @@ class ReportController extends Controller
                 rt.id as transaction_id,
                 rt.bet_amount,
                 rt.transaction_amount,
+                rt.status,
                 rt.created_at as transaction_date
             ');
             } elseif($owner->hasRole('Master')) {
@@ -407,6 +407,7 @@ class ReportController extends Controller
                 rt.id as transaction_id,
                 rt.bet_amount,
                 rt.transaction_amount,
+                rt.status,
                 rt.created_at as transaction_date
             ');
             }  elseif($owner->hasRole('Agent')) {
@@ -418,6 +419,7 @@ class ReportController extends Controller
                 rt.id as transaction_id,
                 rt.bet_amount,
                 rt.transaction_amount,
+                rt.status,
                 rt.created_at as transaction_date
             ');
             }
