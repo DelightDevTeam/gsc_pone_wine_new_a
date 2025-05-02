@@ -9,6 +9,7 @@ use App\Traits\HttpResponses;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -83,9 +84,14 @@ class TransactionController extends Controller
         $user_id = Auth::id();
 
         // Query to get all report transactions for the authenticated user
-        $userTransactions = ReportTransaction::where('user_id', $user_id)
-            ->orderByDesc('created_at')
-            ->get();
+        $userTransactions =  ReportTransaction::where('user_id', $user_id)
+        ->select(
+            '*',
+            DB::raw('transaction_amount - bet_amount AS payout')
+        )
+        ->orderByDesc('created_at')
+        ->get();
+    
 
         // Get player name
         $player = Auth::user();
