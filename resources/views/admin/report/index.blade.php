@@ -51,7 +51,7 @@
                         </form>
                         <div class="card-body">
                             <table id="mytable" class="table table-bordered table-hover">
-                                <thead>
+                                <thead class="text-center">
                                     <tr>
                                         <th>AgentName</th>
                                         <th>UserName</th>
@@ -62,11 +62,11 @@
                                         <th>Action</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody class="text-center">
 
                                     @foreach ($report as $row)
                                         <tr>
-                                            <td>{{ $row->user_name }}</td>
+                                            <td>{{ $row->parent_member_name }}</td>
                                             <td>{{ $row->user_name }}</td>
                                             <td>{{ $row->total_count }}</td>
                                             <td class="">
@@ -84,7 +84,7 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
-                                <tfoot>
+                                <tfoot class="text-center">
                                     <th></th>
                                     <th>Total Stake</th>
                                     <th>{{$total['totalstake']}}</th>

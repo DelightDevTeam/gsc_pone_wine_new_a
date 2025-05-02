@@ -280,14 +280,17 @@ class ReportController extends Controller
         $query = DB::table('reports')
             ->select(
                 'users.id as user_id',
+                'users.agent_id as agent_id',
                 'users.name as name',
                 'users.user_name as user_name',
+                'parent_users.user_name as parent_member_name',
                 DB::raw('count(reports.product_code) as total_count'),
                 DB::raw('SUM(reports.bet_amount) as total_bet_amount'),
                 DB::raw('SUM(reports.payout_amount) as total_payout_amount'),
                 DB::raw('MAX(wallets.balance) as balance'),
             )
             ->leftjoin('users', 'reports.member_name', '=', 'users.user_name')
+            ->leftJoin('users as parent_users', 'users.agent_id', '=', 'parent_users.id')
             ->leftJoin('wallets', 'wallets.holder_id', '=', 'users.id')
             ->when($request->player_id, fn ($query) => $query->where('users.user_name', $request->player_id))
             ->whereBetween('reports.created_at', [$startDate.' 00:00:00', $endDate.' 23:59:59']);
@@ -302,7 +305,9 @@ class ReportController extends Controller
             $result = $query->whereIn('users.id', $agentChildrenIds);
         }
 
-        return $result->groupBy('users.id', 'users.name', 'users.user_name')->get();
+
+
+        return $result->groupBy('users.id', 'users.name', 'users.user_name','users.agent_id','parent_users.user_name')->get();
     }
 
     private function getPlayerDetails($playerId, $request)
