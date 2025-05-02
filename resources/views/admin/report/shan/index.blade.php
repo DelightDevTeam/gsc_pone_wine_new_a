@@ -50,7 +50,7 @@
                             </div>
                         </form>
                         <div class="card-body">
-                            <table id="mytable" class="table table-bordered  table-hover">
+                            <table class="table table-bordered  table-hover">
                                 <thead class=" table-primary text-center">
                                     <tr>
                                         <th>#</th>
