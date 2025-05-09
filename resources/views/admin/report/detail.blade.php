@@ -87,7 +87,7 @@
                                         </a>
                                     </td>
                                     <td>{{ number_format($detail->bet_amount, 2) }}</td>
-                                    <td>{{ number_format($detail->payout_amount, 2) }}</td>
+                                    <td>{{ number_format($detail->payout_amount - $detail->bet_amount, 2) }}</td>
                                     <td>{{ $detail->created_on }}</td>
                                 </tr>
                                 @endforeach
