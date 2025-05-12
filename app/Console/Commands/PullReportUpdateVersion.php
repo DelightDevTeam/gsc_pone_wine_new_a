@@ -67,11 +67,17 @@ class PullReportUpdateVersion extends Command
             $secretKey = Config::get('game.api.secret_key');
             Log::info('PullReportUpdateVersion command started', ['secretKey' => $secretKey]);
 
-            while ($lastEndTime->copy()->addMinutes($interval) < $now) {
+            while ($lastEndTime->copy()->addMinutes($interval) <= $now) {
                 $startDate = $lastEndTime;
                 $endDate = $startDate->copy()->addMinutes($interval);
                 $requestTime = now()->format('YmdHis');
                 $signature = md5($operatorCode.$requestTime.'pullreport'.$secretKey);
+
+                Log::info('Entering while loop', [
+                    'lastEndTime' => $lastEndTime,
+                    'interval_end' => $lastEndTime->copy()->addMinutes($interval),
+                    'now' => $now
+                ]);
 
                 $data = [
                     'OperatorCode' => $operatorCode,
