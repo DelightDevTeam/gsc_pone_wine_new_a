@@ -81,8 +81,8 @@ class PullReportUpdateVersion extends Command
     
             if ($response->successful()) {
                 $data = $response->json();
-                Log::debug('PullReport Request Payload', $data);
-                Log::debug('PullReport API Response', ['body' => $response->body()]);
+                //Log::debug('PullReport Request Payload', $data);
+                //Log::debug('PullReport API Response', ['body' => $response->body()]);
                 //Log::info($data);
                 if (isset($data['ErrorCode']) && $data['ErrorCode'] !== 0) {
                     Log::error('PullReport API Error', ['ErrorCode' => $data['ErrorCode'], 'ErrorMessage' => $data['ErrorMessage']]);
