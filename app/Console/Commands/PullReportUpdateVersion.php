@@ -49,6 +49,7 @@ class PullReportUpdateVersion extends Command
      */
     public function handle()
 {
+    Log::info('PullReportUpdateVersion command started');
     $lockKey = 'pullreport-api-lock'; // You can change this key if needed
     $lockTimeout = 60; // Lock timeout in seconds, adjust as needed
     $interval = 5; // minutes
