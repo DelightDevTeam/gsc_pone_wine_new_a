@@ -124,8 +124,19 @@ class HomeController extends Controller
     public function hotGameLists()
     {
         $hot_games = GameList::hotGame()->get();
-
         return $this->success(GameListResource::collection($hot_games));
+    }
+
+    public function specialGameLists()
+    {
+        $cards = SpecialGame::where('status', 2)->get();
+        $tables = SpecialGame::where('status', 1)->get();
+        $bingos = SpecialGame::where('status', 3)->get();
+        return $this->success([
+            'cards' => GameListResource::collection($cards),
+            'tables' => GameListResource::collection($tables),
+            'bingos' => GameListResource::collection($bingos),
+        ]);
     }
 
     public function SpecialCardGameList()
