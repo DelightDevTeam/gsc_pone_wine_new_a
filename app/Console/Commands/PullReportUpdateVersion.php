@@ -76,13 +76,13 @@ class PullReportUpdateVersion extends Command
                     'Sign' => $signature,
                     'RequestTime' => $requestTime,
                 ];
-                Log::info('PullReportUpdateVersion command started', ['data' => $data]);
-                Log::debug('PullReport Request Payload', $data);
+                //Log::info('PullReportUpdateVersion command started', ['data' => $data]);
+                //Log::debug('PullReport Request Payload', $data);
                 $response = Http::withHeaders([
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json',
                 ])->post($apiUrl, $data);
-                Log::debug('PullReport API Response', ['body' => $response->body()]);
+                //Log::debug('PullReport API Response', ['body' => $response->body()]);
                 Log::info('PullReportUpdateVersion command started', ['response' => $response->body()]);
 
                 if ($response->successful() && $response->json('ErrorCode') == 0) {
