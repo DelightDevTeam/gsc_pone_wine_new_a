@@ -55,8 +55,9 @@ class PullReportUpdateVersion extends Command
     $interval = 5; // minutes
     $now = now();
     $lastEndTime = Cache::get('pullreport:last_end_time', now()->subMinutes($interval));
-
+    Log::info('PullReportUpdateVersion command started', ['lastEndTime' => $lastEndTime]);
     $lock = Cache::lock($lockKey, $lockTimeout);
+    Log::info('PullReportUpdateVersion command started', ['lock' => $lock]);
 
     if ($lock->get()) {
         try {
