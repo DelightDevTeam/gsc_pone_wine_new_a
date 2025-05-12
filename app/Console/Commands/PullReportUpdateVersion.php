@@ -50,7 +50,7 @@ class PullReportUpdateVersion extends Command
     // ... existing code ...
     public function handle()
     {
-        Log::info('PullReportUpdateVersion command started');
+        //Log::info('PullReportUpdateVersion command started');
         $lockKey = 'pullreport-api-lock';
         $lockTimeout = 60;
         $interval = 5; // minutes
@@ -80,12 +80,12 @@ class PullReportUpdateVersion extends Command
                         'Sign' => $signature,
                         'RequestTime' => $requestTime,
                     ];
-                    Log::info('PullReportUpdateVersion command started', ['data' => $data]);
+                    //Log::info('PullReportUpdateVersion command started', ['data' => $data]);
                     $response = Http::withHeaders([
                         'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
                     ])->post($apiUrl, $data);
-                    Log::info('PullReportUpdateVersion command started', ['response' => $response->body()]);
+                    //Log::info('PullReportUpdateVersion command started', ['response' => $response->body()]);
 
                     if ($response->successful() && $response->json('ErrorCode') == 0) {
                         $data = $response->json();
@@ -118,6 +118,7 @@ class PullReportUpdateVersion extends Command
                                         'agent_id' => $agent_id,
                                         'agent_commission' => 0.00,
                                     ]);
+                                    Log::info('Data stored in the database with update method');
                                 } else {
                                     Report::create([
                                         'member_name' => $report['MemberName'],
@@ -139,9 +140,13 @@ class PullReportUpdateVersion extends Command
                                         'agent_id' => $agent_id,
                                         'agent_commission' => 0.00,
                                     ]);
+                                    Log::info('Data stored in the database with create method');
                                 }
                             }
                         }
+                        // data is stored in the database completed log 
+                        Log::info('Data stored in the database');
+
                         // Update last processed end time
                         Cache::put('pullreport:last_end_time', $endDate);
                         $lastEndTime = $endDate;
