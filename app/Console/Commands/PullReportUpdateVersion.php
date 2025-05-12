@@ -145,6 +145,7 @@ class PullReportUpdateVersion extends Command
                         // Update last processed end time
                         Cache::put('pullreport:last_end_time', $endDate);
                         $lastEndTime = $endDate;
+                        Log::info('Stored last_end_time in cache', ['endDate' => $endDate]);
                         $this->line('<fg=green>Pull Report success for interval: ' . $startDate . ' to ' . $endDate . '</>');
                     } else {
                         Log::error('PullReport API Error or Call Failed', ['response' => $response->body()]);
