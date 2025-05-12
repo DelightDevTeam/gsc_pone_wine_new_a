@@ -63,7 +63,9 @@ class PullReportUpdateVersion extends Command
         try {
             $apiUrl = $this->apiUrl.'/Seamless/PullReport';
             $operatorCode = Config::get('game.api.operator_code');
+            Log::info('PullReportUpdateVersion command started', ['operatorCode' => $operatorCode]);
             $secretKey = Config::get('game.api.secret_key');
+            Log::info('PullReportUpdateVersion command started', ['secretKey' => $secretKey]);
 
             while ($lastEndTime->copy()->addMinutes($interval) < $now) {
                 $startDate = $lastEndTime;
@@ -78,12 +80,14 @@ class PullReportUpdateVersion extends Command
                     'Sign' => $signature,
                     'RequestTime' => $requestTime,
                 ];
+                Log::info('PullReportUpdateVersion command started', ['data' => $data]);
                 Log::debug('PullReport Request Payload', $data);
                 $response = Http::withHeaders([
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json',
                 ])->post($apiUrl, $data);
                 Log::debug('PullReport API Response', ['body' => $response->body()]);
+                Log::info('PullReportUpdateVersion command started', ['response' => $response->body()]);
 
                 if ($response->successful() && $response->json('ErrorCode') == 0) {
                     $data = $response->json();
