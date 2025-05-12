@@ -30,7 +30,7 @@ class DownloadGameImages extends Command
     public function handle()
     {
         // Path to the JSON file
-        $jsonFilePath = base_path('app/Console/Commands/json_data/joker_slot.json');
+        $jsonFilePath = base_path('app/Console/Commands/json_data/pp.json');
 
         // Check if the JSON file exists
         if (! File::exists($jsonFilePath)) {
@@ -53,14 +53,14 @@ class DownloadGameImages extends Command
         $games = $gamesData['ProviderGames'];
 
         // Create directory to store images
-        $directoryPath = public_path('assets/img/game_list/joker');
+        $directoryPath = public_path('assets/img/game_list/pplay');
         if (! File::exists($directoryPath)) {
             File::makeDirectory($directoryPath, 0755, true);
         }
 
         // Loop through games and download images
         foreach ($games as $game) {
-            $this->downloadImage($game['ImageUrl'], $game['GameName'], $directoryPath);
+            $this->downloadImage($game['ImageUrl'], $game['GameCode'], $directoryPath);
         }
 
         $this->info('All images have been downloaded.');
