@@ -73,12 +73,12 @@ trait UseWebhook
             $rate = $game_type_product->rate ?? 1;
 
             // Log transaction creation
-            Log::info('Creating SeamlessTransaction', [
-                'wager_id' => $transaction->WagerID,
-                'transaction_id' => $transactionId,
-                'user_id' => $userId,
-                'seamless_event_id' => $seamlessEventId,
-            ]);
+            // Log::info('Creating SeamlessTransaction', [
+            //     'wager_id' => $transaction->WagerID,
+            //     'transaction_id' => $transactionId,
+            //     'user_id' => $userId,
+            //     'seamless_event_id' => $seamlessEventId,
+            // ]);
 
             $seamlessTransactions[] = SeamlessTransaction::create([
                 'user_id' => $userId,
