@@ -60,7 +60,7 @@ class NewPullReport extends Command
             ])->post($apiUrl, $payload);
 
            // Log::info('NewPullReport API response', ['body' => $response->body()]);
-            $this->info('API Response: ' . $response->body());
+            //$this->info('API Response: ' . $response->body());
 
             if ($response->successful() && $response->json('ErrorCode') == 0) {
                 $data = $response->json();
@@ -99,7 +99,7 @@ class NewPullReport extends Command
                             //Log::info('Wager created', ['wager_id' => $wager['WagerID']]);
                         }
                     }
-                    $this->info('All wagers processed and stored in reports table.');
+                   // $this->info('All wagers processed and stored in reports table.');
                 } else {
                     $this->info('No wagers found in response.');
                 }
