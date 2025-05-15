@@ -69,7 +69,7 @@ class PullReportUpdateVersion extends Command
                 while ($lastEndTime->copy()->addMinutes($interval) <= $now) {
                     $startDate = $lastEndTime;
                     $endDate = $startDate->copy()->addMinutes($interval);
-                    Log::info('Processing interval', ['startDate' => $startDate, 'endDate' => $endDate]);
+                    //Log::info('Processing interval', ['startDate' => $startDate, 'endDate' => $endDate]);
                     $requestTime = now()->format('YmdHis');
                     $signature = md5($operatorCode.$requestTime.'pullreport'.$secretKey);
 
@@ -118,7 +118,7 @@ class PullReportUpdateVersion extends Command
                                         'agent_id' => $agent_id,
                                         'agent_commission' => 0.00,
                                     ]);
-                                    Log::info('Wager updated', ['wager_id' => $report['WagerID']]);
+                                    //Log::info('Wager updated', ['wager_id' => $report['WagerID']]);
                                 } else {
                                     Report::create([
                                         'member_name' => $report['MemberName'],
@@ -140,13 +140,13 @@ class PullReportUpdateVersion extends Command
                                         'agent_id' => $agent_id,
                                         'agent_commission' => 0.00,
                                     ]);
-                                    Log::info('Wager created', ['wager_id' => $report['WagerID']]);
+                                    //Log::info('Wager created', ['wager_id' => $report['WagerID']]);
                                 }
                             }
                         }
                         // Update last processed end time
                         Cache::put('pullreport:last_end_time', $endDate);
-                        Log::info('Updated pullreport:last_end_time', ['endDate' => $endDate]);
+                        //Log::info('Updated pullreport:last_end_time', ['endDate' => $endDate]);
                         $lastEndTime = $endDate;
                         $this->line('<fg=green>Pull Report success for interval: ' . $startDate . ' to ' . $endDate . '</>');
                     } else {
