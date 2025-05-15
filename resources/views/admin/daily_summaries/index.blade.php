@@ -83,6 +83,12 @@
 
                             <!-- Add this to display results -->
                             <div id="generationResult" class="mt-3"></div>
+                            @if(session('success'))
+       <div class="alert alert-success">{{ session('success') }}</div>
+   @endif
+   @if(session('error'))
+       <div class="alert alert-danger">{{ session('error') }}</div>
+   @endif
 
                             <table id="ponewineTable" class="table table-bordered table-hover">
                                 <thead>
@@ -135,7 +141,7 @@
 @section('script')
 <!-- <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script> -->
 
-    <script>
+    <!-- <script>
         // Handle form submission with AJAX
         $('.date-filter-form').on('submit', function(e) {
             e.preventDefault();
@@ -158,5 +164,5 @@
                 }
             });
         });
-    </script>
+    </script> -->
 @endsection
