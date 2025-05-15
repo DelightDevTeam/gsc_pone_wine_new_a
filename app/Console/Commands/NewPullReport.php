@@ -96,7 +96,7 @@ class NewPullReport extends Command
                            // Log::info('Wager updated', ['wager_id' => $wager['WagerID']]);
                         } else {
                             Report::create($fields);
-                            Log::info('Wager created', ['wager_id' => $wager['WagerID']]);
+                            //Log::info('Wager created', ['wager_id' => $wager['WagerID']]);
                         }
                     }
                     $this->info('All wagers processed and stored in reports table.');
