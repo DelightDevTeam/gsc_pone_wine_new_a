@@ -68,6 +68,7 @@
                                     <th>Game Name</th>
                                     <th>History</th>
                                     <th>Bet</th>
+                                    <th>Payout</th>
                                     <th>Win</th>
                                     <th>TransactionDateTime</th>
                                 </tr>
@@ -87,6 +88,7 @@
                                         </a>
                                     </td>
                                     <td>{{ number_format($detail->bet_amount, 2) }}</td>
+                                    <td>{{ number_format($detail->payout_amount, 2) }}</td>
                                     <td>{{ number_format($detail->payout_amount - $detail->bet_amount, 2) }}</td>
                                     <td>{{ $detail->created_on }}</td>
                                 </tr>
