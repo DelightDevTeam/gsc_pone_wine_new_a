@@ -50,7 +50,7 @@ class NewPullReport extends Command
             'RequestTime' => $requestTime,
         ];
 
-        Log::info('NewPullReport request payload', $payload);
+       // Log::info('NewPullReport request payload', $payload);
         $this->info('Request Payload: ' . json_encode($payload));
 
         try {
@@ -59,7 +59,7 @@ class NewPullReport extends Command
                 'Accept' => 'application/json',
             ])->post($apiUrl, $payload);
 
-            Log::info('NewPullReport API response', ['body' => $response->body()]);
+           // Log::info('NewPullReport API response', ['body' => $response->body()]);
             $this->info('API Response: ' . $response->body());
 
             if ($response->successful() && $response->json('ErrorCode') == 0) {
@@ -93,7 +93,7 @@ class NewPullReport extends Command
                         ];
                         if ($existing) {
                             $existing->update($fields);
-                            Log::info('Wager updated', ['wager_id' => $wager['WagerID']]);
+                           // Log::info('Wager updated', ['wager_id' => $wager['WagerID']]);
                         } else {
                             Report::create($fields);
                             Log::info('Wager created', ['wager_id' => $wager['WagerID']]);
