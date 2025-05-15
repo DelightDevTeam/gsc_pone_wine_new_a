@@ -51,7 +51,7 @@ class NewPullReport extends Command
         ];
 
        // Log::info('NewPullReport request payload', $payload);
-        $this->info('Request Payload: ' . json_encode($payload));
+       // $this->info('Request Payload: ' . json_encode($payload));
 
         try {
             $response = Http::withHeaders([
