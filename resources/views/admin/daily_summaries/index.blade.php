@@ -133,7 +133,7 @@
 @endsection
 
 @section('script')
-<script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
+<!-- <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script> -->
 
     <script>
         // Handle form submission with AJAX
