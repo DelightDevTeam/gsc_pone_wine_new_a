@@ -9,8 +9,9 @@ class Kernel extends ConsoleKernel
 {
     protected $commands = [
        // Commands\PullReport::class,
-        Commands\PullReportUpdateVersion::class,
+        //Commands\PullReportUpdateVersion::class,
         //Commands\GenerateDailySummaries::class,
+        Commands\NewPullReport::class,
     ];
 
     /**
@@ -19,8 +20,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
 
+        $schedule->command('app:new-pull-report')->everyMinute();
         //$schedule->command('make:pull-report')->everyFiveSeconds();
-        $schedule->command('app:pull-report-update-version')->everyFiveSeconds();
+       // $schedule->command('app:pull-report-update-version')->everyFiveSeconds();
         //$schedule->command('generate:daily-summaries')->everyMinute('01:00');
 
         // $schedule->command('inspire')->hourly();
