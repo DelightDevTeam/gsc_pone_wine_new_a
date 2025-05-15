@@ -133,6 +133,8 @@
 @endsection
 
 @section('script')
+<script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
+
     <script>
         // Handle form submission with AJAX
         $('.date-filter-form').on('submit', function(e) {
