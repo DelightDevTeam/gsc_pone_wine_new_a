@@ -2,12 +2,16 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Admin\GameList;
+use App\Models\Report;
+use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use App\Models\Report;
-
+use Illuminate\Support\Facades\Cache;
 class NewPullReport extends Command
 {
     /**
