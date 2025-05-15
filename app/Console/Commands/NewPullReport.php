@@ -69,7 +69,7 @@ class NewPullReport extends Command
                         $existing = Report::where('wager_id', $wager['WagerID'])->first();
                         $user = User::where('user_name', $report['MemberName'])->first();
                                 $game_name = GameList::where('code', $report['GameID'])->first();
-                                $report_game_name = $game_name ? $game_name->name : $report['GameID'];
+                                $report_game_name = $game_name ? $game_name->name : $wager['GameID'];
                                 $agent_id = $user ? $user->agent_id : null;
                         $fields = [
                             'member_name' => $wager['MemberName'],
