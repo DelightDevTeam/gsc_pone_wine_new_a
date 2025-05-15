@@ -25,8 +25,8 @@ class JokerFishing extends Command
      */
     public function handle()
     {
-        $inputFilePath = base_path('app/Console/Commands/json_data/JokerFishing.json');
-        $outputFilePath = base_path('app/Console/Commands/data/JokerFishingModify.json');
+        $inputFilePath = base_path('app/Console/Commands/json_data/pp.json');
+        $outputFilePath = base_path('app/Console/Commands/data/ppModify.json');
 
         // Load the JSON file
         $jsonData = file_get_contents($inputFilePath);
@@ -34,8 +34,8 @@ class JokerFishing extends Command
 
         // Modify the data
         foreach ($data['ProviderGames'] as &$game) {
-            $game['game_type_id'] = 8;
-            $game['product_id'] = 3;
+            $game['game_type_id'] = 1;
+            $game['product_id'] = 1;
             // Remove ProviderGameType and ProviderCode if they exist
             if (isset($game['ProviderGameType'])) {
                 unset($game['ProviderGameType']);

@@ -20,8 +20,8 @@ class Kernel extends ConsoleKernel
     {
 
         //$schedule->command('make:pull-report')->everyFiveSeconds();
-        $schedule->command('app:pull-report-update-version')->everyMinute();
-        //$schedule->command('generate:daily-summaries')->dailyAt('01:00');
+        $schedule->command('app:pull-report-update-version')->everyFiveSeconds();
+        //$schedule->command('generate:daily-summaries')->everyMinute('01:00');
 
         // $schedule->command('inspire')->hourly();
         //$schedule->command('summary:fetch')->dailyAt('00:01');
