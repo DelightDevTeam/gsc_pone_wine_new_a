@@ -67,8 +67,8 @@ class NewPullReport extends Command
                 if (!empty($data['Wagers'])) {
                     foreach ($data['Wagers'] as $wager) {
                         $existing = Report::where('wager_id', $wager['WagerID'])->first();
-                        $user = User::where('user_name', $report['MemberName'])->first();
-                                $game_name = GameList::where('code', $report['GameID'])->first();
+                        $user = User::where('user_name', $wager['MemberName'])->first();
+                                $game_name = GameList::where('code', $wager['GameID'])->first();
                                 $report_game_name = $game_name ? $game_name->name : $wager['GameID'];
                                 $agent_id = $user ? $user->agent_id : null;
                         $fields = [
