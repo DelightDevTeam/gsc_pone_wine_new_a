@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Admin\GameList;
 use App\Models\Report;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -11,7 +10,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
+
 class PullReport extends Command
 {
     /**
@@ -61,8 +60,8 @@ class PullReport extends Command
 
         $data = [
             'OperatorCode' => $operatorCode,
-            'StartDate' => $startDate->format('Y-m-d H:i:s'),
-            'EndDate' => $startDate->copy()->addMinutes(5)->format('Y-m-d H:i:s'),
+            'StartDate' => $startDate->format('Y-m-d H:i'),
+            'EndDate' => $startDate->copy()->addMinutes(5)->format('Y-m-d H:i'),
             'Sign' => $signature,
             'RequestTime' => $requestTime,
         ];
@@ -75,27 +74,24 @@ class PullReport extends Command
         if ($response->successful()) {
             $data = $response->json();
             //Log::info($data);
-            if (isset($data['ErrorCode']) && $data['ErrorCode'] !== 0) {
-                Log::error('PullReport API Error', ['ErrorCode' => $data['ErrorCode'], 'ErrorMessage' => $data['ErrorMessage']]);
-                $this->line('<fg=red>API Error: ' . $data['ErrorMessage'] . '</>');
-                return;
-            }
-            if (!empty($data['Wagers'])) {
-                $wagers = $data['Wagers'];
-                foreach ($wagers as $report) {
+            if ($data['Wagers'] != null) {
+                $data = $response['Wagers'];
+                Log::info($response);
+                // $user = Auth::user(); // Get the authenticated user
+                foreach ($data as $report) {
                     $wagerId = Report::where('wager_id', $report['WagerID'])->first();
                     $user = User::where('user_name', $report['MemberName'])->first();
-                    $game_name = GameList::where('code', $report['GameID'])->first();
-                    $report_game_name = $game_name ? $game_name->name : $report['GameID'];
-                    $agent_id = $user ? $user->agent_id : null;
+                    $game_name = GameList::where('code', $wager['GameID'])->first();
+                    $report_game_name = $game_name ? $game_name->name : $wager['GameID'];
+                    Log::info($report);
                     if ($wagerId) {
                         $wagerId->update([
                             'member_name' => $report['MemberName'],
                             'wager_id' => $report['WagerID'],
                             'product_code' => $report['ProductID'],
                             'game_type_id' => $report['GameType'],
-                            //'game_name' => $report['GameID'],
-                            'game_name' => $report_game_name,
+                           // 'game_name' => $report['GameID'],
+                           'game_name' => $report_game_name,
                             'game_round_id' => $report['GameRoundID'],
                             'valid_bet_amount' => $report['ValidBetAmount'],
                             'bet_amount' => $report['BetAmount'],
@@ -108,8 +104,10 @@ class PullReport extends Command
                             'modified_on' => $report['ModifiedOn'],
                             // 'settlement_date' => $report['SettlementDate'],
                             'settlement_date' => $report['SettlementDate'] ?? now(),
-                            'agent_id' => $agent_id, // Store the agent_id
+                            'agent_id' => $user->agent_id, // Store the agent_id
                             'agent_commission' => 0.00,
+
+                            //'agent_commission' => $grossCommission,
                         ]);
                     } else {
                         Report::create([
@@ -117,7 +115,7 @@ class PullReport extends Command
                             'wager_id' => $report['WagerID'],
                             'product_code' => $report['ProductID'],
                             'game_type_id' => $report['GameType'],
-                            'game_name' => $report_game_name,
+                            'game_name' => $report['GameID'],
                             'game_round_id' => $report['GameRoundID'],
                             'valid_bet_amount' => $report['ValidBetAmount'],
                             'bet_amount' => $report['BetAmount'],
@@ -130,16 +128,16 @@ class PullReport extends Command
                             'modified_on' => $report['ModifiedOn'],
                             //'settlement_date' => $report['SettlementDate'],
                             'settlement_date' => $report['SettlementDate'] ?? now(),
-                            'agent_id' => $agent_id, // Store the agent_id
+                            'agent_id' => $user->agent_id, // Store the agent_id
                             'agent_commission' => 0.00,
+
                         ]);
                     }
                 }
             }
             $this->line('<fg=green>Pull Report success</>');
         } else {
-            Log::error('PullReport API Call Failed', ['response' => $response->body()]);
-            $this->line('<fg=red>Api Call Error</>');
+            $this->line('<fg=green>Api Call Error</>');
         }
     }
 }
