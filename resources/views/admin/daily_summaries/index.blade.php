@@ -90,7 +90,7 @@
        <div class="alert alert-danger">{{ session('error') }}</div>
    @endif
 
-                            <table id="ponewineTable" class="table table-bordered table-hover">
+                            <!-- <table id="ponewineTable" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
                                         <th>Date</th>
@@ -125,7 +125,43 @@
                                         </tr>
                                     @endforelse
                                 </tbody>
-                            </table>
+                            </table> -->
+                            <table class="table table-bordered table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Member Name</th>
+                                    <th>Agent ID</th>
+                                    <th>Valid Bet Amount</th>
+                                    <th>Payout Amount</th>
+                                    <th>Total Bet Amount</th>
+                                    <th>Win Amount</th>
+                                    <th>Lose Amount</th>
+                                    <th>Stake Count</th>
+                                    <th>Created At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($summaries as $summary)
+                                    <tr>
+                                        <td>{{ $summary->report_date_formatted }}</td>
+                                        <td>{{ $summary->member_name ?? 'N/A' }}</td>
+                                        <td>{{ $summary->agent_id ?? 'N/A' }}</td>
+                                        <td>{{ number_format($summary->total_valid_bet_amount ?? 0) }}</td>
+                                        <td>{{ number_format($summary->total_payout_amount) }}</td>
+                                        <td>{{ number_format($summary->total_bet_amount) }}</td>
+                                        <td>{{ number_format($summary->total_win_amount) }}</td>
+                                        <td>{{ number_format($summary->total_lose_amount) }}</td>
+                                        <td>{{ $summary->total_stake_count }}</td>
+                                        <td>{{ $summary->created_at_formatted }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="10">No summaries found</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
 
                             <div class="pagination">
                                 {{ $summaries->links() }}
