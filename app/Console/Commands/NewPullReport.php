@@ -21,12 +21,16 @@ class NewPullReport extends Command
         $secretKey = config('game.api.secret_key');
         $apiUrl = config('game.api.url') . '/Seamless/PullReport';
 
-        // ✅ Use timestamp tracking to avoid overlapping
         $endDate = now();
         $startDate = Cache::get('last_pull_time', $endDate->copy()->subMinutes(5));
 
-        // Enforce maximum 5-minute range
+        Log::info('PullReport start', [
+            'start' => $startDate->format('Y-m-d H:i:s'),
+            'end' => $endDate->format('Y-m-d H:i:s'),
+        ]);
+
         if ($endDate->diffInMinutes($startDate) > 5) {
+            Log::warning('Start date was older than 5 minutes, resetting.');
             $startDate = $endDate->copy()->subMinutes(5);
         }
 
@@ -41,16 +45,23 @@ class NewPullReport extends Command
             'RequestTime' => $requestTime,
         ];
 
+        Log::debug('PullReport request payload', $payload);
+
         try {
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
             ])->post($apiUrl, $payload);
 
+            Log::info('API response status', ['status' => $response->status()]);
+            Log::debug('API response body', ['body' => $response->body()]);
+
             if ($response->successful() && $response->json('ErrorCode') == 0) {
                 $data = $response->json();
 
                 if (!empty($data['Wagers'])) {
+                    Log::info('Wagers received', ['count' => count($data['Wagers'])]);
+
                     foreach ($data['Wagers'] as $wager) {
                         $existing = Report::where('wager_id', $wager['WagerID'])->first();
                         $user = User::where('user_name', $wager['MemberName'])->first();
@@ -81,18 +92,25 @@ class NewPullReport extends Command
 
                         if ($existing) {
                             $existing->update($fields);
+                            Log::info('Updated wager', ['wager_id' => $wager['WagerID']]);
                         } else {
                             Report::create($fields);
+                            Log::info('Created new wager', ['wager_id' => $wager['WagerID']]);
                         }
                     }
 
-                    // ✅ Only update the last pull time if data is successfully processed
                     Cache::put('last_pull_time', $endDate);
+                    Log::info('Cache updated with last_pull_time', ['timestamp' => $endDate]);
                     $this->info('Wagers processed successfully. Last pull time updated.');
                 } else {
+                    Log::info('No wagers found in the API response.');
                     $this->info('No wagers found in response.');
                 }
             } else {
+                Log::error('API call failed or returned error code.', [
+                    'status' => $response->status(),
+                    'error_code' => $response->json('ErrorCode'),
+                ]);
                 $this->error('API call failed with status: ' . $response->status());
             }
         } catch (\Exception $e) {
