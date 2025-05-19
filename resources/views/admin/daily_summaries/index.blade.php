@@ -90,7 +90,7 @@
        <div class="alert alert-danger">{{ session('error') }}</div>
    @endif
 
-                            <!-- <table id="ponewineTable" class="table table-bordered table-hover">
+                            <table id="ponewineTable" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
                                         <th>Date</th>
@@ -125,8 +125,8 @@
                                         </tr>
                                     @endforelse
                                 </tbody>
-                            </table> -->
-                            <table class="table table-bordered table-hover">
+                            </table>
+                            <!-- <table class="table table-bordered table-hover">
                             <thead class="thead-light">
                                 <tr>
                                     <th>Date</th>
@@ -161,7 +161,7 @@
                                     </tr>
                                 @endforelse
                             </tbody>
-                        </table>
+                        </table> -->
 
                             <div class="pagination">
                                 {{ $summaries->links() }}
@@ -177,14 +177,13 @@
 @section('script')
 <!-- <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script> -->
  <!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- DataTables -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
-<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script> -->
 
 
-    <!-- <script>
+    <script>
         // Handle form submission with AJAX
         $('.date-filter-form').on('submit', function(e) {
             e.preventDefault();
@@ -207,7 +206,7 @@
                 }
             });
         });
-    </script> -->
+    </script>
 
    
 <!-- <script>
