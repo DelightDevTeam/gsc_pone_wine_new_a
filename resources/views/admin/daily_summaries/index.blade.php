@@ -141,7 +141,7 @@
 @section('script')
 <!-- <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script> -->
 
-    <!-- <script>
+    <script>
         // Handle form submission with AJAX
         $('.date-filter-form').on('submit', function(e) {
             e.preventDefault();
@@ -164,5 +164,40 @@
                 }
             });
         });
-    </script> -->
+    </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const table = document.getElementById('ponewineTable');
+        if (table) {
+            $('#ponewineTable').DataTable(); // Only initialize if table exists
+        }
+
+        const form = document.querySelector('.date-filter-form');
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: form.action,
+                    method: 'POST',
+                    data: $(form).serialize(),
+                    success: function (response) {
+                        const html = `<div class="alert alert-success">
+                            <strong>Success!</strong> ${response.message}<br>
+                            Processed dates: ${response.processed_dates.join(', ')}<br>
+                            Total summaries created: ${response.total_summaries_created}
+                        </div>`;
+                        $('#generationResult').html(html);
+                    },
+                    error: function (xhr) {
+                        const error = xhr.responseJSON?.error || 'Unknown error occurred';
+                        $('#generationResult').html(`<div class="alert alert-danger">${error}</div>`);
+                    }
+                });
+            });
+        }
+    });
+</script>
+
 @endsection
