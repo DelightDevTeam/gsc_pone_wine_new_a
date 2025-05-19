@@ -209,8 +209,8 @@
         });
     </script> -->
 
-    @section('script')
-<script>
+   
+<!-- <script>
 document.addEventListener('DOMContentLoaded', function () {
     const $table = $('#ponewineTable');
     if ($table.length) {
@@ -251,7 +251,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
-</script>
-@endsection
+</script> -->
 
 @endsection
