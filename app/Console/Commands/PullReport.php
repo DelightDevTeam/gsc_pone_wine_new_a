@@ -77,7 +77,7 @@ class PullReport extends Command
             //Log::info($data);
             if (!empty($data['Wagers'])) {
                 $data = $response['Wagers'];
-                Log::info($response);
+               // Log::info($response);
                 
                 // $user = Auth::user(); // Get the authenticated user
                 foreach ($data as $report) {

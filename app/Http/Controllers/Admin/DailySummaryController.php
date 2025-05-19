@@ -93,28 +93,28 @@ class DailySummaryController extends Controller
         }
 
         // Log before executing the query
-        // Log::debug('Executing final query for summaries', [
-        //     'sql' => $result->toSql(),
-        //     'bindings' => $result->getBindings(),
-        // ]);
+        Log::debug('Executing final query for summaries', [
+            'sql' => $result->toSql(),
+            'bindings' => $result->getBindings(),
+        ]);
 
         $summaries = $result->orderBy('report_date', 'desc')
             ->paginate(10)
             ->appends($request->only(['start_date', 'end_date'])); // Preserve query parameters in pagination links
 
         // Log the pagination results
-        // Log::debug('Summaries retrieved', [
-        //     'total' => $summaries->total(),
-        //     'per_page' => $summaries->perPage(),
-        //     'current_page' => $summaries->currentPage(),
-        //     'summary_ids' => $summaries->pluck('id')->toArray(),
-        // ]);
+        Log::debug('Summaries retrieved', [
+            'total' => $summaries->total(),
+            'per_page' => $summaries->perPage(),
+            'current_page' => $summaries->currentPage(),
+            'summary_ids' => $summaries->pluck('id')->toArray(),
+        ]);
 
         // // Log the pagination links to verify query parameters
-        // Log::debug('Pagination links generated', [
-        //     'links' => $summaries->toArray()['links'],
-        //     'appended_params' => $request->only(['start_date', 'end_date']),
-        // ]);
+        Log::debug('Pagination links generated', [
+            'links' => $summaries->toArray()['links'],
+            'appended_params' => $request->only(['start_date', 'end_date']),
+        ]);
 
         return view('admin.daily_summaries.index', compact('summaries'));
     }
