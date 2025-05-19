@@ -75,9 +75,10 @@ class PullReport extends Command
         if ($response->successful()) {
             $data = $response->json();
             //Log::info($data);
-            if ($data['Wagers'] != null) {
+            if (!empty($data['Wagers'])) {
                 $data = $response['Wagers'];
                 Log::info($response);
+                
                 // $user = Auth::user(); // Get the authenticated user
                 foreach ($data as $report) {
                     $wagerId = Report::where('wager_id', $report['WagerID'])->first();
