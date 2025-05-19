@@ -19,7 +19,7 @@ class DailySummaryController extends Controller
 {
     protected const SUB_AGENT_ROlE = 'Sub Agent';
 
-    protected const MAX_REPORTS_PER_DAY = 10000; // Maximum allowed reports per day
+    protected const MAX_REPORTS_PER_DAY = 100000; // Maximum allowed reports per day
 
     public function index(Request $request)
     {
@@ -54,7 +54,7 @@ class DailySummaryController extends Controller
         // ]);
 
         // Set default date range if not provided (e.g., last 7 days)
-        $startDate = $request->filled('start_date') ? Carbon::parse($request->start_date) : Carbon::now()->subDays(7);
+        $startDate = $request->filled('start_date') ? Carbon::parse($request->start_date) : Carbon::now()->subDays(30);
         $endDate = $request->filled('end_date') ? Carbon::parse($request->end_date) : Carbon::now();
 
         $query->whereDate('report_date', '>=', $startDate);
