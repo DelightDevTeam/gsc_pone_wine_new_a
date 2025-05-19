@@ -6,39 +6,30 @@ use App\Models\Admin\GameList;
 use App\Models\Report;
 use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+
 class NewPullReport extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'app:new-pull-report';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Call Seamless PullReport API and log/display the response.';
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
         $operatorCode = config('game.api.operator_code');
         $secretKey = config('game.api.secret_key');
         $apiUrl = config('game.api.url') . '/Seamless/PullReport';
 
+        // ✅ Use timestamp tracking to avoid overlapping
         $endDate = now();
-        $startDate = $endDate->copy()->subMinutes(5);
+        $startDate = Cache::get('last_pull_time', $endDate->copy()->subMinutes(5));
+
+        // Enforce maximum 5-minute range
+        if ($endDate->diffInMinutes($startDate) > 5) {
+            $startDate = $endDate->copy()->subMinutes(5);
+        }
+
         $requestTime = now()->format('YmdHis');
         $sign = md5($operatorCode . $requestTime . 'pullreport' . $secretKey);
 
@@ -50,27 +41,23 @@ class NewPullReport extends Command
             'RequestTime' => $requestTime,
         ];
 
-       // Log::info('NewPullReport request payload', $payload);
-       // $this->info('Request Payload: ' . json_encode($payload));
-
         try {
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
             ])->post($apiUrl, $payload);
 
-           // Log::info('NewPullReport API response', ['body' => $response->body()]);
-            //$this->info('API Response: ' . $response->body());
-
             if ($response->successful() && $response->json('ErrorCode') == 0) {
                 $data = $response->json();
+
                 if (!empty($data['Wagers'])) {
                     foreach ($data['Wagers'] as $wager) {
                         $existing = Report::where('wager_id', $wager['WagerID'])->first();
                         $user = User::where('user_name', $wager['MemberName'])->first();
-                                $game_name = GameList::where('code', $wager['GameID'])->first();
-                                $report_game_name = $game_name ? $game_name->name : $wager['GameID'];
-                                $agent_id = $user ? $user->agent_id : null;
+                        $game_name = GameList::where('code', $wager['GameID'])->first();
+                        $report_game_name = $game_name ? $game_name->name : $wager['GameID'];
+                        $agent_id = $user ? $user->agent_id : null;
+
                         $fields = [
                             'member_name' => $wager['MemberName'],
                             'wager_id' => $wager['WagerID'],
@@ -91,15 +78,17 @@ class NewPullReport extends Command
                             'agent_id' => $agent_id,
                             'agent_commission' => 0.00,
                         ];
+
                         if ($existing) {
                             $existing->update($fields);
-                           // Log::info('Wager updated', ['wager_id' => $wager['WagerID']]);
                         } else {
                             Report::create($fields);
-                            //Log::info('Wager created', ['wager_id' => $wager['WagerID']]);
                         }
                     }
-                   // $this->info('All wagers processed and stored in reports table.');
+
+                    // ✅ Only update the last pull time if data is successfully processed
+                    Cache::put('last_pull_time', $endDate);
+                    $this->info('Wagers processed successfully. Last pull time updated.');
                 } else {
                     $this->info('No wagers found in response.');
                 }
