@@ -140,6 +140,13 @@
 
 @section('script')
 <!-- <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script> -->
+ <!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+
 
     <!-- <script>
         // Handle form submission with AJAX
@@ -166,6 +173,7 @@
         });
     </script> -->
 
+    @section('script')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const $table = $('#ponewineTable');
@@ -173,6 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if ($.fn.DataTable.isDataTable($table)) {
             $table.DataTable().clear().destroy();
         }
+
         $table.DataTable({
             responsive: true,
             paging: true,
@@ -207,5 +216,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 </script>
+@endsection
 
 @endsection
