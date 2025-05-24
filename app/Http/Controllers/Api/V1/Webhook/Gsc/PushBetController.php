@@ -72,39 +72,5 @@ class PushBetController extends Controller
             ], 500);
         }
     }
-    // public function pushBet(WebhookRequest $request)
-    // {
-    //     DB::beginTransaction();
-    //     try {
-    //         $validator = $request->check();
-
-    //         if ($validator->fails()) {
-    //             return $validator->getResponse();
-    //         }
-
-    //         $before_balance = $request->getMember()->balanceFloat;
-
-    //         $event = $this->createEvent($request);
-
-    //         $this->createWagerTransactions($validator->getRequestTransactions(), $event);
-
-    //         $request->getMember()->wallet->refreshBalance();
-
-    //         $after_balance = $request->getMember()->balanceFloat;
-
-    //         DB::commit();
-
-    //         return SlotWebhookService::buildResponse(
-    //             SlotWebhookResponseCode::Success,
-    //             $after_balance,
-    //             $before_balance
-    //         );
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-
-    //         return response()->json([
-    //             'message' => $e->getMessage(),
-    //         ]);
-    //     }
-    // }
+    
 }
