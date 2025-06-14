@@ -77,7 +77,7 @@ class ShanLaunchGameController extends Controller
             'batch_requests' => [
                 [
                     'member_account' => $member_account,
-                    'product_code'   => 1002 // or as required
+                    'product_code'   => 100200 // or as required
                 ]
             ],
             'operator_code' => $operator_code,
