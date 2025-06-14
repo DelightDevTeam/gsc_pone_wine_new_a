@@ -57,14 +57,13 @@ class ShanLaunchGameController extends Controller
 
         DB::beginTransaction();
         foreach ($accounts as $acc) {
-            $user = User::where('member_account', $acc)->first();
+            $user = User::where('user_name', $acc)->first();
             if (!$user) {
                 User::create([
-                    'member_account' => $acc,
+                    'user_name' => $acc,
                     'name'           => $acc,
-                    'balance'        => 0,
                     'password'       => bcrypt('defaultpassword'),
-                    'register_date'  => now(),
+                   
                 ]);
             }
         }
