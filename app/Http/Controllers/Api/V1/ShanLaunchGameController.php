@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 use App\Models\Operator;
+use Illuminate\Support\Facades\Log;
+use App\Enums\UserType;
 
 class ShanLaunchGameController extends Controller
 {
@@ -63,7 +65,7 @@ class ShanLaunchGameController extends Controller
                     'user_name' => $acc,
                     'name'           => $acc,
                     'password'       => bcrypt('defaultpassword'),
-                   
+                    'type'           => UserType::Player,
                 ]);
             }
         }
