@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Operator;
-use App\Models\Product;
+use App\Models\Admin\Product;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Config;
 
