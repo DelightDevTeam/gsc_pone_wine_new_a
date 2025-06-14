@@ -14,7 +14,7 @@ class ShanLaunchGameController extends Controller
 {
     public function launch(Request $request)
     {
-        // Validate input
+        // Validate input is required 
         $validator = Validator::make($request->all(), [
             'member_account' => 'required|string|max:50',
             'operator_code'  => 'required|string',
