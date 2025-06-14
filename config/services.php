@@ -30,5 +30,9 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+    'shan' => [
+        'transaction_key' => env('TRANSACTION_KEY', 'yYpfrVcWmkwxWx7um0TErYHj4YcHOOWr'),
+
+    ],
 
 ];

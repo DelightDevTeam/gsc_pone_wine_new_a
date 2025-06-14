@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 use App\Services\WalletService;
 use App\Enums\UserType;
 use App\Enums\TransactionName;
+use Illuminate\Support\Facades\Log;
+use App\Helpers\InternalApiHelper;
 
 class ShanLaunchGameController extends Controller
 {
@@ -104,7 +106,25 @@ class ShanLaunchGameController extends Controller
 
         // 3. Build launch game URL
         $launchGameUrl = 'https://goldendragon7.pro/?user_name=' . urlencode($member_account) . '&balance=' . $balance;
-
+        // report history to shan 
+        $transactionData = [
+            'game_type_id' => $request->input('game_type_id'), // From client/dev/game engine
+            'players' => [
+                [
+                    'player_id' => $member_account,
+                    'bet_amount' => $request->input('bet_amount'),
+                    'amount_changed' => $request->input('amount_changed'),
+                    'win_lose_status' => $request->input('win_lose_status'),
+                ],
+            ],
+        ];
+        
+        $response = InternalApiHelper::postWithTransactionKey(url('/api/transactions'), $transactionData);
+        
+        if ($response->failed()) {
+            Log::warning('Transaction history failed', ['resp' => $response->body()]);
+        }
+        
         return response()->json([
             'status' => 'success',
             'launch_game_url' => $launchGameUrl
