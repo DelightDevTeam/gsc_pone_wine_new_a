@@ -105,26 +105,26 @@ class ShanLaunchGameController extends Controller
         DB::commit();
 
         // 3. Build launch game URL
-        $launchGameUrl = 'https://goldendragon7.pro/?user_name=' . urlencode($member_account) . '&balance=' . $balance;
-        // report history to shan 
-        $transactionData = [
-            'game_type_id' => $request->input('game_type_id'), // From client/dev/game engine
-            'players' => [
-                [
-                    'player_id' => $member_account,
-                    'bet_amount' => $request->input('bet_amount'),
-                    'amount_changed' => $request->input('amount_changed'),
-                    'win_lose_status' => $request->input('win_lose_status'),
-                ],
-            ],
-        ];
+        // $launchGameUrl = 'https://goldendragon7.pro/?user_name=' . urlencode($member_account) . '&balance=' . $balance;
+        // // report history to shan 
+        // $transactionData = [
+        //     'game_type_id' => $request->input('game_type_id'), // From client/dev/game engine
+        //     'players' => [
+        //         [
+        //             'player_id' => $member_account,
+        //             'bet_amount' => $request->input('bet_amount'),
+        //             'amount_changed' => $request->input('amount_changed'),
+        //             'win_lose_status' => $request->input('win_lose_status'),
+        //         ],
+        //     ],
+        // ];
         
-        $response = InternalApiHelper::postWithTransactionKey(url('https://ponewine20x.xyz/api/transactions'), $transactionData);
+        // $response = InternalApiHelper::postWithTransactionKey(url('https://ponewine20x.xyz/api/transactions'), $transactionData);
         
-        Log::info('Transaction history', ['resp' => $response->body()]);
-        if ($response->failed()) {
-            Log::warning('Transaction history failed', ['resp' => $response->body()]);
-        }
+        // Log::info('Transaction history', ['resp' => $response->body()]);
+        // if ($response->failed()) {
+        //     Log::warning('Transaction history failed', ['resp' => $response->body()]);
+        // }
         
         return response()->json([
             'status' => 'success',
