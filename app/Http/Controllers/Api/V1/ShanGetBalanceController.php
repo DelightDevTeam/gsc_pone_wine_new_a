@@ -27,6 +27,8 @@ class ShanGetBalanceController extends Controller
             'sign' => 'required|string',
         ]);
 
+        Log::info('request', $request->all());
+
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'fail',
@@ -39,7 +41,7 @@ class ShanGetBalanceController extends Controller
         $operator = Operator::where('code', $request->operator_code)
                             ->where('active', true)
                             ->first();
-
+        Log::info('operator', $operator->toArray());
         if (!$operator) {
             return response()->json([
                 'status' => 'fail',
@@ -50,7 +52,7 @@ class ShanGetBalanceController extends Controller
         // 3. Signature check using operator's secret_key from DB
         $secret_key = $operator->secret_key;
         $expectedSign = md5($request->operator_code . $request->request_time . 'getbalance' . $secret_key);
-
+        Log::info('expectedSign', $expectedSign);
         if ($request->sign !== $expectedSign) {
             return response()->json([
                 'status' => 'fail',
