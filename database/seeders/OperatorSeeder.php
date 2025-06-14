@@ -12,7 +12,7 @@ class OperatorSeeder extends Seeder
         Operator::create([
             'code' => 'a3h1',
             'secret_key' => 'shana3h1', // change to a secure value
-            'callback_url' => 'https://a1yoma.online/api/shan/balance',
+            'callback_url' => 'https://luckymillion.pro/api/shan/balance',
             'active' => true,
         ]);
 
