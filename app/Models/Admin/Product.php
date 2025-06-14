@@ -14,6 +14,10 @@ class Product extends Model
     // protected $fillable = ['code', 'name', 'short_name', 'order', 'status', 'game_list_status'];
 
     protected $fillable = ['code', 'name', 'short_name', 'order', 'status', 'game_list_status'];
+    
+    // To insert data using MySQL command:
+    // INSERT INTO products (id, code, name, short_name, `order`, status, game_list_status) 
+    // VALUES ('47', '100200', 'Shan', 'Shan', 1, 1, 1);
 
     protected $appends = ['imgUrl']; // Changed from 'image' to 'imgUrl'
     //protected $appends = ['image'];

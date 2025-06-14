@@ -18,12 +18,14 @@ class GameType extends Model
         return $this->belongsToMany(Product::class, 'game_type_product')->withPivot('image');
     }
 
-    public function getImageAttribute() //getImageAttribute
+    public function getImageAttribute()
     {
         return $this->products->pluck('pivot.image');
     }
 
-    // getImgUrlAttribute
+    /**
+     * Get the image URL attribute
+     */
     public function getImgUrlAttribute()
     {
         return asset('assets/img/game_type/'.$this->img);

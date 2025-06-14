@@ -55,6 +55,7 @@ crontab -e
 
 * * * * * cd /var/www/gsc_pone_wine_new_a && php artisan schedule:run >> /dev/null 2>&1
 
+
 tail -f /var/log/mysql/error.log
 
 sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
@@ -653,7 +654,7 @@ class PullReport extends Command
 }
 
 
-------------- 
+-------------
 <?php
 
 namespace App\Console\Commands;
@@ -721,7 +722,7 @@ class PullReportUpdateVersion extends Command
             $signature = md5($operatorCode.$requestTime.'pullreport'.$secretKey);
             // Prepare the payload
             $startDate = now()->subMinutes(2);
-    
+
             $data = [
                 'OperatorCode' => $operatorCode,
                 'StartDate' => $startDate->format('Y-m-d H:i:s'),
@@ -734,7 +735,7 @@ class PullReportUpdateVersion extends Command
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
             ])->post($apiUrl, $data);
-    
+
             if ($response->successful()) {
                 $data = $response->json();
                 //Log::debug('PullReport Request Payload', $data);
@@ -816,8 +817,8 @@ class PullReportUpdateVersion extends Command
 }
 }
 
------------- 
-new pull report update --------- 
+------------
+new pull report update ---------
 <?php
 
 namespace App\Console\Commands;
@@ -933,7 +934,7 @@ class NewPullReport extends Command
     }
 }
 
------------------ 
+-----------------
 <?php
 
 namespace App\Http\Controllers\Api\V1\Webhook\Gsc\Traits;
@@ -1351,7 +1352,7 @@ trait OptimizedBettingProcess
 }
 
 
---------------- 
+---------------
 <?php
 
 namespace App\Console\Commands;

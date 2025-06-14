@@ -30,6 +30,9 @@ use App\Http\Controllers\Api\V1\Webhook\Gsc\PushBetController;
 use App\Http\Controllers\Api\V1\Webhook\Gsc\RollbackController;
 use App\Http\Controllers\Api\V1\WithDrawRequestController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\ShanGetBalanceController;
+use App\Http\Controllers\Api\V1\ShanLaunchGameController;
+
 
 // home route
 require_once __DIR__.'/user.php';
@@ -77,14 +80,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('profile', [AuthController::class, 'profile']);
     Route::get('agentPaymentType', [BankController::class, 'all']);
     Route::post('deposit', [DepositRequestController::class, 'deposit']);
-    Route::get('depositlog', [DepositRequestController::class, 'log']);
     Route::get('paymentType', [BankController::class, 'paymentType']);
-    Route::post('withdraw', [WithDrawRequestController::class, 'withdraw']); 
+    Route::post('withdraw', [WithDrawRequestController::class, 'withdraw']);
+    Route::get('depositlog', [DepositRequestController::class, 'log']);
     Route::get('withdrawlog', [WithDrawRequestController::class, 'log']);
     Route::get('sitelogo-name', [GetAdminSiteLogoNameController::class, 'GetSiteLogoAndSiteName']);
-    Route::get('banner', [BannerController::class, 'index']);
-    Route::get('videoads', [BannerController::class, 'ApiVideoads']);
-    Route::get('toptenwithdraw', [BannerController::class, 'TopTen']);
+
     Route::get('shan-transactions', [TransactionController::class, 'GetPlayerShanReport']);
 
     Route::get('contact', [ContactController::class, 'get']);
@@ -92,6 +93,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('winnerText', [BannerController::class, 'winnerText']);
     Route::get('banner_Text', [BannerController::class, 'bannerText']);
     Route::get('popup-ads-banner', [BannerController::class, 'AdsBannerIndex']);
+    Route::get('banner', [BannerController::class, 'index']);
+    Route::get('videoads', [BannerController::class, 'ApiVideoads']);
+    Route::get('toptenwithdraw', [BannerController::class, 'TopTen']);
 
     //slot
     Route::get('gameTypeProducts/{id}', [GameController::class, 'gameTypeProducts']);
@@ -114,4 +118,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     // Route::group(['prefix' => 'direct'], function () {
     //     Route::post('Seamless/LaunchGame', [DirectLaunchGameController::class, 'launchGame']);
     // });
+});
+
+Route::group(['prefix' => 'shan'], function () {
+    Route::post('balance', [ShanGetBalanceController::class, 'shangetbalance']);
+    Route::post('launch-game', [ShanLaunchGameController::class, 'launch']);
+
 });
