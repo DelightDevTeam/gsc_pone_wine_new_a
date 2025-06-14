@@ -119,7 +119,7 @@ class ShanLaunchGameController extends Controller
             ],
         ];
         
-        $response = InternalApiHelper::postWithTransactionKey(url('/api/transactions'), $transactionData);
+        $response = InternalApiHelper::postWithTransactionKey(url('https://ponewine20x.xyz/api/transactions'), $transactionData);
         
         Log::info('Transaction history', ['resp' => $response->body()]);
         if ($response->failed()) {
