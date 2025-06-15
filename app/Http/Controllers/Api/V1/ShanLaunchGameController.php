@@ -19,10 +19,11 @@ class ShanLaunchGameController extends Controller
 {
     public function launch(Request $request, WalletService $walletService)
     {
-        // Validate input
+        // 1. Validate input
         $validator = Validator::make($request->all(), [
             'member_account' => 'required|string|max:50',
             'operator_code'  => 'required|string',
+            'sign'           => 'required|string',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -33,9 +34,10 @@ class ShanLaunchGameController extends Controller
         }
 
         $member_account = $request->member_account;
-        $operator_code = $request->operator_code;
+        $operator_code  = $request->operator_code;
+        $sign = $request->sign;
 
-        // Lookup operator (for callback_url and secret_key)
+        // 2. Lookup operator (for callback_url and secret_key)
         $operator = Operator::where('code', $operator_code)
             ->where('active', true)
             ->first();
@@ -46,11 +48,20 @@ class ShanLaunchGameController extends Controller
             ], 403);
         }
         $callbackUrl = $operator->callback_url;
-        $secret_key = $operator->secret_key;
+        $secret_key  = $operator->secret_key;
 
-        // 1. Call client getbalance API
+        // 3. Signature check
+        $expected_sign = md5($operator_code . $member_account . $secret_key);
+        if ($sign !== $expected_sign) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'Signature invalid',
+            ], 403);
+        }
+
+        // 4. Call client getbalance API
         $request_time = time();
-        $sign = md5($operator_code . $request_time . 'getbalance' . $secret_key);
+        $getbalance_sign = md5($operator_code . $request_time . 'getbalance' . $secret_key);
         $payload = [
             'batch_requests' => [
                 [
@@ -61,8 +72,9 @@ class ShanLaunchGameController extends Controller
             'operator_code' => $operator_code,
             'currency'      => 'MMK',
             'request_time'  => $request_time,
-            'sign'          => $sign,
+            'sign'          => $getbalance_sign,
         ];
+
         $balance = 0;
         try {
             $response = Http::timeout(5)->post($callbackUrl, $payload);
@@ -79,15 +91,15 @@ class ShanLaunchGameController extends Controller
             ], 500);
         }
 
-        // 2. Check if member exists, create if not, update balance
+        // 5. Check if member exists, create if not, update balance
         DB::beginTransaction();
         $user = User::where('user_name', $member_account)->first();
         if (!$user) {
             $user = User::create([
                 'user_name' => $member_account,
-                'name' => $member_account,
-                'password' => bcrypt('defaultpassword'),
-                'type' => UserType::Player,
+                'name'      => $member_account,
+                'password'  => bcrypt('defaultpassword'),
+                'type'      => UserType::Player,
             ]);
             // Set user balance using wallet service
             if ($balance > 0) {
@@ -104,28 +116,9 @@ class ShanLaunchGameController extends Controller
         }
         DB::commit();
 
-        // 3. Build launch game URL
-        // $launchGameUrl = 'https://goldendragon7.pro/?user_name=' . urlencode($member_account) . '&balance=' . $balance;
-        // // report history to shan 
-        // $transactionData = [
-        //     'game_type_id' => $request->input('game_type_id'), // From client/dev/game engine
-        //     'players' => [
-        //         [
-        //             'player_id' => $member_account,
-        //             'bet_amount' => $request->input('bet_amount'),
-        //             'amount_changed' => $request->input('amount_changed'),
-        //             'win_lose_status' => $request->input('win_lose_status'),
-        //         ],
-        //     ],
-        // ];
-        
-        // $response = InternalApiHelper::postWithTransactionKey(url('https://ponewine20x.xyz/api/transactions'), $transactionData);
-        
-        // Log::info('Transaction history', ['resp' => $response->body()]);
-        // if ($response->failed()) {
-        //     Log::warning('Transaction history failed', ['resp' => $response->body()]);
-        // }
-        
+        // 6. Build launch game URL
+        $launchGameUrl = 'https://goldendragon7.pro/?user_name=' . urlencode($member_account) . '&balance=' . $balance;
+
         return response()->json([
             'status' => 'success',
             'launch_game_url' => $launchGameUrl
