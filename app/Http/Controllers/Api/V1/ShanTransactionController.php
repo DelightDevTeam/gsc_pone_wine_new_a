@@ -100,6 +100,27 @@ class ShanTransactionController extends Controller
         $clientTransactionUrl = 'https://luckymillion.pro/api/v1/game/transactions';
         $transactionSecret    = 'yYpfrVcWmkwxWx7um0TErYHj4YcHOOWr'; // Use the agreed secret!
 
+        Log::info('ShanTransaction: Client transaction URL', [
+            'client_transaction_url' => $clientTransactionUrl
+        ]);
+
+        Log::info('ShanTransaction: Client transaction secret', [
+            'client_transaction_secret' => $transactionSecret
+        ]);
+
+        Log::info('ShanTransaction: Client transaction payload', [
+            'client_transaction_payload' => $validated['players']
+        ]);
+        Log::info('ShanTransaction: Client transaction game type id', [
+            'client_transaction_game_type_id' => $validated['game_type_id']
+        ]);
+        Log::info('ShanTransaction: Client transaction results', [
+            'client_transaction_results' => $results
+        ]);
+        Log::info('ShanTransaction: Client transaction banker', [
+            'client_transaction_banker' => $banker
+        ]);
+
         foreach ($validated['players'] as $playerData) {
             $clientPayload = [
                 'player_id'       => $playerData['player_id'],
