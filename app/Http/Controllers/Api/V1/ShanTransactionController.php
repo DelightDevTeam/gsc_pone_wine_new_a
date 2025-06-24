@@ -108,18 +108,18 @@ class ShanTransactionController extends Controller
             'client_transaction_secret' => $transactionSecret
         ]);
 
-        Log::info('ShanTransaction: Client transaction payload', [
-            'client_transaction_payload' => $validated['players']
-        ]);
-        Log::info('ShanTransaction: Client transaction game type id', [
-            'client_transaction_game_type_id' => $validated['game_type_id']
-        ]);
-        Log::info('ShanTransaction: Client transaction results', [
-            'client_transaction_results' => $results
-        ]);
-        Log::info('ShanTransaction: Client transaction banker', [
-            'client_transaction_banker' => $banker
-        ]);
+        // Log::info('ShanTransaction: Client transaction payload', [
+        //     'client_transaction_payload' => $validated['players']
+        // ]);
+        // Log::info('ShanTransaction: Client transaction game type id', [
+        //     'client_transaction_game_type_id' => $validated['game_type_id']
+        // ]);
+        // Log::info('ShanTransaction: Client transaction results', [
+        //     'client_transaction_results' => $results
+        // ]);
+        // Log::info('ShanTransaction: Client transaction banker', [
+        //     'client_transaction_banker' => $banker
+        // ]);
 
         foreach ($validated['players'] as $playerData) {
             $clientPayload = [
