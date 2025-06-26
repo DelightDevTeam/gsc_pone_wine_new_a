@@ -11,6 +11,7 @@ use App\Models\Admin\GameType;
 use App\Models\Admin\SpecialGame;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class GameController extends Controller
 {
