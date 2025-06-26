@@ -65,6 +65,7 @@ Route::group(['prefix' => 'Seamless'], function () {
 
 Route::post('bet', [PoneWineBetController::class, 'index'])->middleware('transaction');
 Route::post('transactions', [ShanTransactionController::class, 'index'])->middleware('transaction');
+Route::delete('/game-lists-delete', [GameController::class, 'deleteGameLists']);
 
 // for slot
 Route::post('/transaction-details/{tranId}', [TransactionController::class, 'getTransactionDetails']);
